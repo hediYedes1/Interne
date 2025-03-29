@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Interview index{% endblock %}
+
+{% block body %}
+    <h1>Interview index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Idinterview</th>
+                <th>Titreoffre</th>
+                <th>Dateinterview</th>
+                <th>Typeinterview</th>
+                <th>Lienmeet</th>
+                <th>Localisation</th>
+                <th>Timeinterview</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for interview in interviews %}
+            <tr>
+                <td>{{ interview.idinterview }}</td>
+                <td>{{ interview.titreoffre }}</td>
+                <td>{{ interview.dateinterview ? interview.dateinterview|date('Y-m-d') : '' }}</td>
+                <td>{{ interview.typeinterview }}</td>
+                <td>{{ interview.lienmeet }}</td>
+                <td>{{ interview.localisation }}</td>
+                <td>{{ interview.timeinterview }}</td>
+                <td>
+                    <a href="{{ path('app_interview_show', {'idinterview': interview.idinterview}) }}">show</a>
+                    <a href="{{ path('app_interview_edit', {'idinterview': interview.idinterview}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="8">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_interview_new') }}">Create new</a>
+{% endblock %}
