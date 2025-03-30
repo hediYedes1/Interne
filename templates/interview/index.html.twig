@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'base1.html.twig' %}
 
 {% block title %}Interview index{% endblock %}
 
@@ -8,7 +8,6 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Idinterview</th>
                 <th>Titreoffre</th>
                 <th>Dateinterview</th>
                 <th>Typeinterview</th>
@@ -21,13 +20,12 @@
         <tbody>
         {% for interview in interviews %}
             <tr>
-                <td>{{ interview.idinterview }}</td>
                 <td>{{ interview.titreoffre }}</td>
                 <td>{{ interview.dateinterview ? interview.dateinterview|date('Y-m-d') : '' }}</td>
-                <td>{{ interview.typeinterview }}</td>
+                <td>{{ interview.typeinterview.value }}</td>
                 <td>{{ interview.lienmeet }}</td>
                 <td>{{ interview.localisation }}</td>
-                <td>{{ interview.timeinterview }}</td>
+                <td>{{ interview.timeinterview ? interview.timeinterview|date('H:i') : '' }}</td>
                 <td>
                     <a href="{{ path('app_interview_show', {'idinterview': interview.idinterview}) }}">show</a>
                     <a href="{{ path('app_interview_edit', {'idinterview': interview.idinterview}) }}">edit</a>

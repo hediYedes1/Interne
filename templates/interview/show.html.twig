@@ -21,7 +21,7 @@
             </tr>
             <tr>
                 <th>Typeinterview</th>
-                <td>{{ interview.typeinterview }}</td>
+                <td>{{ interview.typeinterview.value }}</td>
             </tr>
             <tr>
                 <th>Lienmeet</th>
@@ -33,7 +33,7 @@
             </tr>
             <tr>
                 <th>Timeinterview</th>
-                <td>{{ interview.timeinterview }}</td>
+                <td>{{ interview.timeinterview ? interview.timeinterview|date('H:i') : '' }}</td>
             </tr>
         </tbody>
     </table>

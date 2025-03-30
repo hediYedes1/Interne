@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/interview')]
 final class InterviewController extends AbstractController
 {
-    #[Route(name: 'app_interview_index', methods: ['GET'])]
+    #[Route('/list', name: 'app_interview_index', methods: ['GET'])]
     public function index(EntityManagerInterface $entityManager): Response
     {
         $interviews = $entityManager
@@ -31,17 +31,20 @@ final class InterviewController extends AbstractController
         $interview = new Interview();
         $form = $this->createForm(InterviewType::class, $interview);
         $form->handleRequest($request);
-
+    
         if ($form->isSubmitted() && $form->isValid()) {
+            // Copiez le titre de l'offre vers titreoffre
+            $interview->setTitreoffre($interview->getIdoffre()->getTitreoffre());
+            
             $entityManager->persist($interview);
             $entityManager->flush();
-
+    
             return $this->redirectToRoute('app_interview_index', [], Response::HTTP_SEE_OTHER);
         }
-
+    
         return $this->render('interview/new.html.twig', [
             'interview' => $interview,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 
@@ -71,7 +74,7 @@ final class InterviewController extends AbstractController
         ]);
     }
 
-    #[Route('/{idinterview}', name: 'app_interview_delete', methods: ['POST'])]
+    #[Route('/{idinterview}/delete', name: 'app_interview_delete', methods: ['POST'])]
     public function delete(Request $request, Interview $interview, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$interview->getIdinterview(), $request->getPayload()->getString('_token'))) {

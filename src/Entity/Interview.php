@@ -14,6 +14,7 @@ class Interview
 {
 
     #[ORM\Id]
+    #[ORM\GeneratedValue]
     #[ORM\Column(type: "integer")]
     private int $idinterview;
 
@@ -27,7 +28,7 @@ class Interview
     #[ORM\Column(type: "date")]
     private \DateTimeInterface $dateinterview;
 
-    #[ORM\Column(type: "string", enumType: TypeInterview::class)]
+    #[ORM\Column(type: "string", length: 20, enumType: TypeInterview::class)]
     private TypeInterview $typeinterview;
 
     #[ORM\Column(type: "string", length: 255)]
@@ -36,8 +37,8 @@ class Interview
     #[ORM\Column(type: "string", length: 255)]
     private string $localisation;
 
-    #[ORM\Column(type: "string", length: 255)]
-    private string $timeinterview;
+    #[ORM\Column(type: "datetime")]
+    private \DateTimeInterface $timeinterview;
 
     public function getIdinterview()
     {
@@ -79,14 +80,19 @@ class Interview
         $this->dateinterview = $value;
     }
 
-    public function getTypeinterview()
+    public function getTypeinterview(): string|TypeInterview
     {
         return $this->typeinterview;
     }
 
-    public function setTypeinterview($value)
+    public function setTypeinterview(string|TypeInterview $typeinterview): self
     {
-        $this->typeinterview = $value;
+        if (is_string($typeinterview)) {
+            $this->typeinterview = TypeInterview::from($typeinterview);
+        } else {
+            $this->typeinterview = $typeinterview;
+        }
+        return $this;
     }
 
     public function getLienmeet()
