@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Affectationinterview{% endblock %}
+
+{% block body %}
+    <h1>Affectationinterview</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Dateaffectationinterview</th>
+                <td>{{ affectationinterview.dateaffectationinterview ? affectationinterview.dateaffectationinterview|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_affectationinterview_index') }}">back to list</a>
+
+    <a href="{{ path('app_affectationinterview_edit', {'idinterview': affectationinterview.idinterview}) }}">edit</a>
+
+    {{ include('affectationinterview/_delete_form.html.twig') }}
+{% endblock %}

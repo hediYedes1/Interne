@@ -32,6 +32,7 @@
                         <a href="{{ path('app_testtechnique_by_interview', {'id': interview.idinterview}) }}" class="btn btn-primary">
         Voir les Tests Techniques
     </a>
+    <a href="{{ path('app_affectationinterview_new', {'idinterview': interview.idinterview}) }}" class="btn btn-success">Affecter</a>
                 </td>
             </tr>
         {% else %}
