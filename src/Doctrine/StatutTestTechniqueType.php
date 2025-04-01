@@ -9,7 +9,7 @@ use InvalidArgumentException;
 
 class StatutTestTechniqueType extends Type
 {
-    const NAME = 'statut_test_technique';
+    const NAME = 'statuttesttechnique';
 
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform): string
     {

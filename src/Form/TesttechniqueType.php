@@ -11,6 +11,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 
+
+
 class TesttechniqueType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -19,11 +21,10 @@ class TesttechniqueType extends AbstractType
             ->add('titretesttechnique')
             ->add('descriptiontesttechnique')
             ->add('dureetesttechnique')
-            ->add('statuttesttechnique')
             ->add('statuttesttechnique', EnumType::class, [
                 'class' => StatutTestTechnique::class,
                 'choice_label' => fn(StatutTestTechnique $type) => $type->getLabel(),
-                'label' => 'Type d\'interview',
+                'label' => 'Type de test technique',
                 'placeholder' => 'Sélectionnez un type',
             ])
             ->add('datecreationtesttechnique', null, [
@@ -33,8 +34,7 @@ class TesttechniqueType extends AbstractType
             ->add('idinterview', EntityType::class, [
                 'class' => Interview::class,
                 'choice_label' => 'idinterview',
-            ])
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

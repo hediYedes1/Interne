@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Doctrine\TypeInterviewType;
 use Doctrine\ORM\Mapping as ORM;
 
 use App\Entity\Offre;
@@ -30,7 +31,7 @@ class Interview
     #[ORM\Column(type: "date")]
     private \DateTimeInterface $dateinterview;
 
-    #[ORM\Column(type: "string", length: 20, enumType: TypeInterview::class)]
+    #[ORM\Column(type: "typeinterview")]
     private TypeInterview $typeinterview;
 
     #[ORM\Column(type: "string", length: 255)]
@@ -87,18 +88,14 @@ class Interview
         $this->dateinterview = $value;
     }
 
-    public function getTypeinterview(): string|TypeInterview
+    public function getTypeinterview(): TypeInterview
     {
         return $this->typeinterview;
     }
-
-    public function setTypeinterview(string|TypeInterview $typeinterview): self
+    
+    public function setTypeinterview(TypeInterview $typeinterview): self
     {
-        if (is_string($typeinterview)) {
-            $this->typeinterview = TypeInterview::from($typeinterview);
-        } else {
-            $this->typeinterview = $typeinterview;
-        }
+        $this->typeinterview = $typeinterview;
         return $this;
     }
 

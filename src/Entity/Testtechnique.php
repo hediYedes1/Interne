@@ -30,8 +30,9 @@ class Testtechnique
     #[ORM\Column(type: "integer")]
     private int $dureetesttechnique;
 
-    #[ORM\Column(type: "string", length: 20, enumType: StatutTestTechnique::class)]
-    private StatutTestTechnique $statuttesttechnique;
+    #[ORM\Column(type: "statuttesttechnique")]
+private StatutTestTechnique $statuttesttechnique;
+
 
     #[ORM\Column(type: "datetime")]
     private \DateTimeInterface $datecreationtesttechnique;
@@ -89,21 +90,18 @@ class Testtechnique
         $this->dureetesttechnique = $value;
     }
 
-    public function getStatuttesttechnique(): string|StatutTestTechnique
+    public function getStatuttesttechnique(): StatutTestTechnique
     {
         return $this->statuttesttechnique;
     }
 
-    public function setStatuttesttechnique(string|StatutTestTechnique $statuttesttechnique): self
+    public function setStatuttesttechnique(StatutTestTechnique $statuttesttechnique): self
     {
-        if(is_string($statuttesttechnique)){
-            $this->statuttesttechnique = StatutTestTechnique::from($statuttesttechnique);
-        }else{
-            $this->statuttesttechnique = $statuttesttechnique;
-        }
-        
+        $this->statuttesttechnique = $statuttesttechnique;
         return $this;
     }
+    
+    
 
     public function getDatecreationtesttechnique()
     {

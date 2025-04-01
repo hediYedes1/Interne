@@ -11,7 +11,8 @@ doctrine:
         mapping_types:
             enum: string
         types:
-            statut_test_technique: App\Doctrine\StatutTestTechniqueType
+            statuttesttechnique: App\Doctrine\StatutTestTechniqueType
+            typeinterview: App\Doctrine\TypeInterviewType
     orm:
         auto_generate_proxy_classes: true
         enable_lazy_ghost_objects: true

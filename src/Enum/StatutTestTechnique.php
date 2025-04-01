@@ -25,4 +25,13 @@ enum StatutTestTechnique: string
         }
         return null;
     }
+    public static function values(): array
+    {
+        return array_map(fn(self $case) => $case->value, self::cases());
+    }
+    public function label(): string
+    {
+        return $this->value;
+    }
+ 
 }

@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/testtechnique')]
 final class TesttechniqueController extends AbstractController
 {
-    #[Route(name: 'app_testtechnique_index', methods: ['GET'])]
+    #[Route('/list', name: 'app_testtechnique_index', methods: ['GET'])]
     public function index(EntityManagerInterface $entityManager): Response
     {
         $testtechniques = $entityManager
