@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Testtechnique{% endblock %}
+
+{% block body %}
+    <h1>Testtechnique</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Idtesttechnique</th>
+                <td>{{ testtechnique.idtesttechnique }}</td>
+            </tr>
+            <tr>
+                <th>Titretesttechnique</th>
+                <td>{{ testtechnique.titretesttechnique }}</td>
+            </tr>
+            <tr>
+                <th>Descriptiontesttechnique</th>
+                <td>{{ testtechnique.descriptiontesttechnique }}</td>
+            </tr>
+            <tr>
+                <th>Dureetesttechnique</th>
+                <td>{{ testtechnique.dureetesttechnique }}</td>
+            </tr>
+            <tr>
+                <th>Statuttesttechnique</th>
+                <td>{{ testtechnique.statuttesttechnique.value }}</td>
+            </tr>
+            <tr>
+                <th>Datecreationtesttechnique</th>
+                <td>{{ testtechnique.datecreationtesttechnique ? testtechnique.datecreationtesttechnique|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Questions</th>
+                <td>{{ testtechnique.questions }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_testtechnique_index') }}">back to list</a>
+
+    <a href="{{ path('app_testtechnique_edit', {'idtesttechnique': testtechnique.idtesttechnique}) }}">edit</a>
+
+    {{ include('testtechnique/_delete_form.html.twig') }}
+{% endblock %}

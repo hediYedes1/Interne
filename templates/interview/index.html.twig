@@ -27,8 +27,11 @@
                 <td>{{ interview.localisation }}</td>
                 <td>{{ interview.timeinterview ? interview.timeinterview|date('H:i') : '' }}</td>
                 <td>
-                    <a href="{{ path('app_interview_show', {'idinterview': interview.idinterview}) }}">show</a>
-                    <a href="{{ path('app_interview_edit', {'idinterview': interview.idinterview}) }}">edit</a>
+                    <a href="{{ path('app_interview_show', {'idinterview': interview.idinterview}) }}" class="btn btn-info">show</a>
+                    <a href="{{ path('app_interview_edit', {'idinterview': interview.idinterview}) }}" class="btn btn-warning">edit</a>
+                        <a href="{{ path('app_testtechnique_by_interview', {'id': interview.idinterview}) }}" class="btn btn-primary">
+        Voir les Tests Techniques
+    </a>
                 </td>
             </tr>
         {% else %}
@@ -39,5 +42,5 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_interview_new') }}">Create new</a>
+    <a href="{{ path('app_interview_new') }}" class="btn btn-success">Create new</a>
 {% endblock %}

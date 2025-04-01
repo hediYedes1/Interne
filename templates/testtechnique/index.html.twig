@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Testtechnique index{% endblock %}
+
+{% block body %}
+    <h1>Tests Techniques</h1>
+
+    {% if interview is defined %}
+        <h2>Tests liés à l'Interview : {{ interview.titreoffre }}</h2>
+        <a href="{{ path('app_interview_index') }}" class="btn btn-secondary">Retour aux Interviews</a>
+    {% else %}
+        <h2>Liste complète des Tests Techniques</h2>
+        <a href="{{ path('app_testtechnique_new') }}" class="btn btn-primary">Créer un nouveau test</a>
+    {% endif %}
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Titre</th>
+                <th>Description</th>
+                <th>Durée</th>
+                <th>Statut</th>
+                <th>Date de Création</th>
+                <th>Questions</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for testtechnique in testtechniques %}
+            <tr>
+                <td>{{ testtechnique.idtesttechnique }}</td>
+                <td>{{ testtechnique.titretesttechnique }}</td>
+                <td>{{ testtechnique.descriptiontesttechnique }}</td>
+                <td>{{ testtechnique.dureetesttechnique }}</td>
+                <td>{{ testtechnique.statuttesttechnique.value }}</td>
+                <td>{{ testtechnique.datecreationtesttechnique ? testtechnique.datecreationtesttechnique|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ testtechnique.questions }}</td>
+                <td>
+                    <a href="{{ path('app_testtechnique_show', {'idtesttechnique': testtechnique.idtesttechnique}) }}">Voir</a>
+                    <a href="{{ path('app_testtechnique_edit', {'idtesttechnique': testtechnique.idtesttechnique}) }}">Modifier</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="8">Aucun test technique trouvé</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

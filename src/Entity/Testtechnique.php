@@ -5,12 +5,15 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use App\Entity\Interview;
+use App\Enum\StatutTestTechnique;
+use App\Enum\TypeInterview;
 
 #[ORM\Entity]
 class Testtechnique
 {
 
     #[ORM\Id]
+    #[ORM\GeneratedValue]
     #[ORM\Column(type: "integer")]
     private int $idtesttechnique;
 
@@ -27,8 +30,8 @@ class Testtechnique
     #[ORM\Column(type: "integer")]
     private int $dureetesttechnique;
 
-    #[ORM\Column(type: "string", length: 255)]
-    private string $statuttesttechnique;
+    #[ORM\Column(type: "string", length: 20, enumType: StatutTestTechnique::class)]
+    private StatutTestTechnique $statuttesttechnique;
 
     #[ORM\Column(type: "datetime")]
     private \DateTimeInterface $datecreationtesttechnique;
@@ -86,14 +89,20 @@ class Testtechnique
         $this->dureetesttechnique = $value;
     }
 
-    public function getStatuttesttechnique()
+    public function getStatuttesttechnique(): string|StatutTestTechnique
     {
         return $this->statuttesttechnique;
     }
 
-    public function setStatuttesttechnique($value)
+    public function setStatuttesttechnique(string|StatutTestTechnique $statuttesttechnique): self
     {
-        $this->statuttesttechnique = $value;
+        if(is_string($statuttesttechnique)){
+            $this->statuttesttechnique = StatutTestTechnique::from($statuttesttechnique);
+        }else{
+            $this->statuttesttechnique = $statuttesttechnique;
+        }
+        
+        return $this;
     }
 
     public function getDatecreationtesttechnique()

@@ -1,0 +1,50 @@
+{% extends 'base1.html.twig' %}
+
+{% block title %}New Testtechnique{% endblock %}
+
+{% block css %}
+  {{ parent() }}
+ 
+  
+{% endblock %}
+
+{% block sideBar %}
+  {{ parent() }}
+{% endblock %}
+
+{% block headside %}
+  {{ parent() }}
+{% endblock %}
+
+
+{% block body %}
+  <!-- [ Main Content ] start -->
+  <div class="pc-container">
+    <div class="pc-content">
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h5>Create new Interview</h5>
+            </div>
+            <div class="card-body">
+              {{ include('testtechnique/_form.html.twig') }}
+
+            <a href="{{ path('app_testtechnique_index') }}">back to list</a>
+                <i class="ti ti-arrow-left"></i> Back to list
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- [ Main Content ] end -->
+{% endblock %}
+
+{% block javascript %}
+  {{ parent() }}
+
+{% endblock %}
+
+

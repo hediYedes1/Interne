@@ -8,6 +8,8 @@ use App\Entity\Offre;
 use Doctrine\Common\Collections\Collection;
 use App\Entity\Affectationinterview;
 use App\Enum\TypeInterview;
+use Doctrine\Common\Collections\ArrayCollection;
+
 
 #[ORM\Entity]
 class Interview
@@ -43,6 +45,11 @@ class Interview
     public function getIdinterview()
     {
         return $this->idinterview;
+    }
+    public function __construct()
+    {
+        $this->testtechniques = new ArrayCollection();
+        $this->affectationinterviews = new ArrayCollection();
     }
 
     public function setIdinterview($value)
@@ -123,6 +130,14 @@ class Interview
     public function setTimeinterview($value)
     {
         $this->timeinterview = $value;
+    }
+    public function getTesttechniques(): Collection
+    {
+        return $this->testtechniques;
+    }
+    public function getAffectationinterviews(): Collection
+    {
+        return $this->affectationinterviews;
     }
 
     #[ORM\OneToMany(mappedBy: "idinterview", targetEntity: Testtechnique::class)]

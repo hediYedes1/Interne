@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Entity\Testtechnique;
 
 #[Route('/interview')]
 final class InterviewController extends AbstractController
@@ -83,5 +84,15 @@ final class InterviewController extends AbstractController
         }
 
         return $this->redirectToRoute('app_interview_index', [], Response::HTTP_SEE_OTHER);
+    }
+    #[Route('/{idinterview}/tests', name: 'app_interview_tests', methods: ['GET'])]
+    public function getTestsByInterview(Interview $interview): Response
+    {
+        $tests = $interview->getTesttechniques();
+        
+        return $this->render('interview/tests.html.twig', [
+            'interview' => $interview,
+            'tests' => $tests,
+        ]);
     }
 }

@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Testtechnique{% endblock %}
+
+{% block body %}
+    <h1>Edit Testtechnique</h1>
+
+    {{ include('testtechnique/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_testtechnique_index') }}">back to list</a>
+
+    {{ include('testtechnique/_delete_form.html.twig') }}
+{% endblock %}
