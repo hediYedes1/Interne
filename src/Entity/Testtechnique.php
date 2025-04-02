@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Interview;
 use App\Enum\StatutTestTechnique;
 use App\Enum\TypeInterview;
-
+use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity]
 class Testtechnique
 {
@@ -21,23 +21,29 @@ class Testtechnique
     #[ORM\JoinColumn(name: 'idinterview', referencedColumnName: 'idinterview', onDelete: 'CASCADE')]
     private Interview $idinterview;
 
+    #[Assert\NotBlank(message: "Le titre est obligatoire.")]
+    #[Assert\Length(min: 5, max: 255, minMessage: "Le titre doit contenir au moins {{ limit }} caractères.")]
     #[ORM\Column(type: "string", length: 255)]
     private string $titretesttechnique;
 
+    #[Assert\NotBlank(message: "La description est obligatoire.")]
     #[ORM\Column(type: "string", length: 255)]
     private string $descriptiontesttechnique;
 
+    #[Assert\NotBlank(message: "La durée est obligatoire.")]
+    #[Assert\Positive(message: "La durée doit être un entier positif.")]
     #[ORM\Column(type: "integer")]
     private int $dureetesttechnique;
 
+    #[Assert\NotBlank(message: "Le statut est obligatoire.")]
     #[ORM\Column(type: "statuttesttechnique")]
-private StatutTestTechnique $statuttesttechnique;
+    private StatutTestTechnique $statuttesttechnique;
 
+    
+    #[ORM\Column(type: "datetime", options: ["default" => "CURRENT_TIMESTAMP"])]
+    private \DateTimeInterface $datecreationtesttechnique ;
 
-    #[ORM\Column(type: "datetime")]
-    private \DateTimeInterface $datecreationtesttechnique;
-
-    #[ORM\Column(type: "text")]
+    #[ORM\Column(type: "text", nullable: true)]
     private string $questions;
 
     public function getIdtesttechnique()
@@ -85,6 +91,7 @@ private StatutTestTechnique $statuttesttechnique;
         return $this->dureetesttechnique;
     }
 
+
     public function setDureetesttechnique($value)
     {
         $this->dureetesttechnique = $value;
@@ -100,6 +107,10 @@ private StatutTestTechnique $statuttesttechnique;
         $this->statuttesttechnique = $statuttesttechnique;
         return $this;
     }
+    public function __construct()
+    {
+        $this->datecreationtesttechnique = new \DateTimeImmutable();
+    }
     
     
 
@@ -108,9 +119,10 @@ private StatutTestTechnique $statuttesttechnique;
         return $this->datecreationtesttechnique;
     }
 
-    public function setDatecreationtesttechnique($value)
+    #[ORM\PrePersist]
+    public function setDatecreationtesttechnique(): void
     {
-        $this->datecreationtesttechnique = $value;
+        $this->datecreationtesttechnique = new \DateTimeImmutable();
     }
 
     public function getQuestions()

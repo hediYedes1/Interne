@@ -1,6 +1,25 @@
-{% extends 'base.html.twig' %}
+{% extends 'base1.html.twig' %}
 
 {% block title %}Testtechnique index{% endblock %}
+
+{% block css %}
+  {{ parent() }}
+
+{% endblock %}
+
+{% block sideBar %}
+  {{ parent() }}
+{% endblock %}
+
+{% block headside %}
+  {{ parent() }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="../dashboard/index.html">Interviews</a></li>
+    <li class="breadcrumb-item active">New</li>
+{% endblock %}
 
 {% block body %}
     <h1>Tests Techniques</h1>
@@ -8,9 +27,16 @@
     {% if interview is defined %}
         <h2>Tests liés à l'Interview : {{ interview.titreoffre }}</h2>
         <a href="{{ path('app_interview_index') }}" class="btn btn-secondary">Retour aux Interviews</a>
+       {% if interview is defined and interview is not null %}
+    <a href="{{ path('app_testtechnique_new_for_interview', {'idinterview': interview.idinterview}) }}" class="btn btn-primary">
+        <i class="ti ti-plus"></i> Ajouter un test pour cet interview
+    </a>
+{% else %}
+    <p>Aucune interview sélectionnée.</p>
+{% endif %}
     {% else %}
         <h2>Liste complète des Tests Techniques</h2>
-        <a href="{{ path('app_testtechnique_new') }}" class="btn btn-primary">Créer un nouveau test</a>
+        
     {% endif %}
 
     <table class="table">
@@ -48,4 +74,11 @@
         {% endfor %}
         </tbody>
     </table>
+
+
+{% endblock %}
+
+{% block javascript %}
+  {{ parent() }}
+
 {% endblock %}

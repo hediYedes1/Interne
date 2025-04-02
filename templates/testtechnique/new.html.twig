@@ -15,31 +15,33 @@
 {% block headside %}
   {{ parent() }}
 {% endblock %}
-
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="../dashboard/index.html">Interviews</a></li>
+    <li class="breadcrumb-item active">New</li>
+{% endblock %}
 
 {% block body %}
-  <!-- [ Main Content ] start -->
   <div class="pc-container">
     <div class="pc-content">
       <div class="row">
         <div class="col-12">
           <div class="card">
             <div class="card-header">
-              <h5>Create new Interview</h5>
+              <h5>Créer un test technique {% if interview is defined %}pour l'interview {{ interview.titreoffre }}{% endif %}</h5>
             </div>
             <div class="card-body">
               {{ include('testtechnique/_form.html.twig') }}
 
-            <a href="{{ path('app_testtechnique_index') }}">back to list</a>
-                <i class="ti ti-arrow-left"></i> Back to list
-              </a>
+             <a href="{{ path('app_testtechnique_by_interview', {'idinterview': interview.idinterview}) }}" class="btn btn-light mt-3">
+    <i class="ti ti-arrow-left"></i> Retour aux tests de l'interview
+</a>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <!-- [ Main Content ] end -->
 {% endblock %}
 
 {% block javascript %}

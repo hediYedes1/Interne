@@ -1,7 +1,24 @@
-{% extends 'base.html.twig' %}
+{% extends 'base1.html.twig' %}
 
 {% block title %}Edit Affectationinterview{% endblock %}
+{% block css %}
+  {{ parent() }}
+ 
+  
+{% endblock %}
 
+{% block sideBar %}
+  {{ parent() }}
+{% endblock %}
+
+{% block headside %}
+  {{ parent() }}
+{% endblock %}
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="../dashboard/index.html">Interviews</a></li>
+    <li class="breadcrumb-item active">New</li>
+{% endblock %}
 {% block body %}
     <h1>Edit Affectationinterview</h1>
 
@@ -10,4 +27,8 @@
     <a href="{{ path('app_affectationinterview_index') }}">back to list</a>
 
     {{ include('affectationinterview/_delete_form.html.twig') }}
+{% endblock %}
+{% block javascript %}
+  {{ parent() }}
+
 {% endblock %}

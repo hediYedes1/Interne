@@ -1,8 +1,26 @@
-{% extends 'base.html.twig' %}
+{% extends 'base1.html.twig' %}
 
 {% block title %}Interview{% endblock %}
+{% block css %}
+  {{ parent() }}
+ 
+  
+{% endblock %}
 
+{% block sideBar %}
+  {{ parent() }}
+{% endblock %}
+
+{% block headside %}
+  {{ parent() }}
+{% endblock %}
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="../dashboard/index.html">Interviews</a></li>
+    <li class="breadcrumb-item active">New</li>
+{% endblock %}
 {% block body %}
+
     <h1>Interview</h1>
 
     <table class="table">
@@ -43,4 +61,8 @@
     <a href="{{ path('app_interview_edit', {'idinterview': interview.idinterview}) }}">edit</a>
 
     {{ include('interview/_delete_form.html.twig') }}
+{% endblock %}
+{% block javascript %}
+  {{ parent() }}
+
 {% endblock %}

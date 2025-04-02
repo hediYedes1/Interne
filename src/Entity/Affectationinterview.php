@@ -20,7 +20,7 @@ class Affectationinterview
     #[ORM\JoinColumn(name: 'idutilisateur', referencedColumnName: 'idutilisateur', onDelete: 'CASCADE')]
     private Utilisateur $idutilisateur;
 
-    #[ORM\Column(type: "datetime")]
+    #[ORM\Column(type: "datetime", options: ["default" => "CURRENT_TIMESTAMP"])]
     private \DateTimeInterface $dateaffectationinterview;
 
     public function getIdinterview()
@@ -48,8 +48,13 @@ class Affectationinterview
         return $this->dateaffectationinterview;
     }
 
-    public function setDateaffectationinterview($value)
+    #[ORM\PrePersist]
+    public function setDateaffectationinterview(): void
     {
-        $this->dateaffectationinterview = $value;
+        $this->dateaffectationinterview = new \DateTimeImmutable();
+    }
+    public function __construct()
+    {
+        $this->dateaffectationinterview = new \DateTimeImmutable();
     }
 }

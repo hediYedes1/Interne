@@ -59,18 +59,21 @@ final class TesttechniqueController extends AbstractController
     {
         $form = $this->createForm(TesttechniqueType::class, $testtechnique);
         $form->handleRequest($request);
-
+    
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
-
-            return $this->redirectToRoute('app_testtechnique_index', [], Response::HTTP_SEE_OTHER);
+    
+            return $this->redirectToRoute('app_testtechnique_by_interview', [
+                'idinterview' => $testtechnique->getIdinterview()->getIdinterview()
+            ], Response::HTTP_SEE_OTHER);
         }
-
+    
         return $this->render('testtechnique/edit.html.twig', [
             'testtechnique' => $testtechnique,
             'form' => $form,
         ]);
     }
+    
 
     #[Route('/{idtesttechnique}', name: 'app_testtechnique_delete', methods: ['POST'])]
     public function delete(Request $request, Testtechnique $testtechnique, EntityManagerInterface $entityManager): Response
@@ -82,7 +85,7 @@ final class TesttechniqueController extends AbstractController
 
         return $this->redirectToRoute('app_testtechnique_index', [], Response::HTTP_SEE_OTHER);
     }
-    #[Route('/interview/{id}/tests', name: 'app_testtechnique_by_interview', methods: ['GET'])]
+   /* #[Route('/interview/{id}/tests', name: 'app_testtechnique_by_interview', methods: ['GET'])]
 public function indexByInterview(Interview $interview): Response
 {
     $tests = $interview->getTestTechniques(); // Récupérer les tests techniques liés à l'interview
@@ -91,7 +94,47 @@ public function indexByInterview(Interview $interview): Response
         'testtechniques' => $tests,
         'interview' => $interview,
     ]);
+}*/
+#[Route('/interview/{idinterview}/tests', name: 'app_testtechnique_by_interview', methods: ['GET'])]
+public function indexByInterview(Interview $idinterview, EntityManagerInterface $entityManager): Response
+{
+    $testtechniques = $entityManager
+        ->getRepository(Testtechnique::class)
+        ->findBy(['idinterview' => $idinterview]);
+
+    return $this->render('testtechnique/index.html.twig', [
+        'testtechniques' => $testtechniques,
+        'interview' => $idinterview,
+    ]);
 }
+
+#[Route('/new/{idinterview}', name: 'app_testtechnique_new_for_interview', methods: ['GET', 'POST'])]
+public function newForInterview(Request $request, EntityManagerInterface $entityManager, Interview $idinterview): Response
+{
+    $testtechnique = new Testtechnique();
+    $testtechnique->setIdinterview($idinterview);
+
+    $form = $this->createForm(TesttechniqueType::class, $testtechnique, [
+        'interview' => $idinterview,
+    ]);
+
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        $entityManager->persist($testtechnique);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_testtechnique_by_interview', [
+            'idinterview' => $idinterview->getIdinterview()
+        ], Response::HTTP_SEE_OTHER);
+    }
+
+    return $this->render('testtechnique/new.html.twig', [
+        'form' => $form,
+        'interview' => $idinterview
+    ]);
+}
+
 
    
 }

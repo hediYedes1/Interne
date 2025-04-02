@@ -1,8 +1,26 @@
 {% extends 'base1.html.twig' %}
 
 {% block title %}Interview index{% endblock %}
+{% block css %}
+  {{ parent() }}
+ 
+  
+{% endblock %}
 
+{% block sideBar %}
+  {{ parent() }}
+{% endblock %}
+
+{% block headside %}
+  {{ parent() }}
+{% endblock %}
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="../dashboard/index.html">Interviews</a></li>
+    <li class="breadcrumb-item active">New</li>
+{% endblock %}
 {% block body %}
+
     <h1>Interview index</h1>
 
     <table class="table">
@@ -29,9 +47,10 @@
                 <td>
                     <a href="{{ path('app_interview_show', {'idinterview': interview.idinterview}) }}" class="btn btn-info">show</a>
                     <a href="{{ path('app_interview_edit', {'idinterview': interview.idinterview}) }}" class="btn btn-warning">edit</a>
-                        <a href="{{ path('app_testtechnique_by_interview', {'id': interview.idinterview}) }}" class="btn btn-primary">
-        Voir les Tests Techniques
-    </a>
+                       <a href="{{ path('app_testtechnique_by_interview', {'idinterview': interview.idinterview}) }}" class="btn btn-primary">
+    Voir les Tests Techniques
+</a>
+
     <a href="{{ path('app_affectationinterview_new', {'idinterview': interview.idinterview}) }}" class="btn btn-success">Affecter</a>
                 </td>
             </tr>
@@ -44,4 +63,8 @@
     </table>
 
     <a href="{{ path('app_interview_new') }}" class="btn btn-success">Create new</a>
+{% endblock %}
+{% block javascript %}
+  {{ parent() }}
+
 {% endblock %}

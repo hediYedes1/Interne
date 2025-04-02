@@ -27,20 +27,20 @@ class TesttechniqueType extends AbstractType
                 'label' => 'Type de test technique',
                 'placeholder' => 'Sélectionnez un type',
             ])
-            ->add('datecreationtesttechnique', null, [
-                'widget' => 'single_text',
-            ])
-            ->add('questions')
-            ->add('idinterview', EntityType::class, [
-                'class' => Interview::class,
-                'choice_label' => 'idinterview',
-            ]);
+            ->add('questions');
+            if (!isset($options['interview'])) {
+                $builder->add('idinterview', EntityType::class, [
+                    'class' => Interview::class,
+                    'choice_label' => 'idinterview',
+                ]);
+            }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Testtechnique::class,
+            'interview' => null,
         ]);
     }
 }
