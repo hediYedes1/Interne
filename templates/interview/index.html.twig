@@ -1,10 +1,9 @@
 {% extends 'base1.html.twig' %}
 
 {% block title %}Interview index{% endblock %}
+
 {% block css %}
   {{ parent() }}
- 
-  
 {% endblock %}
 
 {% block sideBar %}
@@ -14,57 +13,110 @@
 {% block headside %}
   {{ parent() }}
 {% endblock %}
+
 {% block breadcrumb %}
     {{ parent() }}
     <li class="breadcrumb-item"><a href="../dashboard/index.html">Interviews</a></li>
-    <li class="breadcrumb-item active">New</li>
+    <li class="breadcrumb-item active">Liste</li>
 {% endblock %}
+
 {% block body %}
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
 
-    <h1>Interview index</h1>
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Gestion des Interviews</h1>
+            <a href="{{ path('app_interview_new') }}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                <i class="fas fa-plus fa-sm text-white-50 mr-2"></i>Créer une nouvelle interview
+            </a>
+        </div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Titreoffre</th>
-                <th>Dateinterview</th>
-                <th>Typeinterview</th>
-                <th>Lienmeet</th>
-                <th>Localisation</th>
-                <th>Timeinterview</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for interview in interviews %}
-            <tr>
-                <td>{{ interview.titreoffre }}</td>
-                <td>{{ interview.dateinterview ? interview.dateinterview|date('Y-m-d') : '' }}</td>
-                <td>{{ interview.typeinterview.value }}</td>
-                <td>{{ interview.lienmeet }}</td>
-                <td>{{ interview.localisation }}</td>
-                <td>{{ interview.timeinterview ? interview.timeinterview|date('H:i') : '' }}</td>
-                <td>
-                    <a href="{{ path('app_interview_show', {'idinterview': interview.idinterview}) }}" class="btn btn-info">show</a>
-                    <a href="{{ path('app_interview_edit', {'idinterview': interview.idinterview}) }}" class="btn btn-warning">edit</a>
-                       <a href="{{ path('app_testtechnique_by_interview', {'idinterview': interview.idinterview}) }}" class="btn btn-primary">
-    Voir les Tests Techniques
-</a>
-
-    <a href="{{ path('app_affectationinterview_new', {'idinterview': interview.idinterview}) }}" class="btn btn-success">Affecter</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="8">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('app_interview_new') }}" class="btn btn-success">Create new</a>
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Liste des interviews</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Titre de l'offre</th>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Lien Meet</th>
+                                <th>Localisation</th>
+                                <th>Heure</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for interview in interviews %}
+                            <tr>
+                                <td>{{ interview.titreoffre }}</td>
+                                <td>{{ interview.dateinterview ? interview.dateinterview|date('d/m/Y') : '' }}</td>
+                                <td>{{ interview.typeinterview.value }}</td>
+                                <td>
+                                    {% if interview.lienmeet %}
+                                        <a href="{{ interview.lienmeet }}" target="_blank" class="btn btn-sm btn-info">
+                                            <i class="fas fa-video"></i> Rejoindre
+                                        </a>
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </td>
+                                <td>{{ interview.localisation }}</td>
+                                <td>{{ interview.timeinterview ? interview.timeinterview|date('H:i') : '' }}</td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a href="{{ path('app_interview_show', {'idinterview': interview.idinterview}) }}" 
+                                           class="btn btn-sm btn-primary" title="Voir">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{{ path('app_interview_edit', {'idinterview': interview.idinterview}) }}" 
+                                           class="btn btn-sm btn-warning" title="Modifier">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="{{ path('app_testtechnique_by_interview', {'idinterview': interview.idinterview}) }}" 
+                                           class="btn btn-sm btn-info" title="Tests Techniques">
+                                            <i class="fas fa-clipboard-check"></i>
+                                        </a>
+                                        <a href="{{ path('app_affectationinterview_new', {'idinterview': interview.idinterview}) }}" 
+                                           class="btn btn-sm btn-success" title="Affecter">
+                                            <i class="fas fa-user-plus"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="8" class="text-center">Aucune interview trouvée</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.container-fluid -->
 {% endblock %}
-{% block javascript %}
-  {{ parent() }}
 
+{% block javascript %}
+    {{ parent() }}
+    <!-- Page level plugins -->
+    <script src="{{ asset('back/vendor/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('back/vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+
+    <!-- Page level custom scripts -->
+    <script>
+        $(document).ready(function() {
+            $('#dataTable').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.20/i18n/French.json"
+                }
+            });
+        });
+    </script>
 {% endblock %}

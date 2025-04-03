@@ -24,21 +24,15 @@
     <div class="card">
         <div class="card-header bg-primary text-white">
             <h4>Affectation pour l'interview: {{ interview.titreoffre }}</h4>
-            <p class="mb-0">
-                Date: {{ interview.dateinterview|date('d/m/Y') }} 
-                à {{ interview.timeinterview|date('H:i') }}
-            </p>
         </div>
         
         <div class="card-body">
             {{ form_start(form) }}
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         {{ form_row(form.idutilisateur) }}
                     </div>
-                    <div class="col-md-6">
-                        {{ form_row(form.dateaffectationinterview) }}
-                    </div>
+                    
                 </div>
                 
                 <div class="mt-3">

@@ -24,11 +24,7 @@
 
     {{ include('testtechnique/_form.html.twig', {'button_label': 'Update'}) }}
 
-  <a href="{{ path('app_testtechnique_by_interview', {'idinterview': testtechnique.idinterview.idinterview}) }}" class="btn btn-light mt-3">
-    <i class="ti ti-arrow-left"></i> Retour aux tests de l'interview
-</a>
 
-    {{ include('testtechnique/_delete_form.html.twig') }}
 {% endblock %}
 
 {% block javascript %}

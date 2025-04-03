@@ -48,10 +48,9 @@ class Affectationinterview
         return $this->dateaffectationinterview;
     }
 
-    #[ORM\PrePersist]
-    public function setDateaffectationinterview(): void
+    public function setDateaffectationinterview(\DateTimeInterface $date): void
     {
-        $this->dateaffectationinterview = new \DateTimeImmutable();
+        $this->dateaffectationinterview = $date;
     }
     public function __construct()
     {

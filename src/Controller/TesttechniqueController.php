@@ -115,7 +115,7 @@ public function newForInterview(Request $request, EntityManagerInterface $entity
     $testtechnique->setIdinterview($idinterview);
 
     $form = $this->createForm(TesttechniqueType::class, $testtechnique, [
-        'interview' => $idinterview,
+        'interview' => $idinterview, // This tells the form not to add the idinterview field
     ]);
 
     $form->handleRequest($request);
@@ -131,10 +131,9 @@ public function newForInterview(Request $request, EntityManagerInterface $entity
 
     return $this->render('testtechnique/new.html.twig', [
         'form' => $form,
-        'interview' => $idinterview
+        'interview' => $idinterview,
+        'testtechnique' => $testtechnique
     ]);
 }
-
-
    
 }
