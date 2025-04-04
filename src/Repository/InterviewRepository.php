@@ -12,6 +12,18 @@ class InterviewRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Interview::class);
     }
+  
+    public function findByTitreOffre(string $titre): array
+    {
+        return $this->getEntityManager()
+            ->createQuery('
+                SELECT i FROM App\Entity\Interview i
+                WHERE i.titreoffre LIKE :titre
+            ')
+            ->setParameter('titre', '%' . $titre . '%')
+            ->getResult();
+    }
+    
 
     // Add custom methods as needed
 }

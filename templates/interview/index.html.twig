@@ -32,6 +32,20 @@
             </a>
         </div>
 
+<!-- Formulaire de recherche -->
+<div class="mb-4">
+    <form method="get" action="{{ path('app_interview_index') }}" class="form-inline">
+        <div class="form-group mr-2">
+            <input type="text" name="titreoffre" class="form-control" placeholder="Rechercher par titre d'offre"
+                   value="{{ app.request.get('titreoffre') }}">
+        </div>
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-search"></i> Rechercher
+        </button>
+    </form>
+</div>
+
+
         <!-- DataTales Example -->
         <div class="card shadow mb-4">
             <div class="card-header py-3">

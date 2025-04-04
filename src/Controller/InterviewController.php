@@ -10,21 +10,31 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\Testtechnique;
+use App\Repository\InterviewRepository;
 
 #[Route('/interview')]
 final class InterviewController extends AbstractController
 {
     #[Route('/list', name: 'app_interview_index', methods: ['GET'])]
-    public function index(EntityManagerInterface $entityManager): Response
+    public function index(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $interviews = $entityManager
-            ->getRepository(Interview::class)
-            ->findAll();
-
+        $titre = $request->query->get('titreoffre');
+        $repo = $entityManager->getRepository(Interview::class);
+    
+        // Solution 1 (originale avec Repository personnalisé - peut causer l'erreur)
+        // $interviews = $titre ? $repo->findByTitreOffre($titre) : $repo->findAll();
+    
+        // Solution 2 (alternative avec findBy générique - pour tester)
+        $interviews = $titre 
+            ? $repo->findBy(['titreoffre' => $titre]) 
+            : $repo->findAll();
+    
         return $this->render('interview/index.html.twig', [
             'interviews' => $interviews,
         ]);
     }
+    
+    
 
     #[Route('/new', name: 'app_interview_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
@@ -95,4 +105,5 @@ final class InterviewController extends AbstractController
             'tests' => $tests,
         ]);
     }
+
 }
