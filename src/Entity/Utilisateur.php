@@ -3,16 +3,16 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use Doctrine\Common\Collections\Collection;
-use App\Entity\Repondre;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use App\Enum\Role;
 
 #[ORM\Entity]
-class Utilisateur
+class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 {
-
     #[ORM\Id]
+    #[ORM\GeneratedValue]
     #[ORM\Column(type: "integer")]
     private int $idutilisateur;
 
@@ -25,7 +25,7 @@ class Utilisateur
     #[ORM\Column(type: "integer")]
     private int $ageutilisateur;
 
-    #[ORM\Column(type: "string", length: 255)]
+    #[ORM\Column(type: "string", length: 255, unique: true)]
     private string $emailutilisateur;
 
     #[ORM\Column(type: "string", length: 255)]
@@ -34,68 +34,87 @@ class Utilisateur
     #[ORM\Column(type: "string", enumType: Role::class)]
     private Role $role;
 
-    #[ORM\Column(type: "string", length: 255)]
-    private string $resettoken;
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private ?string $resettoken = null;
 
-    #[ORM\Column(type: "string", length: 255)]
-    private string $profilepictureurl;
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private ?string $profilepictureurl = null;
 
-    public function getIdutilisateur()
+    #[ORM\OneToMany(mappedBy: "idutilisateur", targetEntity: Affectationhebergement::class)]
+    private Collection $affectationhebergements;
+
+    #[ORM\OneToMany(mappedBy: "idutilisateur", targetEntity: Affectationinterview::class)]
+    private Collection $affectationinterviews;
+
+    #[ORM\OneToMany(mappedBy: "idutilisateur", targetEntity: Brancheentreprise::class)]
+    private Collection $brancheentreprises;
+
+    #[ORM\OneToMany(mappedBy: "idutilisateur", targetEntity: Publication::class)]
+    private Collection $publications;
+
+    #[ORM\OneToMany(mappedBy: "idutilisateur", targetEntity: Offre::class)]
+    private Collection $offres;
+
+    #[ORM\OneToMany(mappedBy: "idutilisateur", targetEntity: Repondre::class)]
+    private Collection $repondres;
+
+    // Getters and setters for existing fields
+    public function getIdutilisateur(): int
     {
         return $this->idutilisateur;
     }
 
-    public function setIdutilisateur($value)
+    public function setIdutilisateur(int $value): void
     {
         $this->idutilisateur = $value;
     }
 
-    public function getNomutilisateur()
+    public function getNomutilisateur(): string
     {
         return $this->nomutilisateur;
     }
 
-    public function setNomutilisateur($value)
+    public function setNomutilisateur(string $value): void
     {
         $this->nomutilisateur = $value;
     }
 
-    public function getPrenomutilisateur()
+    public function getPrenomutilisateur(): string
     {
         return $this->prenomutilisateur;
     }
 
-    public function setPrenomutilisateur($value)
+    public function setPrenomutilisateur(string $value): void
     {
         $this->prenomutilisateur = $value;
     }
 
-    public function getAgeutilisateur()
+    public function getAgeutilisateur(): int
     {
         return $this->ageutilisateur;
     }
 
-    public function setAgeutilisateur($value)
+    public function setAgeutilisateur(int $value): void
     {
         $this->ageutilisateur = $value;
     }
 
-    public function getEmailutilisateur()
+    public function getEmailutilisateur(): string
     {
         return $this->emailutilisateur;
     }
 
-    public function setEmailutilisateur($value)
+    public function setEmailutilisateur(string $value): void
     {
         $this->emailutilisateur = $value;
     }
 
-    public function getMotdepasseutilisateur()
+    public function getMotdepasseutilisateur(): string
     {
         return $this->motdepasseutilisateur;
     }
 
-    public function setMotdepasseutilisateur($value)
+    public function setMotdepasseutilisateur(string $value): void
     {
         $this->motdepasseutilisateur = $value;
     }
@@ -111,71 +130,58 @@ class Utilisateur
         return $this;
     }
 
-    public function getResettoken()
+    public function getResettoken(): ?string
     {
         return $this->resettoken;
     }
 
-    public function setResettoken($value)
+    public function setResettoken(?string $value): void
     {
         $this->resettoken = $value;
     }
 
-    public function getProfilepictureurl()
+    public function getProfilepictureurl(): ?string
     {
         return $this->profilepictureurl;
     }
 
-    public function setProfilepictureurl($value)
+    public function setProfilepictureurl(?string $value): void
     {
         $this->profilepictureurl = $value;
     }
 
-    #[ORM\OneToMany(mappedBy: "idutilisateur", targetEntity: Affectationhebergement::class)]
-    private Collection $affectationhebergements;
+    // Implementing UserInterface methods
+    public function getRoles(): array
+    {
+        // Return the role as an array
+        return [$this->role->value];
+    }
 
-        public function getAffectationhebergements(): Collection
-        {
-            return $this->affectationhebergements;
-        }
-    
-        public function addAffectationhebergement(Affectationhebergement $affectationhebergement): self
-        {
-            if (!$this->affectationhebergements->contains($affectationhebergement)) {
-                $this->affectationhebergements[] = $affectationhebergement;
-                $affectationhebergement->setIdutilisateur($this);
-            }
-    
-            return $this;
-        }
-    
-        public function removeAffectationhebergement(Affectationhebergement $affectationhebergement): self
-        {
-            if ($this->affectationhebergements->removeElement($affectationhebergement)) {
-                // set the owning side to null (unless already changed)
-                if ($affectationhebergement->getIdutilisateur() === $this) {
-                    $affectationhebergement->setIdutilisateur(null);
-                }
-            }
-    
-            return $this;
-        }
+    public function getPassword(): string
+    {
+        return $this->motdepasseutilisateur;
+    }
 
-    #[ORM\OneToMany(mappedBy: "idutilisateur", targetEntity: Affectationinterview::class)]
-    private Collection $affectationinterviews;
+    public function getSalt(): ?string
+    {
+        // Not needed for modern algorithms like bcrypt or sodium
+        return null;
+    }
 
-    #[ORM\OneToMany(mappedBy: "idutilisateur", targetEntity: Brancheentreprise::class)]
-    private Collection $brancheentreprises;
+    public function getUsername(): string
+    {
+        // Use email as the username
+        return $this->emailutilisateur;
+    }
 
-    #[ORM\OneToMany(mappedBy: "idutilisateur", targetEntity: Publication::class)]
-    private Collection $publications;
+    public function getUserIdentifier(): string
+    {
+        // Use email as the unique identifier
+        return $this->emailutilisateur;
+    }
 
-  //  #[ORM\OneToMany(mappedBy: "idutilisateur", targetEntity: Commentairepublication::class)]
-   // private Collection $commentairepublications;
-
-    #[ORM\OneToMany(mappedBy: "idutilisateur", targetEntity: Offre::class)]
-    private Collection $offres;
-
-    #[ORM\OneToMany(mappedBy: "idutilisateur", targetEntity: Repondre::class)]
-    private Collection $repondres;
+    public function eraseCredentials(): void
+    {
+        // If you store any temporary sensitive data, clear it here
+    }
 }

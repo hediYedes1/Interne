@@ -10,6 +10,8 @@ doctrine:
         use_savepoints: true
         mapping_types:
             enum: string
+        types:
+            role: App\Doctrine\TypeRoleType
     orm:
         auto_generate_proxy_classes: true
         enable_lazy_ghost_objects: true
