@@ -11,28 +11,26 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\Testtechnique;
 use App\Repository\InterviewRepository;
+use App\Enum\TypeInterview;
 
 #[Route('/interview')]
 final class InterviewController extends AbstractController
 {
-    #[Route('/list', name: 'app_interview_index', methods: ['GET'])]
-    public function index(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $titre = $request->query->get('titreoffre');
-        $repo = $entityManager->getRepository(Interview::class);
+// src/Controller/InterviewController.php
+
+#[Route('/list', name: 'app_interview_index', methods: ['GET'])]
+public function index(Request $request, InterviewRepository $interviewRepository): Response
+{
+    $titre = $request->query->get('titreoffre');
+    $type = $request->query->get('typeinterview');
     
-        // Solution 1 (originale avec Repository personnalisé - peut causer l'erreur)
-        // $interviews = $titre ? $repo->findByTitreOffre($titre) : $repo->findAll();
+    $interviews = $interviewRepository->findByFilters($titre, $type);
     
-        // Solution 2 (alternative avec findBy générique - pour tester)
-        $interviews = $titre 
-            ? $repo->findBy(['titreoffre' => $titre]) 
-            : $repo->findAll();
-    
-        return $this->render('interview/index.html.twig', [
-            'interviews' => $interviews,
-        ]);
-    }
+    return $this->render('interview/index.html.twig', [
+        'interviews' => $interviews,
+    ]);
+}
+
     
     
 
