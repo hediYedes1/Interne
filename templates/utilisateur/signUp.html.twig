@@ -26,7 +26,17 @@
 <!-- [Template CSS Files] -->
 <link rel="stylesheet" href="css/style.css" id="main-style-link" >
 <link rel="stylesheet" href="css/style-preset.css" >
-
+<style>
+  .error-message {
+    color: #dc3545;
+    font-size: 0.875em;
+    margin-top: 0.25rem;
+    display: none;
+  }
+  .is-invalid {
+    border-color: #dc3545 !important;
+  }
+</style>
 </head>
 <!-- [Head] end -->
 <!-- [Body] Start -->
@@ -48,7 +58,7 @@
         </div>
         <div class="card my-5">
           <div class="card-body">
-            <form action="{{ path('app_signup') }}" method="post">
+            <form action="{{ path('app_signup') }}" method="post" id="signupForm">
               <div class="d-flex justify-content-between align-items-end mb-4">
                 <h3 class="mb-0"><b>Sign up</b></h3>
                 <a href="#" class="link-primary">Already have an account?</a>
@@ -58,26 +68,31 @@
                   <div class="form-group mb-3">
                     <label class="form-label">First Name*</label>
                     <input type="text" class="form-control" id="prenom" name="prenom" placeholder="First Name" required>
+                    <div class="error-message" id="prenom-error">First name is required and must be at least 2 characters</div>
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="form-group mb-3">
                     <label class="form-label">Last Name*</label>
                     <input type="text" class="form-control" id="nom" name="nom" placeholder="Last Name" required>
+                    <div class="error-message" id="nom-error">Last name is required and must be at least 2 characters</div>
                   </div>
                 </div>
               </div>
               <div class="form-group mb-3">
                 <label class="form-label">Age*</label>
-                <input type="number" class="form-control" id="age" name="age" placeholder="Age" required>
+                <input type="number" class="form-control" id="age" name="age" placeholder="Age" required min="18" max="120">
+                <div class="error-message" id="age-error">Age must be between 18 and 120</div>
               </div>
               <div class="form-group mb-3">
                 <label class="form-label">Email Address*</label>
                 <input type="email" class="form-control" id="email" name="email" placeholder="Email Address" required>
+                <div class="error-message" id="email-error">Please enter a valid email address</div>
               </div>
               <div class="form-group mb-3">
                 <label class="form-label">Password*</label>
-                <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Password" required minlength="8">
+                <div class="error-message" id="password-error">Password must be at least 8 characters long</div>
               </div>
               <p class="mt-4 text-sm text-muted">By Signing up, you agree to our <a href="#" class="text-primary"> Terms of Service </a> and <a href="#" class="text-primary"> Privacy Policy</a></p>
               <div class="d-grid mt-3">
@@ -143,6 +158,96 @@
   <script>preset_change("preset-1");</script>
   <script>font_change("Public-Sans");</script>
   
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('signupForm');
+      
+      // Validate on input change
+      form.addEventListener('input', function(e) {
+        validateField(e.target);
+      });
+      
+      // Validate on form submit
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        let isValid = true;
+        const fields = ['prenom', 'nom', 'age', 'email', 'password'];
+        
+        fields.forEach(fieldId => {
+          const field = document.getElementById(fieldId);
+          if (!validateField(field)) {
+            isValid = false;
+          }
+        });
+        
+        if (isValid) {
+          form.submit();
+        }
+      });
+      
+      function validateField(field) {
+        const errorElement = document.getElementById(`${field.id}-error`);
+        
+        if (field.required && !field.value.trim()) {
+          showError(field, errorElement, `${field.placeholder} is required`);
+          return false;
+        }
+        
+        switch(field.id) {
+          case 'prenom':
+          case 'nom':
+            if (field.value.trim().length < 2) {
+              showError(field, errorElement, 'Must be at least 2 characters');
+              return false;
+            }
+            break;
+            
+          case 'age':
+            const age = parseInt(field.value);
+            if (isNaN(age) || age < 13 || age > 120) {
+              showError(field, errorElement, 'Age must be between 13 and 120');
+              return false;
+            }
+            break;
+            
+          case 'email':
+            if (!isValidEmail(field.value)) {
+              showError(field, errorElement, 'Please enter a valid email address');
+              return false;
+            }
+            break;
+            
+          case 'password':
+            if (field.value.length < 8) {
+              showError(field, errorElement, 'Password must be at least 8 characters');
+              return false;
+            }
+            break;
+        }
+        
+        clearError(field, errorElement);
+        return true;
+      }
+      
+      function showError(field, errorElement, message) {
+        field.classList.add('is-invalid');
+        errorElement.textContent = message;
+        errorElement.style.display = 'block';
+      }
+      
+      function clearError(field, errorElement) {
+        field.classList.remove('is-invalid');
+        errorElement.style.display = 'none';
+      }
+      
+      function isValidEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+      }
+    });
+  </script>
+
 <div class="offcanvas pct-offcanvas offcanvas-end" tabindex="-1" id="offcanvas_pc_layout">
   <div class="offcanvas-header bg-primary">
     <h5 class="offcanvas-title text-white">Mantis Customizer</h5>
