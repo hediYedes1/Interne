@@ -43,6 +43,7 @@
 
 <body>
   <!-- [ Pre-loader ] start -->
+  
   <div class="loader-bg">
     <div class="loader-track">
       <div class="loader-fill"></div>
@@ -60,47 +61,47 @@
           <div class="card-body">
             <form action="{{ path('app_signup') }}" method="post" id="signupForm">
               <div class="d-flex justify-content-between align-items-end mb-4">
-                <h3 class="mb-0"><b>Sign up</b></h3>
-                <a href="#" class="link-primary">Already have an account?</a>
+                <h3 class="mb-0"><b>Inscription</b></h3>
+                <p class="mb-0">Vous avez déjà un compte ? <a href="{{ path('app_base3') }}" class="text-primary">Connectez-vous</a></p>
               </div>
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-group mb-3">
-                    <label class="form-label">First Name*</label>
-                    <input type="text" class="form-control" id="prenom" name="prenom" placeholder="First Name" required>
-                    <div class="error-message" id="prenom-error">First name is required and must be at least 2 characters</div>
+                    <label class="form-label">Prénom*</label>
+                    <input type="text" class="form-control" id="prenom" name="prenom" placeholder="Prénom" required>
+                    <div class="error-message" id="prenom-error">Le prénom est requis et doit comporter au moins 2 caractères</div>
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="form-group mb-3">
-                    <label class="form-label">Last Name*</label>
-                    <input type="text" class="form-control" id="nom" name="nom" placeholder="Last Name" required>
-                    <div class="error-message" id="nom-error">Last name is required and must be at least 2 characters</div>
+                    <label class="form-label">Nom*</label>
+                    <input type="text" class="form-control" id="nom" name="nom" placeholder="Nom" required>
+                    <div class="error-message" id="nom-error">Le nom est requis et doit comporter au moins 2 caractères</div>
                   </div>
                 </div>
               </div>
               <div class="form-group mb-3">
-                <label class="form-label">Age*</label>
-                <input type="number" class="form-control" id="age" name="age" placeholder="Age" required min="18" max="120">
-                <div class="error-message" id="age-error">Age must be between 18 and 120</div>
+                <label class="form-label">Âge*</label>
+                <input type="number" class="form-control" id="age" name="age" placeholder="Âge" required min="18" max="120">
+                <div class="error-message" id="age-error">L'âge doit être compris entre 18 et 120</div>
               </div>
               <div class="form-group mb-3">
-                <label class="form-label">Email Address*</label>
-                <input type="email" class="form-control" id="email" name="email" placeholder="Email Address" required>
-                <div class="error-message" id="email-error">Please enter a valid email address</div>
+                <label class="form-label">Adresse e-mail*</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Adresse e-mail" required>
+                <div class="error-message" id="email-error">Veuillez entrer une adresse e-mail valide</div>
               </div>
               <div class="form-group mb-3">
-                <label class="form-label">Password*</label>
-                <input type="password" class="form-control" id="password" name="password" placeholder="Password" required minlength="8">
-                <div class="error-message" id="password-error">Password must be at least 8 characters long</div>
+                <label class="form-label">Mot de passe*</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Mot de passe" required minlength="8">
+                <div class="error-message" id="password-error">Le mot de passe doit comporter au moins 8 caractères</div>
               </div>
-              <p class="mt-4 text-sm text-muted">By Signing up, you agree to our <a href="#" class="text-primary"> Terms of Service </a> and <a href="#" class="text-primary"> Privacy Policy</a></p>
+              <p class="mt-4 text-sm text-muted">En vous inscrivant, vous acceptez nos <a href="#" class="text-primary">Conditions d'utilisation</a> et notre <a href="#" class="text-primary">Politique de confidentialité</a></p>
               <div class="d-grid mt-3">
-                <button type="submit" class="btn btn-primary">Create Account</button>
+                <button type="submit" class="btn btn-primary">Créer un compte</button>
               </div>
             </form>
             <div class="saprator mt-3">
-              <span>Sign up with</span>
+              <span>Inscrivez-vous avec</span>
             </div>
             <div class="row">
               <div class="col-4">
@@ -125,7 +126,6 @@
                 </div>
               </div>
             </div>
-            
           </div>
         </div>
         <div class="auth-footer row">
@@ -134,15 +134,17 @@
           </div>
           <div class="col-auto my-1">
             <ul class="list-inline footer-link mb-0">
-              <li class="list-inline-item"><a href="#">Home</a></li>
-              <li class="list-inline-item"><a href="#">Privacy Policy</a></li>
-              <li class="list-inline-item"><a href="#">Contact us</a></li>
+              <li class="list-inline-item"><a href="#">Accueil</a></li>
+              <li class="list-inline-item"><a href="#">Politique de confidentialité</a></li>
+              <li class="list-inline-item"><a href="#">Contactez-nous</a></li>
             </ul>
           </div>
         </div>
       </div>
     </div>
   </div>
+</body>
+  
   <!-- [ Main Content ] end -->
   <!-- Required Js -->
   <script src="js/plugins/popper.min.js"></script>
