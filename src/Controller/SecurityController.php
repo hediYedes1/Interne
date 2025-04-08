@@ -20,6 +20,18 @@ class SecurityController extends AbstractController
         $error = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();
 
+        // If the user is already logged in, redirect to the appropriate page based on their role
+        $user = $this->getUser();
+        if ($user) {
+            $roles = $user->getRoles();
+            if (in_array(Role::CANDIDAT->value, $roles, true)) {
+                return $this->redirectToRoute('app_base');
+            } else {
+                return $this->redirectToRoute('app_base2');
+            }
+            
+        }
+
         return $this->render('utilisateur/login.html.twig', [
             'last_username' => $lastUsername,
             'error' => $error,

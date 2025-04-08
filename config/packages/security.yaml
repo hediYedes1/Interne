@@ -22,7 +22,7 @@ security:
                 check_path: app_login
                 username_parameter: _email # The name of the form field for the username
                 password_parameter: _password 
-                default_target_path: app_base # Redirect to this path after login`
+                success_handler: App\Security\LoginSuccessHandler
             logout:
                 path: app_logout
 

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Enum\Role;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -13,9 +14,16 @@ final class BaseController extends AbstractController
     {
         $user = $this->getUser();
         if ($user) {
-            return $this->render('base.html.twig', [
-                'user' => $user,
-            ]);
+            $roles = $user->getRoles();
+            if (in_array(Role::CANDIDAT, $roles, true)) {
+                return $this->render('base.html.twig', [
+                    'user' => $user,
+                ]);
+            } elseif (in_array(Role::ADMIN, $roles, true)) {
+                return $this->render('base1.html.twig', [
+                    'user' => $user,
+                ]);
+            }
         }
 
         return $this->render('base.html.twig');
@@ -38,6 +46,12 @@ final class BaseController extends AbstractController
     public function index4(): Response
     {
         return $this->render('Utilisateur/signUp.html.twig');
+    }
+
+    #[Route('/base5', name: 'app_base5')]
+    public function index5(): Response
+    {
+        return $this->render('Utilisateur/profile.html.twig');
     }
 
 }

@@ -87,12 +87,11 @@
 								<ul class="top-contact">
 									<li><i class="fa fa-user"></i>{{ app.user.username }}</li>
 									<li><a href="{{ path('app_base3') }}">Logout</a></li>
-									<!-- <li><a href="{{ path('app_base4') }}">Profile</a></li> -->
+									<li><a href="{{ path('app_base4') }}">Profile</a></li> 
 								</ul>
 								{% else %}
 								<ul class="top-contact">
 									<li><i class="fa fa-user"></i><a href="{{ path('app_login') }}">Login</a></li>
-									
 								</ul>
 								{% endif %}
 							
