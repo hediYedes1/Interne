@@ -1,73 +1,65 @@
 <?php
-// src/Controller/QuizController.php
 
 namespace App\Controller;
 
 use App\Entity\TestTechnique;
-use App\Entity\QuizQuestion;
-use App\Repository\TestTechniqueRepository;
+use App\Repository\TesttechniqueRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Enum\StatutTestTechnique;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Service\QuizApiService;
 
 class QuizController extends AbstractController
 {
-    #[Route('/quiz/submit', name: 'quiz_submit', methods: ['POST', 'GET'])]
-    public function submitQuiz(Request $request, TestTechniqueRepository $testRepo, EntityManagerInterface $em): JsonResponse
+    #[Route('/quiz/submit', name: 'quiz_submit', methods: ['POST'])]
+    public function submitQuiz(Request $request, TesttechniqueRepository $testRepo, EntityManagerInterface $em): JsonResponse
     {
         try {
-            $data = $request->getMethod() === 'POST' 
-            ? json_decode($request->getContent(), true) 
-            : $request->query->all();
-            
+            $data = $request->getContentType() === 'json' 
+                ? json_decode($request->getContent(), true) 
+                : $request->request->all();
+    
             if (!$data) {
-                throw new \Exception('Invalid JSON data');
+                throw new \Exception('Données invalides');
             }
     
-            if (!isset($data['test_id'])) {
-                throw new \Exception('Missing test_id');
+            if (!isset($data['test_id']) || !isset($data['answers'])) {
+                throw new \Exception('Données manquantes');
             }
     
             $test = $testRepo->find($data['test_id']);
             if (!$test) {
-                throw new \Exception('Test not found');
+                throw new \Exception('Test introuvable');
             }
     
-            $score = 0;
+            $correctAnswersCount = 0;
             $questions = $test->getQuestions();
             
             foreach ($questions as $index => $question) {
-                if (!isset($data['answers'][$index])) 
+                if (!isset($data['answers'][$index])) {
                     continue;
-                
+                }
                 
                 $userAnswer = $data['answers'][$index];
-                $correctAnswers = $question['correctAnswers'];
-                error_log("Question $index - Réponse utilisateur: $userAnswer");
-                error_log("Bonnes réponses: " . print_r($correctAnswers, true));
+                $correctAnswers = $question['correctAnswers'] ?? [];
                 
-                // Vérification simplifiée
-                if (is_array($correctAnswers)) {
-                    // Si la réponse de l'utilisateur est dans le tableau des bonnes réponses
-                    if (in_array($userAnswer, array_keys($correctAnswers))) {
-                        $score++;
-                    }
+                if (isset($correctAnswers[$userAnswer]) && $correctAnswers[$userAnswer]) {
+                    $correctAnswersCount++;
                 }
-            } // <-- Cette accolade fermante manquait dans votre code original
-            
-            $test->setStatut($score >= 8 ? 'ACCEPTE' : 'REFUSE');
-            $test->setScore($score);
+            }
+    
+            // Mise à jour du statut uniquement
+            $test->setStatuttesttechnique($correctAnswersCount >= 8 ? StatutTestTechnique::ACCEPTE : StatutTestTechnique::REFUSE);
             $em->flush();
     
             return new JsonResponse([
                 'success' => true,
-                'score' => $score,
+                'score' => $correctAnswersCount, // Retourné pour affichage seulement
                 'total' => count($questions),
-                'statut' => $test->getStatut(),
-                'message' => 'Quiz submitted successfully'
+                'statut' => $test->getStatuttesttechnique(),
+                'message' => 'Résultats enregistrés'
             ]);
     
         } catch (\Exception $e) {

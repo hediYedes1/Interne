@@ -32,8 +32,6 @@ public function index(Request $request, InterviewRepository $interviewRepository
 }
 
     
-    
-
     #[Route('/new', name: 'app_interview_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
