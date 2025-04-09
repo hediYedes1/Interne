@@ -43,8 +43,8 @@ class Testtechnique
     #[ORM\Column(type: "datetime", options: ["default" => "CURRENT_TIMESTAMP"])]
     private \DateTimeInterface $datecreationtesttechnique ;
 
-    #[ORM\Column(type: "text", nullable: true)]
-    private string $questions;
+    #[ORM\Column(type: 'text', nullable: true)]
+private ?string $questions = null;
 
     public function getIdtesttechnique()
     {
@@ -125,13 +125,14 @@ class Testtechnique
         $this->datecreationtesttechnique = new \DateTimeImmutable();
     }
 
-    public function getQuestions()
-    {
-        return $this->questions;
-    }
+    public function getQuestions(): ?array
+{
+    return $this->questions ? json_decode($this->questions, true) : [];
+}
 
-    public function setQuestions($value)
-    {
-        $this->questions = $value;
-    }
+public function setQuestions(?array $value): self
+{
+    $this->questions = $value ? json_encode($value) : null;
+    return $this;
+}
 }

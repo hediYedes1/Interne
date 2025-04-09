@@ -1,0 +1,129 @@
+{% extends 'base1.html.twig' %}
+
+{% block title %}Passer le Quiz - {{ testtechnique.titretesttechnique }}{% endblock %}
+{% block css %}
+{{ parent() }}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+{% endblock %}
+{% block body %}
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h4 class="m-0 font-weight-bold text-primary">
+                Quiz: {{ testtechnique.titretesttechnique }}
+                <span class="float-right">Score: <span id="score-display">0</span>/{{ testtechnique.questions|length }}</span>
+            </h4>
+        </div>
+        <div class="card-body">
+            <form id="quiz-form">
+                <input type="hidden" name="test_id" value="{{ testtechnique.idtesttechnique }}">
+                
+                {% for question in testtechnique.questions %}
+<div class="question mb-4" data-correct-answers="{{ question.correctAnswers|json_encode|e('html_attr') }}">
+    <h5>Question {{ loop.index }}: {{ question.question }}</h5>
+    
+    {# Description - champ optionnel #}
+    {% if question.description is defined and question.description %}
+        <p class="text-muted">{{ question.description }}</p>
+    {% endif %}
+    
+    <div class="answers">
+        {% for key, answer in question.answers %}
+            {% if answer %}
+            <div class="form-check">
+                <input class="form-check-input" type="radio" 
+                       name="answers[{{ loop.parent.loop.index0 }}]" 
+                       id="q{{ loop.parent.loop.index0 }}_a{{ loop.index0 }}" 
+                       value="{{ key }}">
+                <label class="form-check-label" for="q{{ loop.parent.loop.index0 }}_a{{ loop.index0 }}">
+                    {{ answer }}
+                </label>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+    
+    <div class="feedback mt-2" style="display: none;">
+        {# Explanation - champ optionnel #}
+        {% if question.explanation is defined and question.explanation %}
+            <div class="alert alert-info">{{ question.explanation }}</div>
+        {% endif %}
+        
+        {# Tip - champ optionnel #}
+        {% if question.tip is defined and question.tip %}
+            <div class="alert alert-warning"><strong>Astuce:</strong> {{ question.tip }}</div>
+        {% endif %}
+    </div>
+</div>
+<hr>
+{% endfor %}
+                
+                <button type="submit" class="btn btn-primary">Soumettre le quiz</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+$(document).ready(function() {
+    $('#quiz-form').on('submit', function(e) {
+        e.preventDefault();
+        const $submitBtn = $(this).find('button[type="submit"]');
+        $submitBtn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Processing...');
+
+        const formData = {
+            test_id: $('input[name="test_id"]').val(),
+            answers: {}
+        };
+
+        // Récupération des réponses
+        $('input[type="radio"]:checked').each(function() {
+            const name = $(this).attr('name');
+            const questionIndex = name.match(/answers\[(\d+)\]/)[1];
+            formData.answers[questionIndex] = $(this).val();
+        });
+
+        console.log('Sending data:', formData);
+
+        $.ajax({
+            url: $(this).attr('action') || '{{ path("quiz_submit") }}',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(formData),
+            timeout: 10000,
+        })
+        .done(function(response) {
+            console.log('Response:', response);
+            if (response.success) {
+                $('#score-display').text(response.score);
+                Swal.fire({
+                    title: 'Quiz Terminé!',
+                    html: `Score: <b>${response.score}/${response.total}</b><br>
+                           Statut: <b>${response.statut}</b>`,
+                    icon: 'success'
+                });
+            } else {
+                Swal.fire('Erreur', response.error || 'Erreur inconnue', 'error');
+            }
+        })
+        .fail(function(xhr) {
+            console.error('Error:', xhr);
+            let errorMsg = 'Erreur de connexion';
+            if (xhr.responseJSON && xhr.responseJSON.error) {
+                errorMsg = xhr.responseJSON.error;
+            } else if (xhr.statusText) {
+                errorMsg = xhr.statusText;
+            }
+            Swal.fire('Erreur', errorMsg, 'error');
+        })
+        .always(function() {
+            $submitBtn.prop('disabled', false).text('Soumettre le quiz');
+        });
+    });
+});
+</script>
+{% endblock %}

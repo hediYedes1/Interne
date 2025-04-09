@@ -4,27 +4,33 @@ namespace App\Controller;
 
 use App\Entity\Testtechnique;
 use App\Entity\Interview;
+use App\Utils\QuizApiService;
 use App\Form\TesttechniqueType;
+use App\Repository\TesttechniqueRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+
 #[Route('/testtechnique')]
 final class TesttechniqueController extends AbstractController
 {
     #[Route('/list', name: 'app_testtechnique_index', methods: ['GET'])]
-    public function index(EntityManagerInterface $entityManager): Response
+    public function index(TesttechniqueRepository $testtechniqueRepository, Request $request): Response
     {
-        $testtechniques = $entityManager
-            ->getRepository(Testtechnique::class)
-            ->findAll();
+        $titre = $request->query->get('titretesttechnique');
+        $statut = $request->query->get('statuttesttechnique');
+
+        $testtechniques = $testtechniqueRepository->findByFilters($titre, $statut);
+            
 
         return $this->render('testtechnique/index.html.twig', [
             'testtechniques' => $testtechniques,
         ]);
     }
+   
 
     #[Route('/new', name: 'app_testtechnique_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
@@ -45,7 +51,7 @@ final class TesttechniqueController extends AbstractController
             'form' => $form,
         ]);
     }
-
+/*
     #[Route('/{idtesttechnique}', name: 'app_testtechnique_show', methods: ['GET'])]
     public function show(Testtechnique $testtechnique): Response
     {
@@ -53,6 +59,22 @@ final class TesttechniqueController extends AbstractController
             'testtechnique' => $testtechnique,
         ]);
     }
+        */
+
+        #[Route('/{idtesttechnique}', name: 'app_testtechnique_show', methods: ['GET'])]
+public function show(Testtechnique $testtechnique): Response
+{
+    /*
+    if ($testtechnique->getQuestions()) {
+        return $this->render('testtechnique/show_quiz.html.twig', [
+            'testtechnique' => $testtechnique
+        ]);
+    }
+*/
+    return $this->render('testtechnique/show.html.twig', [
+        'testtechnique' => $testtechnique
+    ]);
+}
 
     #[Route('/{idtesttechnique}/edit', name: 'app_testtechnique_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Testtechnique $testtechnique, EntityManagerInterface $entityManager): Response
@@ -85,7 +107,8 @@ final class TesttechniqueController extends AbstractController
 
         return $this->redirectToRoute('app_testtechnique_index', [], Response::HTTP_SEE_OTHER);
     }
-   /* #[Route('/interview/{id}/tests', name: 'app_testtechnique_by_interview', methods: ['GET'])]
+        /*
+  #[Route('/interview/{id}/tests', name: 'app_testtechnique_by_interview', methods: ['GET'])]
 public function indexByInterview(Interview $interview): Response
 {
     $tests = $interview->getTestTechniques(); // Récupérer les tests techniques liés à l'interview
@@ -94,13 +117,23 @@ public function indexByInterview(Interview $interview): Response
         'testtechniques' => $tests,
         'interview' => $interview,
     ]);
-}*/
+}
+    */
 #[Route('/interview/{idinterview}/tests', name: 'app_testtechnique_by_interview', methods: ['GET'])]
-public function indexByInterview(Interview $idinterview, EntityManagerInterface $entityManager): Response
-{
-    $testtechniques = $entityManager
-        ->getRepository(Testtechnique::class)
-        ->findBy(['idinterview' => $idinterview]);
+public function indexByInterview(
+    Interview $idinterview, 
+    TesttechniqueRepository $testtechniqueRepository, 
+    Request $request
+): Response {
+    $titre = $request->query->get('titretesttechnique');
+    $statut = $request->query->get('statuttesttechnique');
+
+    // Modifier la méthode findByFilters dans le repository pour prendre en compte l'interview
+    $testtechniques = $testtechniqueRepository->findByFiltersForInterview(
+        $idinterview, 
+        $titre, 
+        $statut
+    );
 
     return $this->render('testtechnique/index.html.twig', [
         'testtechniques' => $testtechniques,
@@ -132,6 +165,94 @@ public function newForInterview(Request $request, EntityManagerInterface $entity
     return $this->render('testtechnique/new.html.twig', [
         'form' => $form,
         'interview' => $idinterview,
+        'testtechnique' => $testtechnique
+    ]);
+}
+#[Route('/{idtesttechnique}/add-quiz', name: 'app_testtechnique_add_quiz', methods: ['GET', 'POST'])]
+public function addQuiz(
+    Request $request,
+    Testtechnique $testtechnique,
+    QuizApiService $quizApiService,
+    EntityManagerInterface $entityManager
+): Response {
+    if ($request->isMethod('POST')) {
+        $category = $request->request->get('category');
+        $difficulty = $request->request->get('difficulty');
+        $limit = $request->request->get('limit', 10);
+
+        try {
+            $questions = $quizApiService->fetchQuizQuestions($category, $difficulty, $limit);
+            
+            // Convertir les questions en format stockable
+            $storableQuestions = [];
+            foreach ($questions as $question) {
+                $questionData = [
+                    'question' => $question->getQuestion(),
+                    'answers' => $question->getAnswers(),
+                    'correctAnswers' => $question->getCorrectAnswers(),
+                    'category' => $question->getCategory(),
+                    'difficulty' => $question->getDifficulty()
+                ];
+                
+                // Ajoutez seulement si la propriété existe (parenthèse corrigée ici)
+                if (method_exists($question, 'getDescription')) {
+                    $questionData['description'] = $question->getDescription();
+                }
+                if (method_exists($question, 'getExplanation')) {
+                    $questionData['explanation'] = $question->getExplanation();
+                }
+                if (method_exists($question, 'getTip')) {
+                    $questionData['tip'] = $question->getTip();
+                }
+                
+                $storableQuestions[] = $questionData;
+            }
+            
+            $testtechnique->setQuestions($storableQuestions);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Quiz ajouté avec succès au test technique');
+            return $this->redirectToRoute('app_testtechnique_show', [
+                'idtesttechnique' => $testtechnique->getIdtesttechnique()
+            ]);
+        } catch (\Exception $e) {
+            $this->addFlash('error', 'Erreur lors de la récupération du quiz: '.$e->getMessage());
+        }
+    }
+
+    return $this->render('testtechnique/add_quiz.html.twig', [
+        'testtechnique' => $testtechnique,
+        'categories' => [
+            'Linux', 'Bash', 'PHP', 'Docker', 'MySQL', 
+            'WordPress', 'HTML', 'JavaScript', 'CSS'
+        ],
+        'difficulties' => ['Easy', 'Medium', 'Hard']
+    ]);
+}
+    #[Route('/{idtesttechnique}/clear-quiz', name: 'app_testtechnique_clear_quiz', methods: ['POST'])]
+    public function clearQuiz(
+        Testtechnique $testtechnique,
+        EntityManagerInterface $entityManager
+    ): Response {
+        $testtechnique->setQuestions([]);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Quiz supprimé du test technique');
+        return $this->redirectToRoute('app_testtechnique_show', [
+            'idtesttechnique' => $testtechnique->getIdtesttechnique()
+        ]);
+    }
+#[Route('/{idtesttechnique}/quiz', name: 'app_testtechnique_quiz', methods: ['GET'])]
+public function showQuiz(Testtechnique $testtechnique): Response
+{
+    if (!$testtechnique->getQuestions()) {
+        $this->addFlash('warning', 'Ce test technique n\'a pas de quiz associé');
+        return $this->redirectToRoute('app_testtechnique_show', [
+            'idtesttechnique' => $testtechnique->getIdtesttechnique()
+        ]);
+    }
+
+    return $this->render('testtechnique/show_quiz.html.twig', [
         'testtechnique' => $testtechnique
     ]);
 }

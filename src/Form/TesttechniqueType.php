@@ -27,8 +27,8 @@ class TesttechniqueType extends AbstractType
             'choice_label' => fn(StatutTestTechnique $type) => $type->getLabel(),
             'label' => 'Statut du test technique',
             'placeholder' => 'Sélectionnez un statut',
-        ])
-        ->add('questions');
+        ]);
+        
 
     // Only add idinterview field if no interview is passed in options
     if (empty($options['interview'])) {

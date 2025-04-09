@@ -61,7 +61,26 @@
                             </tr>
                             <tr>
                                 <th class="bg-light">Questions</th>
-                                <td>{{ testtechnique.questions }}</td>
+                                <td>
+                                    {% if testtechnique.questions %}
+                                        <ul class="list-unstyled">
+                                            {% for question in testtechnique.questions %}
+                                                <li class="mb-2">
+                                                    <strong>{{ question.question }}</strong>
+                                                    <ul>
+                                                        {% for key, answer in question.answers %}
+                                                            {% if answer %}
+                                                                <li>{{ key }}: {{ answer }}</li>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </ul>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% else %}
+                                        Aucune question définie
+                                    {% endif %}
+                                </td>
                             </tr>
                         </tbody>
                     </table>
