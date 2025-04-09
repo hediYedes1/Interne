@@ -6,6 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationSuccessHandlerInterface;
+use App\Enum\Role;
 
 class LoginSuccessHandler implements AuthenticationSuccessHandlerInterface
 {
@@ -21,13 +22,15 @@ class LoginSuccessHandler implements AuthenticationSuccessHandlerInterface
         // Get the logged-in user
         $user = $token->getUser();
 
-        // Check the user's roles
-        if (in_array('ROLE_CANDIDAT', $user->getRoles(), true)) {
+        $roles = $user->getRoles();
+
+        // Check if the user has the CANDIDAT role
+        if (in_array(Role::ADMIN->value, $roles, true)) {
             // Redirect to base2 for ADMIN
-            return new RedirectResponse($this->router->generate('app_base'));
+            return new RedirectResponse($this->router->generate('app_base2'));
         }
 
         // Redirect to base for other roles
-        return new RedirectResponse($this->router->generate('app_base2'));
+        return new RedirectResponse($this->router->generate('app_base'));
     }
 }
