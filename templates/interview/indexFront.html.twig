@@ -8,7 +8,7 @@
     :root {
       --primary: #4e73df;
       --primary-light: #e8f1ff;
-      --secondary: #858796;
+      --secondary: #6c757d;
       --success: #1cc88a;
       --info: #36b9cc;
       --warning: #f6c23e;
@@ -44,6 +44,7 @@
       color: var(--dark);
       font-weight: 600;
       margin-bottom: 1rem;
+      font-size: 1.75rem;
     }
 
     /* Search Form */
@@ -79,44 +80,6 @@
       width: 100%;
     }
 
-    /* Buttons */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0.5rem 1.25rem;
-      border-radius: 0.35rem;
-      font-weight: 500;
-      transition: all 0.2s;
-      border: none;
-      cursor: pointer;
-    }
-
-    .btn i {
-      margin-right: 0.5rem;
-    }
-
-    .btn-primary {
-      background-color: var(--primary);
-      color: white;
-    }
-
-    .btn-secondary {
-      background-color: var(--secondary);
-      color: white;
-    }
-
-    .btn-primary:hover {
-      background-color: #3a5bbf;
-      transform: translateY(-1px);
-      box-shadow: 0 0.25rem 0.5rem rgba(58, 91, 191, 0.3);
-    }
-
-    .btn-secondary:hover {
-      background-color: #6c757d;
-      transform: translateY(-1px);
-    }
-
     /* Cards */
     .interview-card {
       background: white;
@@ -127,6 +90,7 @@
       display: flex;
       flex-direction: column;
       border-left: 4px solid var(--primary);
+      overflow: hidden;
     }
 
     .interview-card:hover {
@@ -138,6 +102,7 @@
       padding: 1.25rem 1.5rem;
       border-bottom: 1px solid var(--border);
       position: relative;
+      background-color: var(--light);
     }
 
     .card-title {
@@ -145,6 +110,7 @@
       color: var(--dark);
       margin: 0;
       padding-right: 2rem;
+      font-size: 1.1rem;
     }
 
     .card-badge {
@@ -177,30 +143,42 @@
     .card-footer {
       padding: 1rem 1.5rem;
       border-top: 1px dashed var(--border);
+      display: flex;
+      justify-content: flex-end;
     }
 
     /* Details */
     .detail-item {
       display: flex;
       margin-bottom: 1rem;
+      align-items: center;
     }
 
     .detail-icon {
-      width: 1.5rem;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      background-color: var(--primary-light);
       color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       margin-right: 1rem;
-      text-align: center;
+      flex-shrink: 0;
     }
 
     .detail-label {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       color: var(--secondary);
       margin-bottom: 0.25rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .detail-value {
       font-weight: 500;
       color: var(--dark);
+      font-size: 0.95rem;
     }
 
     .meet-link {
@@ -208,56 +186,40 @@
       align-items: center;
       color: var(--primary);
       font-weight: 500;
-    }
-
-    .meet-link i {
-      margin-right: 0.5rem;
+      font-size: 0.9rem;
     }
 
     /* Action Buttons */
-    .action-buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-    }
-
     .action-btn {
-      flex: 1;
-      min-width: 120px;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 0.5rem 1rem;
-      border-radius: 0.35rem;
-      font-size: 0.85rem;
-      font-weight: 500;
       transition: all 0.2s;
+      margin-left: 0.5rem;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
     }
 
-    .action-btn i {
-      margin-right: 0.5rem;
-      font-size: 0.9em;
+    .action-btn:hover {
+      transform: translateY(-2px) scale(1.1);
+      box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
     }
 
     .btn-view {
       background-color: var(--primary);
-      color: white;
     }
 
     .btn-tests {
       background-color: var(--info);
-      color: white;
     }
 
     .btn-join {
       background-color: var(--success);
-      color: white;
-    }
-
-    .action-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
-      opacity: 0.9;
     }
 
     /* Empty State */
@@ -292,6 +254,44 @@
       padding: 1rem 1.5rem;
       margin-bottom: 2rem;
       box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+      font-size: 0.9rem;
+      color: var(--dark);
+    }
+
+    /* Search buttons */
+    .search-btn {
+      padding: 0.5rem 1.25rem;
+      border-radius: 0.35rem;
+      font-weight: 500;
+      transition: all 0.2s;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .btn-secondary {
+      background-color: var(--secondary);
+      color: white;
+    }
+
+    .search-btn i {
+      margin-right: 0.5rem;
+    }
+
+    /* Ensure Font Awesome icons are visible */
+    .fas, .far {
+      display: inline-block;
+      font-style: normal;
+      font-variant: normal;
+      text-rendering: auto;
+      line-height: 1;
     }
   </style>
 {% endblock %}
@@ -300,30 +300,30 @@
   <div class="interview-container">
     <!-- Page Header -->
     <div class="page-header">
-      <h1 class="page-title">Gestion des Interviews</h1>
+      <h1 class="page-title">📅 Mes Interviews</h1>
     </div>
 
     <!-- Search Form -->
     <div class="search-form">
       <form method="get" action="{{ path('app_interview_index_front') }}" class="form-inline">
         <div class="form-group">
-          <input type="text" name="titreoffre" class="form-control" placeholder="Rechercher par titre"
+             <input type="text" name="titreoffre" class="form-control" placeholder="🔍 Rechercher par titre"
                  value="{{ app.request.get('titreoffre') }}">
+             </div>
+        
+            <div class="form-group">
+            <select name="typeinterview" class="form-control">
+            <option value="">🌐 Tous les types</option>
+            <option value="ENLIGNE" {{ app.request.get('typeinterview') == 'ENLIGNE' ? 'selected' : '' }}>💻 En ligne</option>
+            <option value="ENPERSONNE" {{ app.request.get('typeinterview') == 'ENPERSONNE' ? 'selected' : '' }}>🏢 En personne</option>
+             </select>
         </div>
         
-        <div class="form-group">
-          <select name="typeinterview" class="form-control">
-            <option value="">Tous les types</option>
-            <option value="ENLIGNE" {{ app.request.get('typeinterview') == 'ENLIGNE' ? 'selected' : '' }}>En ligne</option>
-            <option value="ENPERSONNE" {{ app.request.get('typeinterview') == 'ENPERSONNE' ? 'selected' : '' }}>En personne</option>
-          </select>
-        </div>
-        
-        <button type="submit" class="btn btn-primary">
+        <button type="submit" class="search-btn btn-primary">
           <i class="fas fa-search"></i> Rechercher
         </button>
         
-        <a href="{{ path('app_interview_index_front') }}" class="btn btn-secondary">
+        <a href="{{ path('app_interview_index_front') }}" class="search-btn btn-secondary" style="background-color: #6c757d; color: white;">
           <i class="fas fa-undo"></i> Réinitialiser
         </a>
       </form>
@@ -331,8 +331,8 @@
 
     <!-- Results Info -->
     {% if app.request.get('titreoffre') or app.request.get('typeinterview') %}
-      <div class="results-info alert alert-info">
-        Résultats pour: 
+      <div class="results-info">
+        <i class="fas fa-info-circle"></i> Résultats pour: 
         {% if app.request.get('titreoffre') %}
           <strong>"{{ app.request.get('titreoffre') }}"</strong>
         {% endif %}
@@ -353,7 +353,7 @@
               <div class="card-header">
                 <h3 class="card-title">{{ interview.titreoffre }}</h3>
                 <span class="card-badge {{ interview.typeinterview.value == 'ENLIGNE' ? 'badge-online' : 'badge-inperson' }}">
-                  {{ interview.typeinterview.value == 'ENLIGNE' ? 'En ligne' : 'En personne' }}
+                  {{ interview.typeinterview.value == 'ENLIGNE' ? '💻 En ligne' : '🏢 En personne' }}
                 </span>
               </div>
               
@@ -388,11 +388,11 @@
                       <i class="fas fa-video"></i>
                     </div>
                     <div>
-                      <div class="detail-label">Lien de la réunion</div>
+                      <div class="detail-label">Lien de réunion</div>
                       <div class="detail-value">
                         {% if interview.lienmeet %}
                           <a href="{{ interview.lienmeet }}" target="_blank" class="meet-link">
-                            <i class="fas fa-external-link-alt"></i> Rejoindre
+                            <i class="fas fa-external-link-alt"></i> Rejoindre la réunion
                           </a>
                         {% else %}
                           <span class="text-muted">Non fourni</span>
@@ -416,24 +416,22 @@
               </div>
               
               <div class="card-footer">
-                <div class="action-buttons">
-                  <a href="{{ path('app_interview_show_front', {'idinterview': interview.idinterview}) }}" 
-                     class="action-btn btn-view">
-                    <i class="fas fa-eye"></i> Détails
+                <a href="{{ path('app_interview_show_front', {'idinterview': interview.idinterview}) }}" 
+                   class="action-btn btn-view" title="Voir détails">
+                  <i class="fas fa-eye"></i>
+                </a>
+                
+                <a href="{{ path('app_testtechnique_by_interview_front', {'idinterview': interview.idinterview}) }}" 
+                   class="action-btn btn-tests" title="Tests techniques">
+                  <i class="fas fa-clipboard-check"></i>
+                </a>
+                
+                {% if interview.typeinterview.value == 'ENLIGNE' and interview.lienmeet %}
+                  <a href="{{ interview.lienmeet }}" target="_blank" 
+                     class="action-btn btn-join" title="Rejoindre">
+                    <i class="fas fa-video"></i>
                   </a>
-                  
-                  <a href="{{ path('app_testtechnique_by_interview_front', {'idinterview': interview.idinterview}) }}" 
-                     class="action-btn btn-tests">
-                    <i class="fas fa-clipboard-check"></i> Tests
-                  </a>
-                  
-                  {% if interview.typeinterview.value == 'ENLIGNE' and interview.lienmeet %}
-                    <a href="{{ interview.lienmeet }}" target="_blank" 
-                       class="action-btn btn-join">
-                      <i class="fas fa-video"></i> Rejoindre
-                    </a>
-                  {% endif %}
-                </div>
+                {% endif %}
               </div>
             </div>
           </div>
@@ -441,10 +439,10 @@
       {% else %}
         <div class="col-12">
           <div class="empty-state">
-            <i class="fas fa-calendar-times"></i>
+            <i class="far fa-calendar-times"></i>
             <h4>Aucune interview trouvée</h4>
             <p>Il n'y a actuellement aucune interview programmée correspondant à vos critères.</p>
-            <a href="{{ path('app_interview_index_front') }}" class="btn btn-primary">
+            <a href="{{ path('app_interview_index_front') }}" class="search-btn btn-primary">
               <i class="fas fa-undo"></i> Réinitialiser la recherche
             </a>
           </div>
@@ -465,6 +463,12 @@
       // Animation des cartes
       $('.interview-card').hide().each(function(i) {
         $(this).delay(i * 100).fadeIn(300);
+      });
+
+      // Tooltips pour les boutons d'action
+      $('.action-btn').tooltip({
+        placement: 'top',
+        trigger: 'hover'
       });
     });
   </script>
