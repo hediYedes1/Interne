@@ -44,6 +44,20 @@ final class TesttechniqueController extends AbstractController
             'testtechniques' => $testtechniques,
         ]);
     }
+
+    #[Route('/listFront', name: 'app_testtechnique_index_front', methods: ['GET'])]
+    public function indexFront(TesttechniqueRepository $testtechniqueRepository, Request $request): Response
+    {
+        $titre = $request->query->get('titretesttechnique');
+        $statut = $request->query->get('statuttesttechnique');
+
+        $testtechniques = $testtechniqueRepository->findByFilters($titre, $statut);
+            
+
+        return $this->render('testtechnique/indexFront.html.twig', [
+            'testtechniques' => $testtechniques,
+        ]);
+    }
    
 
     #[Route('/new', name: 'app_testtechnique_new', methods: ['GET', 'POST'])]
@@ -79,6 +93,14 @@ public function show(Testtechnique $testtechnique): Response
 public function showBack(Testtechnique $testtechnique): Response
 {
     return $this->render('testtechnique/showBack.html.twig', [
+        'testtechnique' => $testtechnique
+    ]);
+}
+
+#[Route('/{idtesttechnique}/front', name: 'app_testtechnique_show_front', methods: ['GET'])]
+public function showFront(Testtechnique $testtechnique): Response
+{
+    return $this->render('testtechnique/showFront.html.twig', [
         'testtechnique' => $testtechnique
     ]);
 }
@@ -154,6 +176,28 @@ public function indexByInterviewBack(
     );
 
     return $this->render('testtechnique/indexBack.html.twig', [
+        'testtechniques' => $testtechniques,
+        'interview' => $idinterview,
+    ]);
+}
+
+#[Route('/interview/{idinterview}/testsFront', name: 'app_testtechnique_by_interview_front', methods: ['GET'])]
+public function indexByInterviewFront(
+    Interview $idinterview, 
+    TesttechniqueRepository $testtechniqueRepository, 
+    Request $request
+): Response {
+    $titre = $request->query->get('titretesttechnique');
+    $statut = $request->query->get('statuttesttechnique');
+
+    // Modifier la méthode findByFilters dans le repository pour prendre en compte l'interview
+    $testtechniques = $testtechniqueRepository->findByFiltersForInterview(
+        $idinterview, 
+        $titre, 
+        $statut
+    );
+
+    return $this->render('testtechnique/indexFront.html.twig', [
         'testtechniques' => $testtechniques,
         'interview' => $idinterview,
     ]);
@@ -266,6 +310,20 @@ public function showQuiz(Testtechnique $testtechnique): Response
     if (!$testtechnique->getQuestions()) {
         $this->addFlash('warning', 'Ce test technique n\'a pas de quiz associé');
         return $this->redirectToRoute('app_testtechnique_show', [
+            'idtesttechnique' => $testtechnique->getIdtesttechnique()
+        ]);
+    }
+
+    return $this->render('testtechnique/show_quiz.html.twig', [
+        'testtechnique' => $testtechnique
+    ]);
+}
+#[Route('/{idtesttechnique}/quizFront', name: 'app_testtechnique_quiz_front', methods: ['GET'])]
+public function showQuizFront(Testtechnique $testtechnique): Response
+{
+    if (!$testtechnique->getQuestions()) {
+        $this->addFlash('warning', 'Ce test technique n\'a pas de quiz associé');
+        return $this->redirectToRoute('app_testtechnique_show_front', [
             'idtesttechnique' => $testtechnique->getIdtesttechnique()
         ]);
     }

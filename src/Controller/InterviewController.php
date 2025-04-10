@@ -43,6 +43,18 @@ public function indexBack(Request $request, InterviewRepository $interviewReposi
     ]);
 }
 
+#[Route('/listFront', name: 'app_interview_index_front', methods: ['GET'])]
+public function indexFront(Request $request, InterviewRepository $interviewRepository): Response
+{
+    $titre = $request->query->get('titreoffre');
+    $type = $request->query->get('typeinterview');
+    
+    $interviews = $interviewRepository->findByFilters($titre, $type);
+    
+    return $this->render('interview/indexFront.html.twig', [
+        'interviews' => $interviews,
+    ]);
+}
     
     #[Route('/new', name: 'app_interview_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
@@ -79,6 +91,14 @@ public function indexBack(Request $request, InterviewRepository $interviewReposi
     public function showBack(Interview $interview): Response
     {
         return $this->render('interview/showBack.html.twig', [
+            'interview' => $interview,
+        ]);
+    }
+
+    #[Route('/{idinterview}/front', name: 'app_interview_show_front', methods: ['GET'])]
+    public function showFront(Interview $interview): Response
+    {
+        return $this->render('interview/showFront.html.twig', [
             'interview' => $interview,
         ]);
     }
