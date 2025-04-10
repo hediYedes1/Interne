@@ -30,6 +30,20 @@ final class TesttechniqueController extends AbstractController
             'testtechniques' => $testtechniques,
         ]);
     }
+
+    #[Route('/listBack', name: 'app_testtechnique_index_back', methods: ['GET'])]
+    public function indexBack(TesttechniqueRepository $testtechniqueRepository, Request $request): Response
+    {
+        $titre = $request->query->get('titretesttechnique');
+        $statut = $request->query->get('statuttesttechnique');
+
+        $testtechniques = $testtechniqueRepository->findByFilters($titre, $statut);
+            
+
+        return $this->render('testtechnique/indexBack.html.twig', [
+            'testtechniques' => $testtechniques,
+        ]);
+    }
    
 
     #[Route('/new', name: 'app_testtechnique_new', methods: ['GET', 'POST'])]
@@ -51,27 +65,20 @@ final class TesttechniqueController extends AbstractController
             'form' => $form,
         ]);
     }
-/*
-    #[Route('/{idtesttechnique}', name: 'app_testtechnique_show', methods: ['GET'])]
-    public function show(Testtechnique $testtechnique): Response
-    {
-        return $this->render('testtechnique/show.html.twig', [
-            'testtechnique' => $testtechnique,
-        ]);
-    }
-        */
+
 
         #[Route('/{idtesttechnique}', name: 'app_testtechnique_show', methods: ['GET'])]
 public function show(Testtechnique $testtechnique): Response
 {
-    /*
-    if ($testtechnique->getQuestions()) {
-        return $this->render('testtechnique/show_quiz.html.twig', [
-            'testtechnique' => $testtechnique
-        ]);
-    }
-*/
     return $this->render('testtechnique/show.html.twig', [
+        'testtechnique' => $testtechnique
+    ]);
+}
+
+#[Route('/{idtesttechnique}/back', name: 'app_testtechnique_show_back', methods: ['GET'])]
+public function showBack(Testtechnique $testtechnique): Response
+{
+    return $this->render('testtechnique/showBack.html.twig', [
         'testtechnique' => $testtechnique
     ]);
 }
@@ -107,18 +114,7 @@ public function show(Testtechnique $testtechnique): Response
 
         return $this->redirectToRoute('app_testtechnique_index', [], Response::HTTP_SEE_OTHER);
     }
-        /*
-  #[Route('/interview/{id}/tests', name: 'app_testtechnique_by_interview', methods: ['GET'])]
-public function indexByInterview(Interview $interview): Response
-{
-    $tests = $interview->getTestTechniques(); // Récupérer les tests techniques liés à l'interview
-
-    return $this->render('testtechnique/index.html.twig', [
-        'testtechniques' => $tests,
-        'interview' => $interview,
-    ]);
-}
-    */
+ 
 #[Route('/interview/{idinterview}/tests', name: 'app_testtechnique_by_interview', methods: ['GET'])]
 public function indexByInterview(
     Interview $idinterview, 
@@ -136,6 +132,28 @@ public function indexByInterview(
     );
 
     return $this->render('testtechnique/index.html.twig', [
+        'testtechniques' => $testtechniques,
+        'interview' => $idinterview,
+    ]);
+}
+
+#[Route('/interview/{idinterview}/testsBack', name: 'app_testtechnique_by_interview_back', methods: ['GET'])]
+public function indexByInterviewBack(
+    Interview $idinterview, 
+    TesttechniqueRepository $testtechniqueRepository, 
+    Request $request
+): Response {
+    $titre = $request->query->get('titretesttechnique');
+    $statut = $request->query->get('statuttesttechnique');
+
+    // Modifier la méthode findByFilters dans le repository pour prendre en compte l'interview
+    $testtechniques = $testtechniqueRepository->findByFiltersForInterview(
+        $idinterview, 
+        $titre, 
+        $statut
+    );
+
+    return $this->render('testtechnique/indexBack.html.twig', [
         'testtechniques' => $testtechniques,
         'interview' => $idinterview,
     ]);

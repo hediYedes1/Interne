@@ -17,52 +17,60 @@ class QuizController extends AbstractController
     public function submitQuiz(Request $request, TesttechniqueRepository $testRepo, EntityManagerInterface $em): JsonResponse
     {
         try {
-            $data = $request->getContentType() === 'json' 
-                ? json_decode($request->getContent(), true) 
-                : $request->request->all();
-    
-            if (!$data) {
-                throw new \Exception('Données invalides');
-            }
-    
-            if (!isset($data['test_id']) || !isset($data['answers'])) {
-                throw new \Exception('Données manquantes');
-            }
+            $data = json_decode($request->getContent(), true) ?: $request->request->all();
+            
+            if (!$data) throw new \Exception('Aucune donnée reçue');
+            if (!isset($data['test_id'])) throw new \Exception('ID de test manquant');
+            if (!isset($data['answers'])) throw new \Exception('Réponses manquantes');
     
             $test = $testRepo->find($data['test_id']);
-            if (!$test) {
-                throw new \Exception('Test introuvable');
-            }
+            if (!$test) throw new \Exception('Test non trouvé');
     
-            $correctAnswersCount = 0;
-            $questions = $test->getQuestions();
-            
+            $correctCount = 0;
+            $questions = $test->getQuestions(); // Cette méthode décode déjà le JSON
+    
             foreach ($questions as $index => $question) {
-                if (!isset($data['answers'][$index])) {
-                    continue;
-                }
-                
+                if (!isset($data['answers'][$index])) continue;
+    
                 $userAnswer = $data['answers'][$index];
                 $correctAnswers = $question['correctAnswers'] ?? [];
-                
-                if (isset($correctAnswers[$userAnswer]) && $correctAnswers[$userAnswer]) {
-                    $correctAnswersCount++;
+                $userAnswerKey = strtolower($userAnswer);
+
+                if (array_key_exists($userAnswerKey, $correctAnswers)) {
+                    $isCorrect = filter_var($correctAnswers[$userAnswerKey], FILTER_VALIDATE_BOOLEAN);
+                    if ($isCorrect) {
+                        $correctCount++;
+                    }
+                }
+                // Debug crucial
+                error_log("Question {$index}:");
+                error_log("Réponse utilisateur: {$userAnswer}");
+                error_log("Bonnes réponses: ".print_r($correctAnswers, true));
+    
+                // Vérification robuste
+                if (array_key_exists($userAnswer, $correctAnswers)) {
+                    $isCorrect = $correctAnswers[$userAnswer];
+                    if ($isCorrect === true || $isCorrect === 'true' || $isCorrect === 1) {
+                        $correctCount++;
+                        error_log("Bonne réponse!");
+                    }
                 }
             }
     
-            // Mise à jour du statut uniquement
-            $test->setStatuttesttechnique($correctAnswersCount >= 8 ? StatutTestTechnique::ACCEPTE : StatutTestTechnique::REFUSE);
+            $statut = $correctCount >= 8 ? StatutTestTechnique::ACCEPTE : StatutTestTechnique::REFUSE;
+            $test->setStatuttesttechnique($statut);
             $em->flush();
     
             return new JsonResponse([
                 'success' => true,
-                'score' => $correctAnswersCount, // Retourné pour affichage seulement
+                'score' => $correctCount,
                 'total' => count($questions),
-                'statut' => $test->getStatuttesttechnique(),
-                'message' => 'Résultats enregistrés'
+                'statut' => $statut->value,
+                'message' => 'Quiz évalué avec succès'
             ]);
     
         } catch (\Exception $e) {
+            error_log("ERREUR: ".$e->getMessage());
             return new JsonResponse([
                 'success' => false,
                 'error' => $e->getMessage()

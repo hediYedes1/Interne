@@ -30,6 +30,18 @@ public function index(Request $request, InterviewRepository $interviewRepository
         'interviews' => $interviews,
     ]);
 }
+#[Route('/listBack', name: 'app_interview_index_back', methods: ['GET'])]
+public function indexBack(Request $request, InterviewRepository $interviewRepository): Response
+{
+    $titre = $request->query->get('titreoffre');
+    $type = $request->query->get('typeinterview');
+    
+    $interviews = $interviewRepository->findByFilters($titre, $type);
+    
+    return $this->render('interview/indexBack.html.twig', [
+        'interviews' => $interviews,
+    ]);
+}
 
     
     #[Route('/new', name: 'app_interview_new', methods: ['GET', 'POST'])]
@@ -59,6 +71,14 @@ public function index(Request $request, InterviewRepository $interviewRepository
     public function show(Interview $interview): Response
     {
         return $this->render('interview/show.html.twig', [
+            'interview' => $interview,
+        ]);
+    }
+
+    #[Route('/{idinterview}/back', name: 'app_interview_show_back', methods: ['GET'])]
+    public function showBack(Interview $interview): Response
+    {
+        return $this->render('interview/showBack.html.twig', [
             'interview' => $interview,
         ]);
     }

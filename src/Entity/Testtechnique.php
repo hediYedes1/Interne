@@ -125,14 +125,43 @@ private ?string $questions = null;
         $this->datecreationtesttechnique = new \DateTimeImmutable();
     }
 
-    public function getQuestions(): ?array
+    public function getQuestions(): array
 {
-    return $this->questions ? json_decode($this->questions, true) : [];
+    if ($this->questions === null) {
+        return [];
+    }
+    
+    $decoded = json_decode($this->questions, true);
+    
+    // Validation du format
+    foreach ($decoded as &$question) {
+        if (!isset($question['correctAnswers'])) {
+            $question['correctAnswers'] = [];
+        }
+        
+        // Convertit les valeurs en booléens si nécessaire
+        foreach ($question['correctAnswers'] as $key => $value) {
+            if (is_string($value)) {
+                $question['correctAnswers'][$key] = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+            }
+        }
+    }
+    
+    return $decoded;
 }
 
-public function setQuestions(?array $value): self
+public function setQuestions(?array $questions): self
 {
-    $this->questions = $value ? json_encode($value) : null;
+    // Validation avant encodage
+    if ($questions) {
+        foreach ($questions as &$question) {
+            if (!isset($question['correctAnswers'])) {
+                $question['correctAnswers'] = [];
+            }
+        }
+    }
+    
+    $this->questions = $questions ? json_encode($questions) : null;
     return $this;
 }
 }
