@@ -208,4 +208,8 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         // Return the role as an array
         return [$this->role->value];
     }
+    public function getUsername(): string
+    {
+        return $this->emailutilisateur;
+    }
 }
