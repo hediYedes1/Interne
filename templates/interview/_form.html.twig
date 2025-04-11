@@ -1,0 +1,52 @@
+{{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
+
+<div class="form-group row">
+    <div class="col-md-6 mb-3">
+        {{ form_label(form.idoffre, 'Offre', {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_widget(form.idoffre, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.idoffre) }}
+    </div>
+    <div class="col-md-6 mb-3">
+        {{ form_label(form.dateinterview, 'Date de l\'interview', {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_widget(form.dateinterview, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.dateinterview) }}
+    </div>
+</div>
+
+<div class="form-group row">
+    <div class="col-md-6 mb-3">
+        {{ form_label(form.timeinterview, 'Heure de l\'interview', {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_widget(form.timeinterview, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.timeinterview) }}
+    </div>
+    <div class="col-md-6 mb-3">
+        {{ form_label(form.typeinterview, 'Type d\'interview', {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_widget(form.typeinterview, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.typeinterview) }}
+    </div>
+</div>
+
+<div class="form-group mb-3">
+    {{ form_label(form.lienmeet, 'Lien de visioconférence', {'label_attr': {'class': 'form-label'}}) }}
+    {{ form_widget(form.lienmeet, {'attr': {'class': 'form-control', 'placeholder': 'https://meet.google.com/...'}}) }}
+    {{ form_errors(form.lienmeet) }}
+    <small class="form-text text-muted">Laissez vide si l'entretien est en présentiel</small>
+</div>
+
+<div class="form-group mb-3">
+    {{ form_label(form.localisation, 'Lieu', {'label_attr': {'class': 'form-label'}}) }}
+    {{ form_widget(form.localisation, {'attr': {'class': 'form-control'}}) }}
+    {{ form_errors(form.localisation) }}
+    <small class="form-text text-muted">Adresse physique si entretien en présentiel</small>
+</div>
+
+<div class="form-group text-right mt-4">
+    <button type="submit" class="btn btn-primary">
+        {{ button_label|default('Enregistrer') }}
+    </button>
+    <a href="{{ path('app_interview_index') }}" class="btn btn-secondary ml-2">
+        Annuler
+    </a>
+</div>
+
+{{ form_end(form) }}

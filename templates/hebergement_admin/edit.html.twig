@@ -1,0 +1,13 @@
+{% extends 'baseadmin.html.twig' %}
+
+{% block title %}Edit Hebergement{% endblock %}
+
+{% block body %}
+    <h1>Edit Hebergement</h1>
+
+    {{ include('hebergement_admin/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_hebergement_admin_index') }}">back to list</a>
+
+    {{ include('hebergement_admin/_delete_form.html.twig') }}
+{% endblock %}

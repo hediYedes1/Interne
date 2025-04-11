@@ -1,0 +1,87 @@
+{% extends 'base1.html.twig' %}
+
+{% block title %}Tests Techniques{% endblock %}
+
+{% block css %}
+  {{ parent() }}
+{% endblock %}
+
+{% block sideBar %}
+  {{ parent() }}
+{% endblock %}
+
+{% block headside %}
+  {{ parent() }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="../dashboard/index.html">Interviews</a></li>
+    <li class="breadcrumb-item active">Tests Techniques</li>
+{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Tests Techniques</h1>
+            {% if interview is defined %}
+                <a href="{{ path('app_testtechnique_new_for_interview', {'idinterview': interview.idinterview}) }}" 
+                   class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Ajouter un Test
+                </a>
+            {% endif %}
+        </div>
+
+        {% if interview is defined %}
+            <h2 class="text-primary">Tests liés à l'Interview : {{ interview.titreoffre }}</h2>
+            <a href="{{ path('app_interview_index') }}" class="btn btn-secondary mb-3">Retour aux Interviews</a>
+        {% else %}
+            <h2 class="text-primary">Liste des Tests Techniques</h2>
+        {% endif %}
+
+        <div class="row">
+            {% for testtechnique in testtechniques %}
+                <div class="col-md-4 mb-4">
+                    <div class="card shadow">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">{{ testtechnique.titretesttechnique }}</h5>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Description :</strong> {{ testtechnique.descriptiontesttechnique }}</p>
+                            <p><strong>Durée :</strong> {{ testtechnique.dureetesttechnique }} min</p>
+                            <p><strong>Statut :</strong> 
+                                <span class="badge 
+                                    {% if testtechnique.statuttesttechnique.value == 'Actif' %}badge-success
+                                    {% else %}badge-danger{% endif %}">
+                                    {{ testtechnique.statuttesttechnique.value }}
+                                </span>
+                            </p>
+                            <p><strong>Date de Création :</strong> 
+                                {{ testtechnique.datecreationtesttechnique ? testtechnique.datecreationtesttechnique|date('d/m/Y H:i') : 'Non définie' }}
+                            </p>
+                            <p><strong>Questions :</strong> {{ testtechnique.questions }}</p>
+                        </div>
+                        <div class="card-footer text-center">
+                            <a href="{{ path('app_testtechnique_show', {'idtesttechnique': testtechnique.idtesttechnique}) }}" 
+                               class="btn btn-info btn-sm">
+                                <i class="fas fa-eye"></i> Voir
+                            </a>
+                            <a href="{{ path('app_testtechnique_edit', {'idtesttechnique': testtechnique.idtesttechnique}) }}" 
+                               class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit"></i> Modifier
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-12 text-center">
+                    <p class="text-muted">Aucun test technique trouvé.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+  {{ parent() }}
+{% endblock %}

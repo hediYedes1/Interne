@@ -1,0 +1,37 @@
+{% extends 'baseadmin.html.twig' %}
+
+{% block title %}Affectationhebergement index{% endblock %}
+
+{% block body %}
+    <h1>Affectationhebergement index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Datedebut</th>
+                <th>Datefin</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for affectationhebergement in affectationhebergements %}
+            <tr>
+                <td>{{ affectationhebergement.id }}</td>
+                <td>{{ affectationhebergement.datedebut ? affectationhebergement.datedebut|date('Y-m-d') : '' }}</td>
+                <td>{{ affectationhebergement.datefin ? affectationhebergement.datefin|date('Y-m-d') : '' }}</td>
+                <td>
+                    <a href="{{ path('app_affectation_admin_show', {'id': affectationhebergement.id}) }}">show</a>
+                    <a href="{{ path('app_affectation_admin_edit', {'id': affectationhebergement.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_affectation_admin_new') }}">Create new</a>
+{% endblock %}

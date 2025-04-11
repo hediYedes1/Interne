@@ -1,0 +1,55 @@
+{% extends 'base1.html.twig' %}
+
+{% block title %}Affectationinterview index{% endblock %}
+{% block css %}
+  {{ parent() }}
+ 
+  
+{% endblock %}
+
+{% block sideBar %}
+  {{ parent() }}
+{% endblock %}
+
+{% block headside %}
+  {{ parent() }}
+{% endblock %}
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="../dashboard/index.html">Interviews</a></li>
+    <li class="breadcrumb-item active">New</li>
+{% endblock %}
+{% block body %}
+    <h1>Affectationinterview index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Dateaffectationinterview</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for affectationinterview in affectationinterviews %}
+            <tr>
+                <td>{{ affectationinterview.dateaffectationinterview ? affectationinterview.dateaffectationinterview|date('Y-m-d H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('app_affectationinterview_show', {'idinterview': affectationinterview.idinterview}) }}">show</a>
+                    <a href="{{ path('app_affectationinterview_edit', {'idinterview': affectationinterview.idinterview}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="2">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_affectationinterview_new') }}">Create new</a>
+{% endblock %}
+
+{% block javascript %}
+  {{ parent() }}
+
+{% endblock %}

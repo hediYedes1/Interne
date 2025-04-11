@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Affectationhebergement index{% endblock %}
+
+{% block body %}
+    <h1>Affectationhebergement index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Datedebut</th>
+                <th>Datefin</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for affectationhebergement in affectationhebergements %}
+            <tr>
+                <td>{{ affectationhebergement.datedebut ? affectationhebergement.datedebut|date('Y-m-d') : '' }}</td>
+                <td>{{ affectationhebergement.datefin ? affectationhebergement.datefin|date('Y-m-d') : '' }}</td>
+                <td>
+<a href="{{ path('app_affectationhebergement_show', {'idhebergement': affectationhebergement.idhebergement.idhebergement}) }}">show</a>
+                    <a href="{{ path('app_affectationhebergement_edit', {'idhebergement': affectationhebergement.idhebergement.idhebergement}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_affectationhebergement_new') }}">Create new</a>
+{% endblock %}

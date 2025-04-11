@@ -1,0 +1,52 @@
+{% extends 'base1.html.twig' %}
+
+{% block title %}New Testtechnique{% endblock %}
+
+{% block css %}
+  {{ parent() }}
+ 
+  
+{% endblock %}
+
+{% block sideBar %}
+  {{ parent() }}
+{% endblock %}
+
+{% block headside %}
+  {{ parent() }}
+{% endblock %}
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="../dashboard/index.html">Interviews</a></li>
+    <li class="breadcrumb-item active">New</li>
+{% endblock %}
+
+{% block body %}
+  <div class="pc-container">
+    <div class="pc-content">
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h5>Créer un test technique {% if interview is defined %}pour l'interview {{ interview.titreoffre }}{% endif %}</h5>
+            </div>
+            <div class="card-body">
+              {{ include('testtechnique/_form.html.twig') }}
+
+             <a href="{{ path('app_testtechnique_by_interview', {'idinterview': interview.idinterview}) }}" class="btn btn-light mt-3">
+    <i class="ti ti-arrow-left"></i> Retour aux tests de l'interview
+</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block javascript %}
+  {{ parent() }}
+
+{% endblock %}
+
+

@@ -1,0 +1,13 @@
+{% extends 'baseadmin.html.twig' %}
+
+{% block title %}Edit Affectationhebergement{% endblock %}
+
+{% block body %}
+    <h1>Edit Affectationhebergement</h1>
+
+    {{ include('affectation_admin/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_affectation_admin_index') }}">back to list</a>
+
+    {{ include('affectation_admin/_delete_form.html.twig') }}
+{% endblock %}

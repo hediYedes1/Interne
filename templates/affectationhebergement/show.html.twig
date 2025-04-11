@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Affectationhebergement{% endblock %}
+
+{% block body %}
+    <h1>Affectationhebergement</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Datedebut</th>
+                <td>{{ affectationhebergement.datedebut ? affectationhebergement.datedebut|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Datefin</th>
+                <td>{{ affectationhebergement.datefin ? affectationhebergement.datefin|date('Y-m-d') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_affectationhebergement_index') }}">back to list</a>
+
+    <a href="{{ path('app_affectationhebergement_edit', {'idhebergement': affectationhebergement.idhebergement.idhebergement}) }}">edit</a>
+
+    {{ include('affectationhebergement/_delete_form.html.twig') }}
+{% endblock %}

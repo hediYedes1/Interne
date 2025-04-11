@@ -1,0 +1,56 @@
+{% extends 'base1.html.twig' %}
+
+{% block title %}Affecter un utilisateur à l'interview{% endblock %}
+{% block css %}
+  {{ parent() }}
+ 
+  
+{% endblock %}
+
+{% block sideBar %}
+  {{ parent() }}
+{% endblock %}
+
+{% block headside %}
+  {{ parent() }}
+{% endblock %}
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="../dashboard/index.html">Interviews</a></li>
+    <li class="breadcrumb-item active">New</li>
+{% endblock %}
+{% block body %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h4>Affectation pour l'interview: {{ interview.titreoffre }}</h4>
+        </div>
+        
+        <div class="card-body">
+            {{ form_start(form) }}
+                <div class="row">
+                    <div class="col-md-12">
+                        {{ form_row(form.idutilisateur) }}
+                    </div>
+                    
+                </div>
+                
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> Enregistrer l'affectation
+                    </button>
+                    <a href="{{ path('app_interview_show', {'idinterview': interview.idinterview}) }}" 
+                       class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Retour à l'interview
+                    </a>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascript %}
+  {{ parent() }}
+
+{% endblock %}
