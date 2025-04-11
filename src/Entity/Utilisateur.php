@@ -168,7 +168,29 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     
             return $this;
         }
+
+        public function addAffectationinterview(Affectationinterview $affectationinterview): self
+        {
+            if (!$this->affectationinterviews->contains($affectationinterview)) {
+                $this->affectationinterviews[] = $affectationinterview;
+                $affectationinterview->setIdutilisateur($this);
+            }
     
+            return $this;
+        }
+    
+        public function removeAffectationinterview(Affectationinterview $affectationinterview): self
+        {
+            if ($this->affectationinterviews->removeElement($affectationinterview)) {
+               
+                if ($affectationinterview->getIdutilisateur() === $this) {
+                    $affectationinterview->setIdutilisateur(null);
+                }
+            }
+    
+            return $this;
+        }
+
         public function removeAffectationhebergement(Affectationhebergement $affectationhebergement): self
         {
             if ($this->affectationhebergements->removeElement($affectationhebergement)) {
