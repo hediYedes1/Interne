@@ -6,12 +6,15 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Doctrine\Common\Collections\Collection;
 use App\Entity\Offre;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 #[ORM\Entity]
 class Entreprise
 {
 
     #[ORM\Id]
+    #[ORM\GeneratedValue]
+
     #[ORM\Column(type: "integer")]
     private int $identreprise;
 

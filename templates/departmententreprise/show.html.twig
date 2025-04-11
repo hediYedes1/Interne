@@ -1,0 +1,38 @@
+{% extends 'base1.html.twig' %}
+
+{% block title %}Departmententreprise{% endblock %}
+
+{% block body %}
+    <h1>Departmententreprise</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Iddepartement</th>
+                <td>{{ departmententreprise.iddepartement }}</td>
+            </tr>
+            <tr>
+                <th>Nomdepartement</th>
+                <td>{{ departmententreprise.nomdepartement }}</td>
+            </tr>
+            <tr>
+                <th>Descriptiondepartement</th>
+                <td>{{ departmententreprise.descriptiondepartement }}</td>
+            </tr>
+            <tr>
+                <th>Responsabledepartement</th>
+                <td>{{ departmententreprise.responsabledepartement }}</td>
+            </tr>
+            <tr>
+                <th>Nbremployedepartement</th>
+                <td>{{ departmententreprise.nbremployedepartement }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_departmententreprise_index') }}">back to list</a>
+
+    <a href="{{ path('app_departmententreprise_edit', {'iddepartement': departmententreprise.iddepartement}) }}">edit</a>
+
+    {{ include('departmententreprise/_delete_form.html.twig') }}
+{% endblock %}

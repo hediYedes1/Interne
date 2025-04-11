@@ -1,0 +1,152 @@
+{% extends 'base1.html.twig' %}
+
+{% block title %}Détails de la Branche{% endblock %}
+
+{% block css %}
+  {{ parent() }}
+  <style>
+    .container {
+      margin-top: 20px;
+    }
+
+    .card {
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      margin-bottom: 20px;
+    }
+
+    .card-header {
+      background-color: #007bff;
+      color: white;
+      font-size: 1.25rem;
+      font-weight: bold;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+    }
+
+    .card-body {
+      background-color: #f9f9f9;
+      padding: 1.5rem;
+    }
+
+    .table {
+      width: 100%;
+      margin-bottom: 1rem;
+      background-color: transparent;
+      border-collapse: collapse;
+    }
+
+    .table th, .table td {
+      padding: 12px;
+      text-align: left;
+      vertical-align: middle;
+      border-top: 1px solid #ddd;
+    }
+
+    .table th {
+      background-color: #f5f5f5;
+      color: #333;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .btn {
+      font-size: 1rem;
+      padding: 0.75rem 1.25rem;
+      border-radius: 5px;
+    }
+
+    .btn-secondary {
+      background-color: #6c757d;
+      border-color: #6c757d;
+    }
+
+    .btn-secondary:hover {
+      background-color: #5a6268;
+      border-color: #545b62;
+    }
+
+    .btn-primary {
+      background-color: #007bff;
+      border-color: #007bff;
+    }
+
+    .btn-primary:hover {
+      background-color: #0056b3;
+      border-color: #0056b3;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .mb-3 {
+      margin-bottom: 1.5rem;
+    }
+
+    .actions-container {
+      margin-top: 20px;
+    }
+  </style>
+{% endblock %}
+
+{% block body %}
+  <div class="container">
+    <h1 class="text-center mb-4">Détails de la Branche</h1>
+
+    <div class="card shadow-sm">
+      <div class="card-header">
+        <h6 class="m-0 font-weight-bold text-white">Informations de la branche</h6>
+      </div>
+      <div class="card-body">
+        <table class="table table-bordered">
+          <tbody>
+            <tr>
+              <th>Identifiant</th>
+              <td>{{ brancheentreprise.idbranche }}</td>
+            </tr>
+            <tr>
+              <th>Localisation</th>
+              <td>{{ brancheentreprise.localisationbranche }}</td>
+            </tr>
+            <tr>
+              <th>Email</th>
+              <td>{{ brancheentreprise.emailbranche }}</td>
+            </tr>
+            <tr>
+              <th>Contact</th>
+              <td>{{ brancheentreprise.contactbranche }}</td>
+            </tr>
+            <tr>
+              <th>Nombre d'employés</th>
+              <td>{{ brancheentreprise.nombreemploye }}</td>
+            </tr>
+            <tr>
+              <th>Responsable</th>
+              <td>{{ brancheentreprise.responsablebranche }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="actions-container text-center">
+      <div class="btn-group">
+        <a href="{{ path('app_brancheentreprise_index') }}" class="btn btn-secondary">
+          <i class="fas fa-arrow-left mr-2"></i>Retour à la liste
+        </a>
+        <a href="{{ path('app_brancheentreprise_edit', {'idbranche': brancheentreprise.idbranche}) }}" class="btn btn-primary">
+          <i class="fas fa-edit mr-2"></i>Modifier
+        </a>
+      </div>
+
+      <div class="mt-3">
+        {{ include('brancheentreprise/_delete_form.html.twig') }}
+      </div>
+    </div>
+  </div>
+{% endblock %}

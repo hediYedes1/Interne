@@ -4,17 +4,15 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use App\Entity\Entreprise;
-
 #[ORM\Entity]
 class Departmententreprise
 {
-
     #[ORM\Id]
+    #[ORM\GeneratedValue]
     #[ORM\Column(type: "integer")]
     private int $iddepartement;
 
-        #[ORM\ManyToOne(targetEntity: Entreprise::class, inversedBy: "departmententreprises")]
+    #[ORM\ManyToOne(targetEntity: Entreprise::class, inversedBy: "departmententreprises")]
     #[ORM\JoinColumn(name: 'identreprise', referencedColumnName: 'identreprise', onDelete: 'CASCADE')]
     private Entreprise $identreprise;
 
@@ -30,63 +28,68 @@ class Departmententreprise
     #[ORM\Column(type: "integer")]
     private int $nbremployedepartement;
 
-    public function getIddepartement()
+    public function getIddepartement(): int
     {
         return $this->iddepartement;
     }
 
-    public function setIddepartement($value)
-    {
-        $this->iddepartement = $value;
-    }
-
-    public function getIdentreprise()
+    public function getIdentreprise(): Entreprise
     {
         return $this->identreprise;
     }
 
-    public function setIdentreprise($value)
+    public function setIdentreprise(Entreprise $identreprise): self
     {
-        $this->identreprise = $value;
+        $this->identreprise = $identreprise;
+
+        return $this;
     }
 
-    public function getNomdepartement()
+    public function getNomdepartement(): string
     {
         return $this->nomdepartement;
     }
 
-    public function setNomdepartement($value)
+    public function setNomdepartement(string $nomdepartement): self
     {
-        $this->nomdepartement = $value;
+        $this->nomdepartement = $nomdepartement;
+
+        return $this;
     }
 
-    public function getDescriptiondepartement()
+    public function getDescriptiondepartement(): string
     {
         return $this->descriptiondepartement;
     }
 
-    public function setDescriptiondepartement($value)
+    public function setDescriptiondepartement(string $descriptiondepartement): self
     {
-        $this->descriptiondepartement = $value;
+        $this->descriptiondepartement = $descriptiondepartement;
+
+        return $this;
     }
 
-    public function getResponsabledepartement()
+    public function getResponsabledepartement(): string
     {
         return $this->responsabledepartement;
     }
 
-    public function setResponsabledepartement($value)
+    public function setResponsabledepartement(string $responsabledepartement): self
     {
-        $this->responsabledepartement = $value;
+        $this->responsabledepartement = $responsabledepartement;
+
+        return $this;
     }
 
-    public function getNbremployedepartement()
+    public function getNbremployedepartement(): int
     {
         return $this->nbremployedepartement;
     }
 
-    public function setNbremployedepartement($value)
+    public function setNbremployedepartement(int $nbremployedepartement): self
     {
-        $this->nbremployedepartement = $value;
+        $this->nbremployedepartement = $nbremployedepartement;
+
+        return $this;
     }
 }
