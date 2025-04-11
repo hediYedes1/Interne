@@ -18,6 +18,9 @@
       --border: #e3e6f0;
     }
 
+    /* Icône dynamique après sélection */
+
+
     /* Layout */
     .interview-container {
       max-width: 1400px;
@@ -236,6 +239,16 @@
       color: var(--border);
       margin-bottom: 1.5rem;
     }
+
+    #typeinterview[value="ENLIGNE"] {
+  background-color: var(--primary-light);
+  color: var(--primary);
+}
+
+#typeinterview[value="ENPERSONNE"] {
+  background-color: rgba(28, 200, 138, 0.1);
+  color: var(--success);
+}
 
     .empty-state h4 {
       color: var(--dark);
@@ -472,4 +485,5 @@
       });
     });
   </script>
+  
 {% endblock %}
