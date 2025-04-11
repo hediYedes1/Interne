@@ -1,0 +1,489 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des Interviews{% endblock %}
+
+{% block css %}
+  {{ parent() }}
+  <style>
+    :root {
+      --primary: #4e73df;
+      --primary-light: #e8f1ff;
+      --secondary: #6c757d;
+      --success: #1cc88a;
+      --info: #36b9cc;
+      --warning: #f6c23e;
+      --danger: #e74a3b;
+      --light: #f8f9fc;
+      --dark: #5a5c69;
+      --border: #e3e6f0;
+    }
+
+    /* Icône dynamique après sélection */
+
+
+    /* Layout */
+    .interview-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* Header */
+    .page-header {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 2rem;
+    }
+
+    @media (min-width: 768px) {
+      .page-header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+    }
+
+    .page-title {
+      color: var(--dark);
+      font-weight: 600;
+      margin-bottom: 1rem;
+      font-size: 1.75rem;
+    }
+
+    /* Search Form */
+    .search-form {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+      margin-bottom: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    @media (min-width: 768px) {
+      .form-inline {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+      
+      .form-group {
+        margin-bottom: 0;
+        flex: 1;
+      }
+    }
+
+    .form-control {
+      border: 1px solid var(--border);
+      border-radius: 0.35rem;
+      padding: 0.5rem 1rem;
+      width: 100%;
+    }
+
+    /* Cards */
+    .interview-card {
+      background: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+      transition: all 0.3s ease;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      border-left: 4px solid var(--primary);
+      overflow: hidden;
+    }
+
+    .interview-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0.5rem 1.5rem rgba(58, 59, 69, 0.2);
+    }
+
+    .card-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      background-color: var(--light);
+    }
+
+    .card-title {
+      font-weight: 600;
+      color: var(--dark);
+      margin: 0;
+      padding-right: 2rem;
+      font-size: 1.1rem;
+    }
+
+    .card-badge {
+      position: absolute;
+      top: 1.25rem;
+      right: 1.5rem;
+      font-size: 0.75rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 2rem;
+      font-weight: 500;
+    }
+
+    .badge-online {
+      background-color: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid var(--primary);
+    }
+
+    .badge-inperson {
+      background-color: rgba(28, 200, 138, 0.1);
+      color: var(--success);
+      border: 1px solid var(--success);
+    }
+
+    .card-body {
+      padding: 1.5rem;
+      flex: 1;
+    }
+
+    .card-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px dashed var(--border);
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    /* Details */
+    .detail-item {
+      display: flex;
+      margin-bottom: 1rem;
+      align-items: center;
+    }
+
+    .detail-icon {
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      background-color: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 1rem;
+      flex-shrink: 0;
+    }
+
+    .detail-label {
+      font-size: 0.75rem;
+      color: var(--secondary);
+      margin-bottom: 0.25rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .detail-value {
+      font-weight: 500;
+      color: var(--dark);
+      font-size: 0.95rem;
+    }
+
+    .meet-link {
+      display: inline-flex;
+      align-items: center;
+      color: var(--primary);
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    /* Action Buttons */
+    .action-btn {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      margin-left: 0.5rem;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-2px) scale(1.1);
+      box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-view {
+      background-color: var(--primary);
+    }
+
+    .btn-tests {
+      background-color: var(--info);
+    }
+
+    .btn-join {
+      background-color: var(--success);
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      background-color: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      color: var(--border);
+      margin-bottom: 1.5rem;
+    }
+
+    #typeinterview[value="ENLIGNE"] {
+  background-color: var(--primary-light);
+  color: var(--primary);
+}
+
+#typeinterview[value="ENPERSONNE"] {
+  background-color: rgba(28, 200, 138, 0.1);
+  color: var(--success);
+}
+
+    .empty-state h4 {
+      color: var(--dark);
+      margin-bottom: 1rem;
+    }
+
+    .empty-state p {
+      color: var(--secondary);
+      margin-bottom: 1.5rem;
+    }
+
+    /* Results Info */
+    .results-info {
+      background-color: white;
+      border-radius: 0.5rem;
+      padding: 1rem 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+      font-size: 0.9rem;
+      color: var(--dark);
+    }
+
+    /* Search buttons */
+    .search-btn {
+      padding: 0.5rem 1.25rem;
+      border-radius: 0.35rem;
+      font-weight: 500;
+      transition: all 0.2s;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .btn-secondary {
+      background-color: var(--secondary);
+      color: white;
+    }
+
+    .search-btn i {
+      margin-right: 0.5rem;
+    }
+
+    /* Ensure Font Awesome icons are visible */
+    .fas, .far {
+      display: inline-block;
+      font-style: normal;
+      font-variant: normal;
+      text-rendering: auto;
+      line-height: 1;
+    }
+  </style>
+{% endblock %}
+
+{% block body %}
+  <div class="interview-container">
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1 class="page-title">📅 Mes Interviews</h1>
+    </div>
+
+    <!-- Search Form -->
+    <div class="search-form">
+      <form method="get" action="{{ path('app_interview_index_front') }}" class="form-inline">
+        <div class="form-group">
+             <input type="text" name="titreoffre" class="form-control" placeholder="🔍 Rechercher par titre"
+                 value="{{ app.request.get('titreoffre') }}">
+             </div>
+        
+            <div class="form-group">
+            <select name="typeinterview" class="form-control">
+            <option value="">🌐 Tous les types</option>
+            <option value="ENLIGNE" {{ app.request.get('typeinterview') == 'ENLIGNE' ? 'selected' : '' }}>💻 En ligne</option>
+            <option value="ENPERSONNE" {{ app.request.get('typeinterview') == 'ENPERSONNE' ? 'selected' : '' }}>🏢 En personne</option>
+             </select>
+        </div>
+        
+        <button type="submit" class="search-btn btn-primary">
+          <i class="fas fa-search"></i> Rechercher
+        </button>
+        
+        <a href="{{ path('app_interview_index_front') }}" class="search-btn btn-secondary" style="background-color: #6c757d; color: white;">
+          <i class="fas fa-undo"></i> Réinitialiser
+        </a>
+      </form>
+    </div>
+
+    <!-- Results Info -->
+    {% if app.request.get('titreoffre') or app.request.get('typeinterview') %}
+      <div class="results-info">
+        <i class="fas fa-info-circle"></i> Résultats pour: 
+        {% if app.request.get('titreoffre') %}
+          <strong>"{{ app.request.get('titreoffre') }}"</strong>
+        {% endif %}
+        {% if app.request.get('typeinterview') %}
+          {% if app.request.get('titreoffre') %} | {% endif %}
+          Type: <strong>{{ app.request.get('typeinterview') == 'ENLIGNE' ? 'En ligne' : 'En personne' }}</strong>
+        {% endif %}
+        ({{ interviews|length }} résultat(s) trouvé(s))
+      </div>
+    {% endif %}
+
+    <!-- Interview Cards -->
+    <div class="row">
+      {% if interviews|length > 0 %}
+        {% for interview in interviews %}
+          <div class="col-lg-6 col-xl-4 mb-4">
+            <div class="interview-card">
+              <div class="card-header">
+                <h3 class="card-title">{{ interview.titreoffre }}</h3>
+                <span class="card-badge {{ interview.typeinterview.value == 'ENLIGNE' ? 'badge-online' : 'badge-inperson' }}">
+                  {{ interview.typeinterview.value == 'ENLIGNE' ? '💻 En ligne' : '🏢 En personne' }}
+                </span>
+              </div>
+              
+              <div class="card-body">
+                <div class="detail-item">
+                  <div class="detail-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                  </div>
+                  <div>
+                    <div class="detail-label">Date</div>
+                    <div class="detail-value">
+                      {{ interview.dateinterview ? interview.dateinterview|date('d/m/Y') : 'Non spécifiée' }}
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="detail-item">
+                  <div class="detail-icon">
+                    <i class="fas fa-clock"></i>
+                  </div>
+                  <div>
+                    <div class="detail-label">Heure</div>
+                    <div class="detail-value">
+                      {{ interview.timeinterview ? interview.timeinterview|date('H:i') : 'Non spécifiée' }}
+                    </div>
+                  </div>
+                </div>
+                
+                {% if interview.typeinterview.value == 'ENLIGNE' %}
+                  <div class="detail-item">
+                    <div class="detail-icon">
+                      <i class="fas fa-video"></i>
+                    </div>
+                    <div>
+                      <div class="detail-label">Lien de réunion</div>
+                      <div class="detail-value">
+                        {% if interview.lienmeet %}
+                          <a href="{{ interview.lienmeet }}" target="_blank" class="meet-link">
+                            <i class="fas fa-external-link-alt"></i> Rejoindre la réunion
+                          </a>
+                        {% else %}
+                          <span class="text-muted">Non fourni</span>
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                {% else %}
+                  <div class="detail-item">
+                    <div class="detail-icon">
+                      <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div>
+                      <div class="detail-label">Localisation</div>
+                      <div class="detail-value">
+                        {{ interview.localisation ? interview.localisation : 'Non spécifiée' }}
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
+              </div>
+              
+              <div class="card-footer">
+                <a href="{{ path('app_interview_show_front', {'idinterview': interview.idinterview}) }}" 
+                   class="action-btn btn-view" title="Voir détails">
+                  <i class="fas fa-eye"></i>
+                </a>
+                
+                <a href="{{ path('app_testtechnique_by_interview_front', {'idinterview': interview.idinterview}) }}" 
+                   class="action-btn btn-tests" title="Tests techniques">
+                  <i class="fas fa-clipboard-check"></i>
+                </a>
+                
+                {% if interview.typeinterview.value == 'ENLIGNE' and interview.lienmeet %}
+                  <a href="{{ interview.lienmeet }}" target="_blank" 
+                     class="action-btn btn-join" title="Rejoindre">
+                    <i class="fas fa-video"></i>
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="col-12">
+          <div class="empty-state">
+            <i class="far fa-calendar-times"></i>
+            <h4>Aucune interview trouvée</h4>
+            <p>Il n'y a actuellement aucune interview programmée correspondant à vos critères.</p>
+            <a href="{{ path('app_interview_index_front') }}" class="search-btn btn-primary">
+              <i class="fas fa-undo"></i> Réinitialiser la recherche
+            </a>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
+
+{% block js %}
+  {{ parent() }}
+  <script>
+    $(document).ready(function() {
+      // Réappliquer les filtres après le chargement de la page
+      $('input[name="titreoffre"]').val("{{ app.request.get('titreoffre') }}");
+      $('select[name="typeinterview"]').val("{{ app.request.get('typeinterview') }}");
+      
+      // Animation des cartes
+      $('.interview-card').hide().each(function(i) {
+        $(this).delay(i * 100).fadeIn(300);
+      });
+
+      // Tooltips pour les boutons d'action
+      $('.action-btn').tooltip({
+        placement: 'top',
+        trigger: 'hover'
+      });
+    });
+  </script>
+  
+{% endblock %}

@@ -1,46 +1,119 @@
-{% extends 'base.html.twig' %}
+{% extends 'base1.html.twig' %}
 
-{% block title %}Interview{% endblock %}
+{% block title %}Détails de l'Interview #{{ interview.idinterview }}{% endblock %}
+
+{% block css %}
+  {{ parent() }}
+{% endblock %}
+
+{% block sideBar %}
+  {{ parent() }}
+{% endblock %}
+
+{% block headside %}
+  {{ parent() }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('app_interview_index') }}">Interviews</a></li>
+    <li class="breadcrumb-item active">Détails</li>
+{% endblock %}
 
 {% block body %}
-    <h1>Interview</h1>
+    <div class="container-fluid">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Détails de l'Interview</h1>
+            <div class="btn-group">
+                <a href="{{ path('app_interview_index') }}" class="btn btn-sm btn-secondary shadow-sm">
+                    <i class="fas fa-arrow-left fa-sm text-white-50 mr-2"></i>Retour à la liste
+                </a>
+                <a href="{{ path('app_interview_edit', {'idinterview': interview.idinterview}) }}" 
+                   class="btn btn-sm btn-primary shadow-sm ml-2">
+                    <i class="fas fa-edit fa-sm text-white-50 mr-2"></i>Modifier
+                </a>
+            </div>
+        </div>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Idinterview</th>
-                <td>{{ interview.idinterview }}</td>
-            </tr>
-            <tr>
-                <th>Titreoffre</th>
-                <td>{{ interview.titreoffre }}</td>
-            </tr>
-            <tr>
-                <th>Dateinterview</th>
-                <td>{{ interview.dateinterview ? interview.dateinterview|date('Y-m-d') : '' }}</td>
-            </tr>
-            <tr>
-                <th>Typeinterview</th>
-                <td>{{ interview.typeinterview }}</td>
-            </tr>
-            <tr>
-                <th>Lienmeet</th>
-                <td>{{ interview.lienmeet }}</td>
-            </tr>
-            <tr>
-                <th>Localisation</th>
-                <td>{{ interview.localisation }}</td>
-            </tr>
-            <tr>
-                <th>Timeinterview</th>
-                <td>{{ interview.timeinterview }}</td>
-            </tr>
-        </tbody>
-    </table>
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Informations principales</h6>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <th class="bg-light">ID</th>
+                                    <td>{{ interview.idinterview }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light">Titre de l'offre</th>
+                                    <td>{{ interview.titreoffre }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light">Date</th>
+                                    <td>{{ interview.dateinterview ? interview.dateinterview|date('d/m/Y') : 'Non définie' }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light">Heure</th>
+                                    <td>{{ interview.timeinterview ? interview.timeinterview|date('H:i') : 'Non définie' }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light">Type</th>
+                                    <td>{{ interview.typeinterview.value }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light">Localisation</th>
+                                    <td>{{ interview.localisation ? interview.localisation : 'Non spécifiée' }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light">Lien Meet</th>
+                                    <td>
+                                        {% if interview.lienmeet %}
+                                            <a href="{{ interview.lienmeet }}" target="_blank" class="btn btn-sm btn-info">
+                                                <i class="fas fa-video mr-2"></i>Rejoindre la réunion
+                                            </a>
+                                        {% else %}
+                                            Non spécifié
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
 
-    <a href="{{ path('app_interview_index') }}">back to list</a>
+            <div class="col-lg-4">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Actions</h6>
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <a href="{{ path('app_interview_edit', {'idinterview': interview.idinterview}) }}" 
+                               class="btn btn-primary btn-block">
+                                <i class="fas fa-edit mr-2"></i>Modifier l'interview
+                            </a>
+                        </div>
+                        <div class="mb-3">
+                            <button class="btn btn-outline-secondary btn-block" onclick="window.print()">
+                                <i class="fas fa-print mr-2"></i>Imprimer les détails
+                            </button>
+                        </div>
+                        <div>
+                            {{ include('interview/_delete_form.html.twig') }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
 
-    <a href="{{ path('app_interview_edit', {'idinterview': interview.idinterview}) }}">edit</a>
-
-    {{ include('interview/_delete_form.html.twig') }}
+{% block javascript %}
+  {{ parent() }}
 {% endblock %}

@@ -12,6 +12,8 @@ doctrine:
             enum: string
         types:
             role: App\Doctrine\TypeRoleType
+            statuttesttechnique: App\Doctrine\StatutTestTechniqueType
+            typeinterview: App\Doctrine\TypeInterviewType
     orm:
         auto_generate_proxy_classes: true
         enable_lazy_ghost_objects: true

@@ -1,0 +1,478 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tests Techniques{% endblock %}
+
+{% block css %}
+  {{ parent() }}
+  <style>
+    :root {
+      --primary: #4e73df;
+      --primary-light: #e8f1ff;
+      --secondary: #6c757d;
+      --success: #1cc88a;
+      --info: #36b9cc;
+      --warning: #f6c23e;
+      --danger: #e74a3b;
+      --light: #f8f9fc;
+      --dark: #5a5c69;
+      --border: #e3e6f0;
+    }
+
+    /* Layout général */
+    .test-technique-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* En-tête */
+    .page-header {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 2rem;
+    }
+
+    .page-title {
+      color: var(--dark);
+      font-weight: 600;
+      margin-bottom: 1rem;
+      font-size: 1.75rem;
+      position: relative;
+      padding-bottom: 0.5rem;
+    }
+
+    .page-title:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 60px;
+      height: 3px;
+      background: var(--primary);
+    }
+
+    /* Formulaire de recherche */
+    .search-container {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 0.8rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      margin-bottom: 2rem;
+    }
+
+    .search-container .form-control {
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      padding: 0.6rem 1rem;
+      transition: all 0.3s;
+    }
+
+    .search-container .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+    }
+
+    /* Boutons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.6rem 1.2rem;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      font-size: 0.9rem;
+      line-height: 1.25;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      border: none;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn i {
+      margin-right: 0.5rem;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: #3a5bbf;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(58, 91, 191, 0.3);
+    }
+
+    .btn-secondary {
+      background-color: var(--secondary);
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background-color: #5a6268;
+      transform: translateY(-2px);
+    }
+
+    .btn-success {
+      background-color: var(--success);
+      color: white;
+    }
+
+    .btn-info {
+      background-color: var(--info);
+      color: white;
+    }
+
+    /* Cartes de test */
+    .test-card {
+      border: none;
+      border-radius: 0.8rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      overflow: hidden;
+      height: 100%;
+    }
+
+    .test-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    }
+
+    .card-header {
+      background: linear-gradient(135deg, var(--primary) 0%, #3a5bbf 100%);
+      color: white;
+      padding: 1.25rem 1.5rem;
+      border-bottom: none;
+    }
+
+    .card-title {
+      font-weight: 600;
+      margin-bottom: 0;
+      font-size: 1.1rem;
+    }
+
+    .card-body {
+      padding: 1.5rem;
+    }
+
+    .card-footer {
+      background: white;
+      border-top: none;
+      padding: 1rem 1.5rem;
+    }
+
+    /* Bouton de lancement de quiz */
+    .quiz-launch-btn {
+      position: absolute;
+      top: -15px;
+      right: -15px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      box-shadow: 0 4px 15px rgba(28, 200, 138, 0.3);
+      border: 3px solid white;
+      font-size: 1.2rem;
+      transition: all 0.3s;
+    }
+
+    .quiz-launch-btn:hover {
+      transform: scale(1.1);
+    }
+
+    /* Badges */
+    .badge {
+      font-size: 0.8rem;
+      padding: 0.35rem 0.7rem;
+      border-radius: 50px;
+      font-weight: 500;
+    }
+
+    .badge-success {
+      background-color: rgba(28, 200, 138, 0.15);
+      color: var(--success);
+    }
+
+    .badge-warning {
+      background-color: rgba(246, 194, 62, 0.15);
+      color: var(--warning);
+    }
+
+    .badge-danger {
+      background-color: rgba(231, 74, 59, 0.15);
+      color: var(--danger);
+    }
+
+    /* État vide */
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      background: white;
+      border-radius: 0.8rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .empty-state i {
+      font-size: 3.5rem;
+      color: var(--border);
+      margin-bottom: 1.5rem;
+      opacity: 0.7;
+    }
+
+    .empty-state h4 {
+      color: var(--dark);
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+
+    .empty-state p {
+      color: var(--secondary);
+      margin-bottom: 1.5rem;
+      font-size: 1rem;
+    }
+
+    /* Info résultats */
+    .results-info {
+      background-color: var(--primary-light);
+      border-left: 4px solid var(--primary);
+      padding: 1rem 1.5rem;
+      border-radius: 0.5rem;
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+    }
+
+    /* Détails dans les cartes */
+    .detail-item {
+      margin-bottom: 1rem;
+    }
+
+    .detail-item strong {
+      color: var(--dark);
+    }
+
+    .detail-item p {
+      margin-bottom: 0;
+      color: var(--secondary);
+    }
+
+    .questions-count {
+      display: flex;
+      align-items: center;
+      color: var(--info);
+      font-weight: 500;
+    }
+
+    .questions-count i {
+      margin-right: 0.5rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .search-container .form-group {
+        margin-bottom: 1rem;
+        width: 100%;
+      }
+      
+      .search-container .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+      }
+    }
+    
+  </style>
+{% endblock %}
+
+{% block body %}
+  <div class="test-technique-container">
+    <!-- En-tête de page -->
+    <div class="page-header">
+      <h1 class="page-title">Tests Techniques</h1>
+      
+      {% if interview is defined %}
+        <div class="d-flex align-items-center flex-wrap">
+          <h2 class="text-primary mb-0 mr-3">Tests pour: {{ interview.titreoffre }}</h2>
+          <a href="{{ path('app_interview_index_front') }}" class="btn btn-secondary text-white">
+            <i class="fas fa-arrow-left"></i> Retour aux interviews
+          </a>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Formulaire de recherche -->
+    <div class="search-container">
+      <form method="get" action="{{ interview is defined ? path('app_testtechnique_by_interview_front', {'idinterview': interview.idinterview}) : path('app_testtechnique_index_front') }}" class="form-inline">
+        <div class="form-group mr-3 mb-2">
+          <input type="text" name="titretesttechnique" class="form-control" placeholder="🔍 Titre du test"
+                 value="{{ app.request.get('titretesttechnique') }}">
+        </div>
+        
+        <div class="form-group mr-3 mb-2">
+          <select name="statuttesttechnique" class="form-control">
+            <option value="">📊 Tous les statuts</option>
+            <option value="ACCEPTE" {{ app.request.get('statuttesttechnique') == 'ACCEPTE' ? 'selected' : '' }}>✅ Accepté</option>
+            <option value="ENATTENTE" {{ app.request.get('statuttesttechnique') == 'ENATTENTE' ? 'selected' : '' }}>⏳ En attente</option>
+            <option value="REFUSE" {{ app.request.get('statuttesttechnique') == 'REFUSE' ? 'selected' : '' }}>❌ Refusé</option>
+          </select>
+        </div>
+        
+        <div class="d-flex">
+          <button type="submit" class="btn btn-primary mr-2 mb-2">
+            <i class="fas fa-search"></i> Rechercher
+          </button>
+          
+          <a href="{{ interview is defined ? path('app_testtechnique_by_interview_front', {'idinterview': interview.idinterview}) : path('app_testtechnique_index_front') }}" 
+             class="btn btn-secondary text-white mb-2">
+            <i class="fas fa-undo"></i> Réinitialiser
+          </a>
+        </div>
+      </form>
+    </div>
+
+    <!-- Résultats de recherche -->
+    {% if app.request.get('titretesttechnique') or app.request.get('statuttesttechnique') %}
+      <div class="results-info">
+        <i class="fas fa-info-circle mr-2"></i>
+        <span>
+          Résultats pour: 
+          {% if app.request.get('titretesttechnique') %}
+            <strong>"{{ app.request.get('titretesttechnique') }}"</strong>
+          {% endif %}
+          {% if app.request.get('statuttesttechnique') %}
+            {% if app.request.get('titretesttechnique') %} | {% endif %}
+            Statut: <strong>{{ app.request.get('statuttesttechnique') }}</strong>
+          {% endif %}
+          ({{ testtechniques|length }} résultat(s))
+        </span>
+      </div>
+    {% endif %}
+
+    <!-- Liste des tests -->
+    <div class="row">
+      {% for testtechnique in testtechniques %}
+        <div class="col-lg-4 col-md-6 mb-4">
+          <div class="card-container position-relative">
+            <!-- Bouton de lancement -->
+            {% if testtechnique.questions|length > 0 %}
+              <a href="{{ path('app_testtechnique_quiz_front', {'idtesttechnique': testtechnique.idtesttechnique}) }}" 
+                 class="quiz-launch-btn btn btn-success text-white" 
+                 title="Commencer le test">
+                <i class="fas fa-play"></i>
+              </a>
+            {% else %}
+              <button class="quiz-launch-btn btn btn-secondary"
+                      title="Test non disponible"
+                      disabled>
+                <i class="fas fa-ban"></i>
+              </button>
+            {% endif %}
+            
+            <!-- Carte de test -->
+            <div class="card test-card h-100">
+              <div class="card-header">
+                <h5 class="card-title">{{ testtechnique.titretesttechnique }}</h5>
+              </div>
+              
+              <div class="card-body">
+                <div class="detail-item">
+                  <strong>Description</strong>
+                  <p>{{ testtechnique.descriptiontesttechnique }}</p>
+                </div>
+                
+                <div class="row">
+                  <div class="col-md-6 detail-item">
+                    <strong><i class="fas fa-clock mr-1"></i> Durée</strong>
+                    <p>{{ testtechnique.dureetesttechnique }} minutes</p>
+                  </div>
+                  
+                  <div class="col-md-6 detail-item">
+                    <strong>Statut</strong>
+                    <p>
+                      <span class="badge 
+                        {% if testtechnique.statuttesttechnique.value == 'ACCEPTE' %}badge-success
+                        {% elseif testtechnique.statuttesttechnique.value == 'ENATTENTE' %}badge-warning
+                        {% else %}badge-danger{% endif %}">
+                        {{ testtechnique.statuttesttechnique.value }}
+                      </span>
+                    </p>
+                  </div>
+                </div>
+                
+                <div class="detail-item">
+                  <strong><i class="fas fa-calendar-alt mr-1"></i> Date création</strong>
+                  <p>{{ testtechnique.datecreationtesttechnique ? testtechnique.datecreationtesttechnique|date('d/m/Y H:i') : 'Non définie' }}</p>
+                </div>
+                
+                <div class="questions-count">
+                  <i class="fas fa-question-circle"></i>
+                  {{ testtechnique.questions|length }} question(s)
+                </div>
+              </div>
+              
+              <div class="card-footer bg-white text-center">
+                <div class="d-flex justify-content-center">
+                  <a href="{{ path('app_testtechnique_show_front', {'idtesttechnique': testtechnique.idtesttechnique}) }}" 
+                     class="btn btn-info text-white mr-2">
+                    <i class="fas fa-eye"></i> Détails
+                  </a>
+                  
+                  {% if testtechnique.questions|length > 0 %}
+                    <a href="{{ path('app_testtechnique_quiz_front', {'idtesttechnique': testtechnique.idtesttechnique}) }}" 
+                       class="btn btn-success text-white">
+                      <i class="fas fa-play"></i> Démarrer
+                    </a>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% else %}
+        <div class="col-12">
+          <div class="empty-state">
+            <i class="far fa-file-alt"></i>
+            <h4>Aucun test technique trouvé</h4>
+            <p>Aucun test ne correspond à vos critères de recherche.</p>
+            <a href="{{ interview is defined ? path('app_testtechnique_by_interview_front', {'idinterview': interview.idinterview}) : path('app_testtechnique_index_front') }}" 
+               class="btn btn-primary">
+              <i class="fas fa-undo"></i> Réinitialiser
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}
+
+{% block js %}
+  {{ parent() }}
+  <script>
+    $(document).ready(function() {
+      // Animation des cartes
+      $('.test-card').hide().each(function(i) {
+        $(this).delay(i * 100).fadeIn(300);
+      });
+      
+      // Tooltips
+      $('[title]').tooltip({
+        placement: 'top',
+        trigger: 'hover'
+      });
+      
+      // Animation au survol des boutons de quiz
+      $('.quiz-launch-btn').hover(
+        function() {
+          if (!$(this).prop('disabled')) {
+            $(this).css('transform', 'scale(1.1)');
+          }
+        },
+        function() {
+          $(this).css('transform', 'scale(1)');
+        }
+      );
+    });
+  </script>
+{% endblock %}

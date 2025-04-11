@@ -7,6 +7,8 @@ use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use App\Enum\Role;
+use App\Entity\Affectationhebergement;
+use App\Entity\Affectationinterview;
 
 #[ORM\Entity]
 class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
@@ -150,38 +152,60 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         $this->profilepictureurl = $value;
     }
 
-    // Implementing UserInterface methods
-    public function getRoles(): array
-    {
-        // Return the role as an array
-        return [$this->role->value];
-    }
+   
 
-    public function getPassword(): string
-    {
-        return $this->motdepasseutilisateur;
-    }
+        public function getAffectationhebergements(): Collection
+        {
+            return $this->affectationhebergements;
+        }
+    
+        public function addAffectationhebergement(Affectationhebergement $affectationhebergement): self
+        {
+            if (!$this->affectationhebergements->contains($affectationhebergement)) {
+                $this->affectationhebergements[] = $affectationhebergement;
+                $affectationhebergement->setIdutilisateur($this);
+            }
+    
+            return $this;
+        }
+    
+        public function removeAffectationhebergement(Affectationhebergement $affectationhebergement): self
+        {
+            if ($this->affectationhebergements->removeElement($affectationhebergement)) {
+                // set the owning side to null (unless already changed)
+                if ($affectationhebergement->getIdutilisateur() === $this) {
+                    $affectationhebergement->setIdutilisateur(null);
+                }
+            }
+    
+            return $this;
+        }
 
-    public function getSalt(): ?string
+        public function getAffectationinterviews(): Collection
+        {
+            return $this->affectationinterviews;
+        }
+        public function eraseCredentials(): void
     {
-        // Not needed for modern algorithms like bcrypt or sodium
-        return null;
+        // If you store any temporary sensitive data, clear it here
     }
-
-    public function getUsername(): string
-    {
-        // Use email as the username
-        return $this->emailutilisateur;
-    }
-
     public function getUserIdentifier(): string
     {
         // Use email as the unique identifier
         return $this->emailutilisateur;
     }
-
-    public function eraseCredentials(): void
+    public function getSalt(): ?string
     {
-        // If you store any temporary sensitive data, clear it here
+        // Not needed for modern algorithms like bcrypt or sodium
+        return null;
+    }
+    public function getPassword(): string
+    {
+        return $this->motdepasseutilisateur;
+    }
+    public function getRoles(): array
+    {
+        // Return the role as an array
+        return [$this->role->value];
     }
 }
