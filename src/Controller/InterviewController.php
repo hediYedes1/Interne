@@ -21,15 +21,20 @@ final class InterviewController extends AbstractController
 #[Route('/list', name: 'app_interview_index', methods: ['GET'])]
 public function index(Request $request, InterviewRepository $interviewRepository): Response
 {
+    $user = $this->getUser();
+    if (!$user) {
+        throw $this->createAccessDeniedException('Vous devez être connecté pour voir vos interviews.');
+    }
     $titre = $request->query->get('titreoffre');
     $type = $request->query->get('typeinterview');
     
-    $interviews = $interviewRepository->findByFilters($titre, $type);
-    
+   // $interviews = $interviewRepository->findByFilters($titre, $type);
+   $interviews = $interviewRepository->findInterviewsByUserWithFilters($user, $titre, $type);
     return $this->render('interview/index.html.twig', [
         'interviews' => $interviews,
     ]);
 }
+
 #[Route('/listBack', name: 'app_interview_index_back', methods: ['GET'])]
 public function indexBack(Request $request, InterviewRepository $interviewRepository): Response
 {
@@ -46,10 +51,14 @@ public function indexBack(Request $request, InterviewRepository $interviewReposi
 #[Route('/listFront', name: 'app_interview_index_front', methods: ['GET'])]
 public function indexFront(Request $request, InterviewRepository $interviewRepository): Response
 {
+    $user = $this->getUser();
+    if (!$user) {
+        throw $this->createAccessDeniedException('Vous devez être connecté pour voir vos interviews.');
+    }
     $titre = $request->query->get('titreoffre');
     $type = $request->query->get('typeinterview');
     
-    $interviews = $interviewRepository->findByFilters($titre, $type);
+    $interviews = $interviewRepository->findInterviewsByUserWithFilters($user, $titre, $type);
     
     return $this->render('interview/indexFront.html.twig', [
         'interviews' => $interviews,
@@ -141,5 +150,7 @@ public function indexFront(Request $request, InterviewRepository $interviewRepos
             'tests' => $tests,
         ]);
     }
+ 
+
 
 }
