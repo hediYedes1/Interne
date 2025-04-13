@@ -137,18 +137,40 @@ public function new(Request $request, EntityManagerInterface $entityManager): Re
     #[Route('/{idinterview}/edit', name: 'app_interview_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Interview $interview, EntityManagerInterface $entityManager): Response
     {
+        // Récupérer l'utilisateur connecté
+        $user = $this->getUser();
+        if (!$user) {
+            throw $this->createAccessDeniedException('Vous devez être connecté pour modifier une interview.');
+        }
+    
+        // Vérifier que l'utilisateur est bien associé à cette interview
+        $affectation = $entityManager->getRepository(Affectationinterview::class)->findOneBy([
+            'idinterview' => $interview,
+            'idutilisateur' => $user
+        ]);
+    
+        if (!$affectation) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas modifier cette interview.');
+        }
+    
         $form = $this->createForm(InterviewType::class, $interview);
         $form->handleRequest($request);
-
+    
         if ($form->isSubmitted() && $form->isValid()) {
+            // Mettre à jour le titre de l'offre si l'offre a changé
+            $interview->setTitreoffre($interview->getIdoffre()->getTitreoffre());
+            
+            // Mettre à jour la date de modification dans l'affectation
+            $affectation->setDateaffectationinterview(new \DateTime());
+            
             $entityManager->flush();
-
+    
             return $this->redirectToRoute('app_interview_index', [], Response::HTTP_SEE_OTHER);
         }
-
+    
         return $this->render('interview/edit.html.twig', [
             'interview' => $interview,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 

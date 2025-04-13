@@ -30,6 +30,11 @@ class LoginSuccessHandler implements AuthenticationSuccessHandlerInterface
             return new RedirectResponse($this->router->generate('app_base2'));
         }
 
+        if (in_array(Role::RH->value, $roles, true)) {
+            // Redirect to base2 for ADMIN
+            return new RedirectResponse($this->router->generate('app_base2'));
+        }
+
         // Redirect to base for other roles
         return new RedirectResponse($this->router->generate('app_base'));
     }

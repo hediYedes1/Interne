@@ -28,7 +28,7 @@ class SecurityController extends AbstractController
 
             } elseif (in_array(Role::RH->value, $roles, true)) {
                 return $this->redirectToRoute('app_base2');
-            } else {
+            } elseif (in_array(Role::ADMIN->value, $roles, true)) {
                 return $this->redirectToRoute('app_base2');
             }
             

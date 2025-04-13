@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Enum\Role;
+use PhpParser\Node\Stmt\Else_;
+use PhpParser\Node\Stmt\ElseIf_;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -23,14 +25,12 @@ final class BaseController extends AbstractController
                 return $this->render('base1.html.twig', [
                     'user' => $user,
                 ]);
+            } elseif (in_array(Role::RH, $roles, true )) {
+                return $this->render('base1.html.twig',
+                   ['user' => $user,]);
             }
-            elseif (in_array(Role::RH, $roles, true)) {
-                return $this->render('base1.html.twig', [
-                    'user' => $user,
-                ]);
-            } else {
-                return $this->redirectToRoute('app_base2');
-            }
+
+            
         }
 
         return $this->render('base.html.twig');

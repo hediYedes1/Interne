@@ -31,11 +31,12 @@ class QuizController extends AbstractController
     
             foreach ($questions as $index => $question) {
                 if (!isset($data['answers'][$index])) continue;
-    
+            
                 $userAnswer = $data['answers'][$index];
-                $correctAnswers = $question['correctAnswers'] ?? [];
+                $correctAnswers = $question['correct_answers'] ?? [];
+            
                 $userAnswerKey = strtolower($userAnswer);
-
+            
                 if (array_key_exists($userAnswerKey, $correctAnswers)) {
                     $isCorrect = filter_var($correctAnswers[$userAnswerKey], FILTER_VALIDATE_BOOLEAN);
                     if ($isCorrect) {
