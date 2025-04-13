@@ -20,12 +20,14 @@ class SecurityController extends AbstractController
         $error = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();
 
-        // If the user is already logged in, redirect to the appropriate page based on their role
         $user = $this->getUser();
         if ($user) {
             $roles = $user->getRoles();
             if (in_array(Role::CANDIDAT->value, $roles, true)) {
                 return $this->redirectToRoute('app_base');
+
+            } elseif (in_array(Role::RH->value, $roles, true)) {
+                return $this->redirectToRoute('app_base2');
             } else {
                 return $this->redirectToRoute('app_base2');
             }
@@ -55,7 +57,7 @@ class SecurityController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('app_base3');
         }
 
         return $this->render('utilisateur/signUp.html.twig');

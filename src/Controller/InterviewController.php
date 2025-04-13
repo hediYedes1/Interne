@@ -12,6 +12,8 @@ use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\Testtechnique;
 use App\Repository\InterviewRepository;
 use App\Enum\TypeInterview;
+use App\Entity\Affectationinterview;
+use App\Repository\AffectationinterviewRepository;
 
 #[Route('/interview')]
 final class InterviewController extends AbstractController
@@ -38,10 +40,14 @@ public function index(Request $request, InterviewRepository $interviewRepository
 #[Route('/listBack', name: 'app_interview_index_back', methods: ['GET'])]
 public function indexBack(Request $request, InterviewRepository $interviewRepository): Response
 {
+    $user = $this->getUser();
+    if (!$user) {
+        throw $this->createAccessDeniedException('Vous devez être connecté pour voir vos interviews.');
+    }
     $titre = $request->query->get('titreoffre');
     $type = $request->query->get('typeinterview');
     
-    $interviews = $interviewRepository->findByFilters($titre, $type);
+    $interviews = $interviewRepository->findInterviewsByUserWithFilters($user, $titre, $type);
     
     return $this->render('interview/indexBack.html.twig', [
         'interviews' => $interviews,
@@ -65,28 +71,44 @@ public function indexFront(Request $request, InterviewRepository $interviewRepos
     ]);
 }
     
-    #[Route('/new', name: 'app_interview_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $interview = new Interview();
-        $form = $this->createForm(InterviewType::class, $interview);
-        $form->handleRequest($request);
-    
-        if ($form->isSubmitted() && $form->isValid()) {
-            // Copiez le titre de l'offre vers titreoffre
-            $interview->setTitreoffre($interview->getIdoffre()->getTitreoffre());
-            
-            $entityManager->persist($interview);
-            $entityManager->flush();
-    
-            return $this->redirectToRoute('app_interview_index', [], Response::HTTP_SEE_OTHER);
-        }
-    
-        return $this->render('interview/new.html.twig', [
-            'interview' => $interview,
-            'form' => $form->createView(),
-        ]);
+#[Route('/new', name: 'app_interview_new', methods: ['GET', 'POST'])]
+public function new(Request $request, EntityManagerInterface $entityManager): Response
+{
+    // Récupérer l'utilisateur connecté
+    $user = $this->getUser();
+    if (!$user) {
+        throw $this->createAccessDeniedException('Vous devez être connecté pour créer une interview.');
     }
+
+    $interview = new Interview();
+    $form = $this->createForm(InterviewType::class, $interview);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        // Copier le titre de l'offre
+        $interview->setTitreoffre($interview->getIdoffre()->getTitreoffre());
+        
+        // Persister l'interview d'abord
+        $entityManager->persist($interview);
+        $entityManager->flush(); // Nécessaire pour obtenir l'ID de l'interview
+        
+        // Créer l'affectation
+        $affectation = new Affectationinterview();
+        $affectation->setIdutilisateur($user);
+        $affectation->setIdinterview($interview);
+        $affectation->setDateaffectationinterview(new \DateTime());
+        
+        $entityManager->persist($affectation);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_interview_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    return $this->render('interview/new.html.twig', [
+        'interview' => $interview,
+        'form' => $form->createView(),
+    ]);
+}
 
     #[Route('/{idinterview}', name: 'app_interview_show', methods: ['GET'])]
     public function show(Interview $interview): Response
