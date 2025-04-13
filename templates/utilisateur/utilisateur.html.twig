@@ -247,7 +247,7 @@
         // Profile image upload handling
         $('#profile-image-input').change(function() {
                 if (this.files && this.files[0]) {
-                    // Preview the image
+                    // Preview the image temporarily
                     var reader = new FileReader();
                     reader.onload = function(e) {
                         $('#profile-preview').attr('src', e.target.result);
@@ -265,9 +265,11 @@
                         contentType: false,
                         success: function(response) {
                             toastr.success(response.message);
-                            // Add timestamp to force refresh the image
-                            var timestamp = new Date().getTime();
-                            $('#profile-preview').attr('src', $('#profile-preview').attr('src').split('?')[0] + '?' + timestamp);
+                            // Update the image source with the new filename
+                            if (response.success && response.newFilename) {
+                                var newImageUrl = '{{ asset('uploads/profile_images/') }}' + response.newFilename + '?t=' + new Date().getTime();
+                                $('#profile-preview').attr('src', newImageUrl);
+                            }
                         },
                         error: function(xhr) {
                             try {

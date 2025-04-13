@@ -85,7 +85,7 @@ class ProfilePageController extends AbstractController
                 return $this->json([
                     'success' => true,
                     'message' => 'Photo de profil mise à jour avec succès',
-                    'imageUrl' => $this->generateUrl('app_profile') // Return the profile page URL
+                    'newFilename' => $newFilename  // Return the new filename
                 ]);
             } catch (FileException $e) {
                 return $this->json([
@@ -99,7 +99,7 @@ class ProfilePageController extends AbstractController
             'success' => false,
             'message' => 'Aucun fichier téléchargé'
         ]);
-    }
+        }
 
     #[Route('/update-password', name: 'update_password', methods: ['POST'])]
     public function updatePassword(
