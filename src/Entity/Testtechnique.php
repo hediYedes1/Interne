@@ -27,6 +27,7 @@ class Testtechnique
     private string $titretesttechnique;
 
     #[Assert\NotBlank(message: "La description est obligatoire.")]
+    #[Assert\Length(min: 5, max: 255, minMessage: "La description doit contenir au moins {{ limit }} caractères.")]
     #[ORM\Column(type: "string", length: 255)]
     private string $descriptiontesttechnique;
 
