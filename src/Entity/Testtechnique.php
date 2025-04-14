@@ -35,8 +35,8 @@ class Testtechnique
     #[ORM\Column(type: "integer")]
     private int $dureetesttechnique;
 
-    #[Assert\NotBlank(message: "Le statut est obligatoire.")]
-    #[ORM\Column(type: "statuttesttechnique")]
+    
+    #[ORM\Column(type: "statuttesttechnique" , options: ["default" => "ENATTENTE"])]
     private StatutTestTechnique $statuttesttechnique;
 
     
@@ -110,6 +110,7 @@ private ?string $questions = null;
     public function __construct()
     {
         $this->datecreationtesttechnique = new \DateTimeImmutable();
+        $this->statuttesttechnique = StatutTestTechnique::ENATTENTE;
     }
     
     

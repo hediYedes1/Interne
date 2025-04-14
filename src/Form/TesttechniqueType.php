@@ -4,7 +4,6 @@ namespace App\Form;
 
 use App\Entity\Interview;
 use App\Entity\Testtechnique;
-use App\Enum\StatutTestTechnique;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -21,13 +20,7 @@ class TesttechniqueType extends AbstractType
     $builder
         ->add('titretesttechnique')
         ->add('descriptiontesttechnique')
-        ->add('dureetesttechnique')
-        ->add('statuttesttechnique', EnumType::class, [
-            'class' => StatutTestTechnique::class,
-            'choice_label' => fn(StatutTestTechnique $type) => $type->getLabel(),
-            'label' => 'Statut du test technique',
-            'placeholder' => 'Sélectionnez un statut',
-        ]);
+        ->add('dureetesttechnique');
         
 
     // Only add idinterview field if no interview is passed in options

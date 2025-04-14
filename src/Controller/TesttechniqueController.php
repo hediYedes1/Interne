@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use App\Enum\StatutTestTechnique;
 use Symfony\Component\Routing\Attribute\Route;
 
 
@@ -297,6 +298,7 @@ public function addQuiz(
         EntityManagerInterface $entityManager
     ): Response {
         $testtechnique->setQuestions([]);
+        $testtechnique->setStatuttesttechnique(StatutTestTechnique::ENATTENTE);
         $entityManager->flush();
 
         $this->addFlash('success', 'Quiz supprimé du test technique');

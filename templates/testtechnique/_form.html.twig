@@ -49,17 +49,6 @@
         </div>
 
        <div class="form-group row mb-4">
-    <div class="col-md-6">
-        <div class="form-floating">
-            {{ form_widget(form.statuttesttechnique, {'attr': {
-                'class': 'form-select form-select-lg'
-            }}) }}
-            {{ form_label(form.statuttesttechnique, 'Statut du test', {'label_attr': {'class': 'form-label'}}) }}
-            <div class="invalid-feedback">
-                {{ form_errors(form.statuttesttechnique) }}
-            </div>
-        </div>
-    </div>
     {% if form.idinterview is defined %}
     <div class="col-md-6">
         <div class="form-floating">
