@@ -16,18 +16,20 @@ final class UtilisateurController extends AbstractController
     #[Route(name: 'app_utilisateur_index', methods: ['GET'])]
     public function index(Request $request, EntityManagerInterface $entityManager): Response
     {
-        // Get search and sorting parameters from the request
-        $search = $request->query->get('search', ''); // Search query
-        $sort = $request->query->get('sort', 'nomutilisateur'); // Default sort field
-        $direction = $request->query->get('direction', 'asc'); // Default sort direction
+        $search = $request->query->get('search', ''); 
+        $field = $request->query->get('field', 'nomutilisateur'); 
+        $sort = $request->query->get('sort', 'nomutilisateur'); 
+        $direction = $request->query->get('direction', 'asc'); 
 
-        // Build the query with search and sorting
+        $allowedFields = ['nomutilisateur', 'prenomutilisateur', 'emailutilisateur', 'ageutilisateur'];
+        if (!in_array($field, $allowedFields)) {
+            $field = 'nomutilisateur';
+        }
+
         $queryBuilder = $entityManager->getRepository(Utilisateur::class)->createQueryBuilder('u');
 
         if (!empty($search)) {
-            $queryBuilder->where('u.nomutilisateur LIKE :search')
-                ->orWhere('u.prenomutilisateur LIKE :search')
-                ->orWhere('u.emailutilisateur LIKE :search')
+            $queryBuilder->where("u.$field LIKE :search")
                 ->setParameter('search', '%' . $search . '%');
         }
 
@@ -38,6 +40,7 @@ final class UtilisateurController extends AbstractController
         return $this->render('utilisateur/index.html.twig', [
             'utilisateurs' => $utilisateurs,
             'search' => $search,
+            'field' => $field,
             'sort' => $sort,
             'direction' => $direction,
         ]);
