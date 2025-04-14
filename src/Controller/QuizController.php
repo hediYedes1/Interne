@@ -10,11 +10,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Enum\StatutTestTechnique;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Response;
 
 class QuizController extends AbstractController
 {
     #[Route('/quiz/submit', name: 'quiz_submit', methods: ['POST'])]
-    public function submitQuiz(Request $request, TesttechniqueRepository $testRepo, EntityManagerInterface $em): JsonResponse
+    public function submitQuiz(Request $request, TesttechniqueRepository $testRepo, EntityManagerInterface $em): Response
     {
         try {
             $data = json_decode($request->getContent(), true) ?: $request->request->all();
@@ -28,26 +29,38 @@ class QuizController extends AbstractController
     
             $correctCount = 0;
             $questions = $test->getQuestions();
+            $results = [];
     
             foreach ($questions as $index => $question) {
-                if (!isset($data['answers'][$index])) continue;
-    
-                $userAnswer = $data['answers'][$index];
+                $userAnswer = $data['answers'][$index] ?? null;
                 $correctAnswers = $question['correctAnswers'] ?? [];
+                $isCorrect = false;
+                $correctAnswerKey = null;
     
-                // Vérification plus robuste des réponses
-                foreach ($correctAnswers as $answerKey => $isCorrect) {
-                    // Normaliser les clés pour la comparaison
-                    $normalizedUserAnswer = strtolower(trim($userAnswer));
-                    $normalizedAnswerKey = strtolower(trim(str_replace('_correct', '', $answerKey)));
-    
-                    if ($normalizedUserAnswer === $normalizedAnswerKey) {
-                        if (filter_var($isCorrect, FILTER_VALIDATE_BOOLEAN)) {
-                            $correctCount++;
-                            break; // Sortir de la boucle si une bonne réponse est trouvée
-                        }
+                // Trouver la bonne réponse
+                foreach ($correctAnswers as $answerKey => $isCorrectAnswer) {
+                    if (filter_var($isCorrectAnswer, FILTER_VALIDATE_BOOLEAN)) {
+                        $correctAnswerKey = str_replace('_correct', '', $answerKey);
+                        break;
                     }
                 }
+    
+                // Vérifier si la réponse de l'utilisateur est correcte
+                if ($userAnswer) {
+                    $normalizedUserAnswer = strtolower(trim($userAnswer));
+                    $normalizedCorrectAnswer = strtolower(trim($correctAnswerKey));
+                    
+                    if ($normalizedUserAnswer === $normalizedCorrectAnswer) {
+                        $correctCount++;
+                        $isCorrect = true;
+                    }
+                }
+    
+                $results[] = [
+                    'isCorrect' => $isCorrect,
+                    'correctAnswer' => $correctAnswerKey,
+                    'userAnswer' => $userAnswer
+                ];
             }
     
             $statut = $correctCount >= 8 ? StatutTestTechnique::ACCEPTE : StatutTestTechnique::REFUSE;
@@ -59,15 +72,21 @@ class QuizController extends AbstractController
                 'score' => $correctCount,
                 'total' => count($questions),
                 'statut' => $statut->value,
-                'message' => 'Quiz évalué avec succès'
+                'results' => $results,
+                'redirect' => $this->generateUrl('app_testtechnique_show', [
+                    'idtesttechnique' => $test->getIdtesttechnique()
+                ])
             ]);
     
         } catch (\Exception $e) {
             error_log("ERREUR: ".$e->getMessage());
             return new JsonResponse([
                 'success' => false,
-                'error' => $e->getMessage()
-            ], 400);
+                'error' => $e->getMessage(),
+                'redirect' => $this->generateUrl('app_testtechnique_quiz', [
+                    'idtesttechnique' => $data['test_id'] ?? null
+                ])
+            ], Response::HTTP_BAD_REQUEST);
         }
     }
 }

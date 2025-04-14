@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Enum\StatutTestTechnique;
 use Symfony\Component\Routing\Attribute\Route;
-
+use App\Utils\EmailService;
 
 #[Route('/testtechnique')]
 final class TesttechniqueController extends AbstractController
@@ -80,7 +80,7 @@ final class TesttechniqueController extends AbstractController
             'form' => $form,
         ]);
     }
-
+   
 
         #[Route('/{idtesttechnique}', name: 'app_testtechnique_show', methods: ['GET'])]
 public function show(Testtechnique $testtechnique): Response
