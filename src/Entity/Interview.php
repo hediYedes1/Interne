@@ -32,8 +32,9 @@ class Interview
 
     #[Assert\NotBlank(message: "La date est obligatoire.")]
     #[Assert\GreaterThanOrEqual("today", message: "La date doit être au moins aujourd'hui.")]
-    #[ORM\Column(type: "date")]
-    private \DateTimeInterface $dateinterview;
+    #[ORM\Column(type: "date", nullable: true)]
+    private ?\DateTimeInterface $dateinterview = null;
+    
 
     #[Assert\NotBlank(message: "Le type d'interview est obligatoire.")]
     #[ORM\Column(type: "typeinterview")]
@@ -49,8 +50,8 @@ class Interview
 
     #[Assert\NotBlank(message: "L'heure est obligatoire.")]
     #[Assert\Callback([self::class, 'validateTimeInterview'])]
-    #[ORM\Column(type: "datetime")]
-    private \DateTimeInterface $timeinterview;
+    #[ORM\Column(type: "datetime" , nullable: true)]
+    private ?\DateTimeInterface $timeinterview = null;
 
     public function getIdinterview()
     {
@@ -147,6 +148,9 @@ class Interview
     }
     public static function validateTimeInterview($timeinterview, ExecutionContextInterface $context)
     {
+        if ($timeinterview === null) {
+            return; // Si le champ est vide, on ne fait rien
+        }
         $now = new \DateTime();
         
         // Vérifie si l'heure est dans le passé (le même jour)
