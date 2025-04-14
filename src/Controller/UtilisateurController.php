@@ -20,7 +20,7 @@ final class UtilisateurController extends AbstractController
             ->getRepository(Utilisateur::class)
             ->findAll();
 
-        return $this->render('utilisateur/index.html.twig', [
+            return $this->render('utilisateur/index.html.twig', [
             'utilisateurs' => $utilisateurs,
         ]);
     }

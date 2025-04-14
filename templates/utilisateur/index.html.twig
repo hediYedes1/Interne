@@ -1,49 +1,47 @@
-{% extends 'base.html.twig' %}
+{% extends 'base1.html.twig' %}
 
 {% block title %}Utilisateur index{% endblock %}
 
 {% block body %}
-    <h1>Utilisateur index</h1>
+<div class="container mt-5">
+    <h1 class="mb4">Utilisateur index</h1>
 
-    <table class="table">
+    <table class="table table-striped">
         <thead>
             <tr>
-                <th>Idutilisateur</th>
                 <th>Nomutilisateur</th>
                 <th>Prenomutilisateur</th>
                 <th>Ageutilisateur</th>
                 <th>Emailutilisateur</th>
                 <th>Motdepasseutilisateur</th>
                 <th>Role</th>
-                <th>Resettoken</th>
-                <th>Profilepictureurl</th>
                 <th>actions</th>
             </tr>
         </thead>
         <tbody>
         {% for utilisateur in utilisateurs %}
             <tr>
-                <td>{{ utilisateur.idutilisateur }}</td>
                 <td>{{ utilisateur.nomutilisateur }}</td>
                 <td>{{ utilisateur.prenomutilisateur }}</td>
                 <td>{{ utilisateur.ageutilisateur }}</td>
                 <td>{{ utilisateur.emailutilisateur }}</td>
                 <td>{{ utilisateur.motdepasseutilisateur }}</td>
-                <td>{{ utilisateur.role }}</td>
-                <td>{{ utilisateur.resettoken }}</td>
-                <td>{{ utilisateur.profilepictureurl }}</td>
+                <td>{{ utilisateur.role.getlabel() }}</td>
                 <td>
-                    <a href="{{ path('app_utilisateur_show', {'idutilisateur': utilisateur.idutilisateur}) }}">show</a>
-                    <a href="{{ path('app_utilisateur_edit', {'idutilisateur': utilisateur.idutilisateur}) }}">edit</a>
+                    <a href="{{ path('app_utilisateur_edit', {'idutilisateur': utilisateur.idutilisateur}) }}" class="btn btn-primary btn-sm">Modifier</a>
+                        <form action="{{ path('app_utilisateur_delete', {'idutilisateur': utilisateur.idutilisateur}) }}" method="post" style="display:inline;">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ utilisateur.idutilisateur) }}">
+                            <button class="btn btn-danger btn-sm" type="submit">Supprimer</button>
+                        </form>
                 </td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="10">no records found</td>
+                <td colspan="6" class="text-center">Aucun utilisateur trouvé.</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
-
     <a href="{{ path('app_utilisateur_new') }}">Create new</a>
+</div>
 {% endblock %}

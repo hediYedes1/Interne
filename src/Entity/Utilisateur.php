@@ -150,10 +150,8 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         $this->profilepictureurl = $value;
     }
 
-    // Implementing UserInterface methods
     public function getRoles(): array
     {
-        // Return the role as an array
         return [$this->role->value];
     }
 
@@ -164,24 +162,23 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getSalt(): ?string
     {
-        // Not needed for modern algorithms like bcrypt or sodium
         return null;
     }
 
     public function getUsername(): string
     {
-        // Use email as the username
         return $this->emailutilisateur;
     }
 
     public function getUserIdentifier(): string
     {
-        // Use email as the unique identifier
         return $this->emailutilisateur;
     }
 
     public function eraseCredentials(): void
     {
-        // If you store any temporary sensitive data, clear it here
+
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
     }
 }
