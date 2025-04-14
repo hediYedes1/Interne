@@ -5,16 +5,63 @@
 {% block body %}
 <div class="container mt-5">
     <h1 class="mb4">fuck il group</h1>
+    <div class="row">
+        <div class="col-md-6 col-lg-4">
+            <form method="get" class="mb-3">
+                <div class="input-group">
+                    <input 
+                        type="text" 
+                        name="search" 
+                        class="form-control" 
+                        placeholder="{{ placeholder|default('Rechercher un utilisateur...') }}" 
+                        value="{{ search }}"
+                    >
+                    <button class="btn btn-{{ button_class|default('primary') }}" type="submit">
+                        {{ button_label|default('Rechercher') }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 
     <table class="table table-striped">
         <thead>
             <tr>
-                <th style="color: #007bff;">Nom d'utilisateur</th>
-                <th style="color: #007bff;">Prenom d'utilisateur</th>
-                <th style="color: #007bff;">Age d'utilisateur</th>
-                <th style="color: #007bff;">Email d'utilisateur</th>
-                <th style="color: #007bff;">Role</th>
-                <th style="color: #007bff;">Actions</th>
+                <th>
+                    <a href="{{ path('app_utilisateur_index', { search: search, sort: 'nomutilisateur', direction: sort == 'nomutilisateur' and direction == 'asc' ? 'desc' : 'asc' }) }}">
+                        Nom d'utilisateur
+                        {% if sort == 'nomutilisateur' %}
+                            <i class="fas fa-sort-{{ direction == 'asc' ? 'up' : 'down' }}"></i>
+                        {% endif %}
+                    </a>
+                </th>
+                <th>
+                    <a href="{{ path('app_utilisateur_index', { search: search, sort: 'prenomutilisateur', direction: sort == 'prenomutilisateur' and direction == 'asc' ? 'desc' : 'asc' }) }}">
+                        Prénom d'utilisateur
+                        {% if sort == 'prenomutilisateur' %}
+                            <i class="fas fa-sort-{{ direction == 'asc' ? 'up' : 'down' }}"></i>
+                        {% endif %}
+                    </a>
+                </th>
+                <th>
+                    <a href="{{ path('app_utilisateur_index', { search: search, sort: 'ageutilisateur', direction: sort == 'ageutilisateur' and direction == 'asc' ? 'desc' : 'asc' }) }}">
+                        Âge d'utilisateur
+                        {% if sort == 'ageutilisateur' %}
+                            <i class="fas fa-sort-{{ direction == 'asc' ? 'up' : 'down' }}"></i>
+                        {% endif %}
+                    </a>
+                </th>
+                <th>
+                    <a href="{{ path('app_utilisateur_index', { search: search, sort: 'emailutilisateur', direction: sort == 'emailutilisateur' and direction == 'asc' ? 'desc' : 'asc' }) }}">
+                        Email d'utilisateur
+                        {% if sort == 'emailutilisateur' %}
+                            <i class="fas fa-sort-{{ direction == 'asc' ? 'up' : 'down' }}"></i>
+                        {% endif %}
+                    </a>
+                </th>
+                <th>Role</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>

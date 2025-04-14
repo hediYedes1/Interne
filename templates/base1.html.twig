@@ -16,6 +16,7 @@
   <link rel="icon" href="{{ asset('images/favicon.svg') }}" type="image/x-icon">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" id="main-font-link">
 {% block css %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="{{ asset('fonts/tabler-icons.min.css') }}">
 <link rel="stylesheet" href="{{ asset('fonts/feather.css') }}">
 <link rel="stylesheet" href="{{ asset('fonts/fontawesome.css') }}">
@@ -40,11 +41,10 @@
 <nav class="pc-sidebar">
   <div class="navbar-wrapper">
     <div class="m-header">
-      <a href="../dashboard/index.html" class="b-brand text-primary">
+      <a href="{{ path('app_base2') }}" class="b-brand text-primary">
         <!-- ========   Change your logo from here   ============ -->
-        <a href="{{ asset('index.html') }}"><img src="{{ asset('images/hedi.png') }}" alt="#"></a>
+        <img src="{{ asset('img/logoIn.png') }}" alt="Logo" width="150" height="auto">
       </a>
-   
     </div>
     <div class="navbar-content">
       <ul class="pc-navbar">
@@ -404,7 +404,7 @@
         </ul>
         <div class="tab-content" id="mysrpTabContent">
           <div class="tab-pane fade show active" id="drp-tab-1" role="tabpanel" aria-labelledby="drp-t1" tabindex="0">
-            <a href="#!" class="dropdown-item">
+            <a href="{{ path('app_adminProfile') }}" class="dropdown-item">
               <i class="ti ti-edit-circle"></i>
               <span>Edit Profile</span>
             </a>
@@ -466,7 +466,7 @@
                 <h5 class="m-b-10">Home</h5>
               </div>
               <ul class="breadcrumb">
-                <li class="breadcrumb-item"><a href="../dashboard/index.html">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ path('app_base2') }}">Home</a></li>
                 <li class="breadcrumb-item"><a href="javascript: void(0)">Dashboard</a></li>
                 <li class="breadcrumb-item" aria-current="page">Home</li>
               </ul>
