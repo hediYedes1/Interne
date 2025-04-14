@@ -4,18 +4,17 @@
 
 {% block body %}
 <div class="container mt-5">
-    <h1 class="mb4">Utilisateur index</h1>
+    <h1 class="mb4">fuck il group</h1>
 
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Nomutilisateur</th>
-                <th>Prenomutilisateur</th>
-                <th>Ageutilisateur</th>
-                <th>Emailutilisateur</th>
-                <th>Motdepasseutilisateur</th>
-                <th>Role</th>
-                <th>actions</th>
+                <th style="color: #007bff;">Nom d'utilisateur</th>
+                <th style="color: #007bff;">Prenom d'utilisateur</th>
+                <th style="color: #007bff;">Age d'utilisateur</th>
+                <th style="color: #007bff;">Email d'utilisateur</th>
+                <th style="color: #007bff;">Role</th>
+                <th style="color: #007bff;">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -25,17 +24,21 @@
                 <td>{{ utilisateur.prenomutilisateur }}</td>
                 <td>{{ utilisateur.ageutilisateur }}</td>
                 <td>{{ utilisateur.emailutilisateur }}</td>
-                <td>{{ utilisateur.motdepasseutilisateur }}</td>
                 <td>{{ utilisateur.role.getlabel() }}</td>
-                <td>
-                    <a href="{{ path('app_utilisateur_edit', {'idutilisateur': utilisateur.idutilisateur}) }}" class="btn btn-primary btn-sm">Modifier</a>
-                        <form action="{{ path('app_utilisateur_delete', {'idutilisateur': utilisateur.idutilisateur}) }}" method="post" style="display:inline;">
-                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ utilisateur.idutilisateur) }}">
-                            <button class="btn btn-danger btn-sm" type="submit">Supprimer</button>
-                        </form>
+                <td class="text-center">
+                    <a 
+                        href="{{ path('app_utilisateur_edit', {'idutilisateur': utilisateur.idutilisateur}) }}" 
+                        class="btn btn-primary btn-sm d-block mx-auto text-center" 
+                        style="width: 100px;"
+                    >Modifier</a>
+
+                    <div class="mt-2">
+                        {{ include('utilisateur/_delete_form.html.twig', { utilisateur: utilisateur }) }}
+                    </div>
                 </td>
+
             </tr>
-        {% else %}
+        {% else %}  
             <tr>
                 <td colspan="6" class="text-center">Aucun utilisateur trouvé.</td>
             </tr>
