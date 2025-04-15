@@ -29,12 +29,10 @@ class QuizController extends AbstractController
     
             $correctCount = 0;
             $questions = $test->getQuestions();
-            $results = [];
     
             foreach ($questions as $index => $question) {
                 $userAnswer = $data['answers'][$index] ?? null;
                 $correctAnswers = $question['correctAnswers'] ?? [];
-                $isCorrect = false;
                 $correctAnswerKey = null;
     
                 // Trouver la bonne réponse
@@ -52,41 +50,25 @@ class QuizController extends AbstractController
                     
                     if ($normalizedUserAnswer === $normalizedCorrectAnswer) {
                         $correctCount++;
-                        $isCorrect = true;
                     }
                 }
-    
-                $results[] = [
-                    'isCorrect' => $isCorrect,
-                    'correctAnswer' => $correctAnswerKey,
-                    'userAnswer' => $userAnswer
-                ];
             }
     
             $statut = $correctCount >= 8 ? StatutTestTechnique::ACCEPTE : StatutTestTechnique::REFUSE;
             $test->setStatuttesttechnique($statut);
             $em->flush();
     
-            return new JsonResponse([
-                'success' => true,
-                'score' => $correctCount,
-                'total' => count($questions),
-                'statut' => $statut->value,
-                'results' => $results,
-                'redirect' => $this->generateUrl('app_testtechnique_show', [
-                    'idtesttechnique' => $test->getIdtesttechnique()
-                ])
+            $this->addFlash('success', 'Quiz soumis avec succès. Résultat: ' . $statut->value);
+            return $this->redirectToRoute('app_testtechnique_show', [
+                'idtesttechnique' => $test->getIdtesttechnique()
             ]);
     
         } catch (\Exception $e) {
             error_log("ERREUR: ".$e->getMessage());
-            return new JsonResponse([
-                'success' => false,
-                'error' => $e->getMessage(),
-                'redirect' => $this->generateUrl('app_testtechnique_quiz', [
-                    'idtesttechnique' => $data['test_id'] ?? null
-                ])
-            ], Response::HTTP_BAD_REQUEST);
+            $this->addFlash('error', $e->getMessage());
+            return $this->redirectToRoute('app_testtechnique_quiz', [
+                'idtesttechnique' => $data['test_id'] ?? null
+            ]);
         }
     }
 }

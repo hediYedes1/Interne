@@ -44,17 +44,9 @@
                                 <td>{{ testtechnique.dureetesttechnique }}</td>
                             </tr>
                             <tr>
-                                <th class="bg-light">Statut</th>
-                                <td>
-                                    <span class="badge 
-                                        {% if testtechnique.statuttesttechnique == 'Actif' %}badge-success
-                                        {% elseif testtechnique.statuttesttechnique == 'Inactif' %}badge-secondary
-                                        {% else %}badge-warning
-                                        {% endif %}">
-                                        {{ testtechnique.statuttesttechnique.value }}
-                                    </span>
-                                </td>
-                            </tr>
+    <th class="bg-light">Statut</th>
+    <td>{{ testtechnique.statuttesttechnique.value }}</td>
+</tr>
                             <tr>
                                 <th class="bg-light">Date de création</th>
                                 <td>{{ testtechnique.datecreationtesttechnique ? testtechnique.datecreationtesttechnique|date('d/m/Y H:i') : 'Non définie' }}</td>

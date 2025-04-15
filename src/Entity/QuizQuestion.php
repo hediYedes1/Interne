@@ -36,6 +36,7 @@ class QuizQuestion
     #[ORM\Column(type: 'string', length: 100, nullable: true)]
     private ?string $difficulty = null;
 
+
     // Getters et Setters
 
     public function getId(): ?int
