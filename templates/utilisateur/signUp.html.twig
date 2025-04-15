@@ -59,7 +59,7 @@
         </div>
         <div class="card my-5">
           <div class="card-body">
-            <form action="{{ path('app_signup') }}" method="post" id="signupForm">
+            <form action="{{ path('app_signup') }}" method="post" **novalidate** id="signupForm">
               <div class="d-flex justify-content-between align-items-end mb-4">
                 <h3 class="mb-0"><b>Inscription</b></h3>
                 <p class="mb-0">Vous avez déjà un compte ? <a href="{{ path('app_base3') }}" class="text-primary">Connectez-vous</a></p>

@@ -218,7 +218,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     }
     public function getSalt(): ?string
     {
-        // Not needed for modern algorithms like bcrypt or sodium
         return null;
     }
     public function getPassword(): string
@@ -233,5 +232,11 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUsername(): string
     {
         return $this->emailutilisateur;
+    }
+
+    public function eraseCredentials(): void
+    {
+        // If you store any temporary sensitive data, clear it here
+        // $this->plainPassword = null;
     }
 }

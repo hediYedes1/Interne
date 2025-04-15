@@ -17,6 +17,7 @@
   
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" id="main-font-link">
 {% block css %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="{{ asset('fonts/tabler-icons.min.css') }}">
 <link rel="stylesheet" href="{{ asset('fonts/feather.css') }}">
 <link rel="stylesheet" href="{{ asset('fonts/fontawesome.css') }}">
@@ -41,16 +42,15 @@
 <nav class="pc-sidebar">
   <div class="navbar-wrapper">
     <div class="m-header">
-      <a href="../dashboard/index.html" class="b-brand text-primary">
+      <a href="{{ path('app_base2') }}" class="b-brand text-primary">
         <!-- ========   Change your logo from here   ============ -->
-        <a href="{{ asset('index.html') }}"><img src="{{ asset('images/hedi.png') }}" alt="#"></a>
+        <img src="{{ asset('img/logoIn.png') }}" alt="Logo" width="150" height="auto">
       </a>
-   
     </div>
     <div class="navbar-content">
       <ul class="pc-navbar">
         <li class="pc-item">
-          <a href="../dashboard/index.html" class="pc-link">
+          <a href="{{ path('app_base2') }}" class="pc-link">
             <span class="pc-micon"><i class="ti ti-dashboard"></i></span>
             <span class="pc-mtext">Dashboard</span>
           </a>
@@ -67,9 +67,9 @@
           </a>
         </li>
         <li class="pc-item">
-          <a href="../elements/bc_color.html" class="pc-link">
+          <a href="{{ path('app_utilisateur_index') }}" class="pc-link">
             <span class="pc-micon"><i class="ti ti-color-swatch"></i></span>
-            <span class="pc-mtext">Utilisateur</span>
+            <span class="pc-mtext">Utilisateurs</span>
           </a>
         </li>
         <li class="pc-item">
@@ -355,7 +355,7 @@
         aria-expanded="false"
       >
         <img src="images/user/avatar-2.jpg" alt="user-image" class="user-avtar">
-        <span>Stebin Ben</span>
+        <span>{{ app.user ? app.user.nomutilisateur ~ ' ' ~ app.user.prenomutilisateur : 'Guest' }}</span>
       </a>
       <div class="dropdown-menu dropdown-user-profile dropdown-menu-end pc-h-dropdown">
         <div class="dropdown-header">
@@ -364,10 +364,10 @@
               <img src="images/user/avatar-2.jpg" alt="user-image" class="user-avtar wid-35">
             </div>
             <div class="flex-grow-1 ms-3">
-              <h6 class="mb-1">Stebin Ben</h6>
-              <span>UI/UX Designer</span>
+              <h6 class="mb-1">{{ app.user ? app.user.nomutilisateur ~ ' ' ~ app.user.prenomutilisateur : 'Guest' }}</h6>
+              <span>{{ app.user ? app.user.role.getLabel() : 'No Role' }}</span>
             </div>
-            <a href="#!" class="pc-head-link bg-transparent"><i class="ti ti-power text-danger"></i></a>
+            <a href="{{ path('app_logout') }}" class="pc-head-link bg-transparent"><i class="ti ti-power text-danger"></i></a>
           </div>
         </div>
         <ul class="nav drp-tabs nav-fill nav-tabs" id="mydrpTab" role="tablist">
@@ -400,7 +400,7 @@
         </ul>
         <div class="tab-content" id="mysrpTabContent">
           <div class="tab-pane fade show active" id="drp-tab-1" role="tabpanel" aria-labelledby="drp-t1" tabindex="0">
-            <a href="#!" class="dropdown-item">
+            <a href="{{ path('app_adminProfile') }}" class="dropdown-item">
               <i class="ti ti-edit-circle"></i>
               <span>Edit Profile</span>
             </a>
@@ -408,17 +408,9 @@
               <i class="ti ti-user"></i>
               <span>View Profile</span>
             </a>
-            <a href="#!" class="dropdown-item">
-              <i class="ti ti-clipboard-list"></i>
-              <span>Social Profile</span>
-            </a>
-            <a href="#!" class="dropdown-item">
-              <i class="ti ti-wallet"></i>
-              <span>Billing</span>
-            </a>
-            <a href="#!" class="dropdown-item">
+            <a href="{{ path('app_base3') }}" class="dropdown-item">
               <i class="ti ti-power"></i>
-              <span>Logout</span>
+              <span>Se Déconnecter</span>
             </a>
           </div>
           <div class="tab-pane fade" id="drp-tab-2" role="tabpanel" aria-labelledby="drp-t2" tabindex="0">
@@ -468,7 +460,7 @@
                 <h5 class="m-b-10">Home</h5>
               </div>
               <ul class="breadcrumb">
-                <li class="breadcrumb-item"><a href="../dashboard/index.html">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ path('app_base2') }}">Home</a></li>
                 <li class="breadcrumb-item"><a href="javascript: void(0)">Dashboard</a></li>
                 <li class="breadcrumb-item" aria-current="page">Home</li>
               </ul>
@@ -793,6 +785,7 @@
 <script src="{{ asset('js/fonts/custom-font.js') }}"></script>
 <script src="{{ asset('js/pcoded.js') }}"></script>
 <script src="{{ asset('js/plugins/feather.min.js') }}"></script>
+
 
 <!-- Scripts d'initialisation -->
 <script>

@@ -14,14 +14,35 @@ use Symfony\Component\Routing\Attribute\Route;
 final class UtilisateurController extends AbstractController
 {
     #[Route(name: 'app_utilisateur_index', methods: ['GET'])]
-    public function index(EntityManagerInterface $entityManager): Response
+    public function index(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $utilisateurs = $entityManager
-            ->getRepository(Utilisateur::class)
-            ->findAll();
+        $search = $request->query->get('search', ''); 
+        $field = $request->query->get('field', 'nomutilisateur'); 
+        $sort = $request->query->get('sort', 'nomutilisateur'); 
+        $direction = $request->query->get('direction', 'asc'); 
+
+        $allowedFields = ['nomutilisateur', 'prenomutilisateur', 'emailutilisateur', 'ageutilisateur'];
+        if (!in_array($field, $allowedFields)) {
+            $field = 'nomutilisateur';
+        }
+
+        $queryBuilder = $entityManager->getRepository(Utilisateur::class)->createQueryBuilder('u');
+
+        if (!empty($search)) {
+            $queryBuilder->where("u.$field LIKE :search")
+                ->setParameter('search', '%' . $search . '%');
+        }
+
+        $queryBuilder->orderBy('u.' . $sort, $direction);
+
+        $utilisateurs = $queryBuilder->getQuery()->getResult();
 
         return $this->render('utilisateur/index.html.twig', [
             'utilisateurs' => $utilisateurs,
+            'search' => $search,
+            'field' => $field,
+            'sort' => $sort,
+            'direction' => $direction,
         ]);
     }
 
@@ -67,16 +88,18 @@ final class UtilisateurController extends AbstractController
 
         return $this->render('utilisateur/edit.html.twig', [
             'utilisateur' => $utilisateur,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 
     #[Route('/{idutilisateur}', name: 'app_utilisateur_delete', methods: ['POST'])]
     public function delete(Request $request, Utilisateur $utilisateur, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$utilisateur->getIdutilisateur(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $utilisateur->getIdutilisateur(), $request->request->get('_token'))) {
             $entityManager->remove($utilisateur);
             $entityManager->flush();
+
+            $this->addFlash('success', 'Utilisateur supprimé avec succès.');
         }
 
         return $this->redirectToRoute('app_utilisateur_index', [], Response::HTTP_SEE_OTHER);
