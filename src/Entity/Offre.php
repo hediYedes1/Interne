@@ -16,15 +16,15 @@ class Offre
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: "integer")]
-    private int $idoffre;
+    #[ORM\Column(name: "idoffre", type: "integer")]
+    private ?int $idoffre = null;
 
     #[ORM\ManyToOne(targetEntity: Utilisateur::class, inversedBy: "offres")]
-    #[ORM\JoinColumn(name: 'idutilisateur', referencedColumnName: 'idutilisateur', onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(name: "idutilisateur", referencedColumnName: "idutilisateur", onDelete: "CASCADE")]
     private Utilisateur $idutilisateur;
 
     #[ORM\ManyToOne(targetEntity: Entreprise::class, inversedBy: "offres")]
-    #[ORM\JoinColumn(name: 'identreprise', referencedColumnName: 'identreprise', onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(name: "identreprise", referencedColumnName: "identreprise", onDelete: "CASCADE")]
     private Entreprise $identreprise;
 
     #[ORM\Column(type: "text")]
@@ -57,7 +57,6 @@ class Offre
     #[Assert\NotBlank(message: "La date limite est requise.")]
     #[Assert\GreaterThan("today", message: "La date limite doit être dans le futur.")]
     private \DateTimeInterface $datelimite;
-    
 
     #[ORM\OneToMany(mappedBy: "idoffre", targetEntity: Projet::class)]
     private Collection $projets;
@@ -72,7 +71,7 @@ class Offre
         $this->interviews = new ArrayCollection();
     }
 
-    public function getIdoffre(): int
+    public function getIdoffre(): ?int
     {
         return $this->idoffre;
     }

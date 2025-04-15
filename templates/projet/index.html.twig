@@ -1,41 +1,61 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Projet index{% endblock %}
+{% block title %}Liste des projets{% endblock %}
 
 {% block body %}
-    <h1>Projet index</h1>
+<div class="container mt-4">
+    <h1 class="mb-4 text-center">Liste des projets</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Idprojet</th>
-                <th>Titreprojet</th>
-                <th>Descriptionprojet</th>
-                <th>Datedebut</th>
-                <th>Datefin</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
+    <form method="get" class="row mb-4">
+        <div class="col-md-6">
+            <input type="text" name="search" class="form-control" placeholder="Rechercher un projet...">
+        </div>
+        <div class="col-md-4">
+            <select name="offre" class="form-select">
+                <option value="">-- Filtrer par offre --</option>
+                {% for projet in projets %}
+                    <option value="{{ projet.idoffre.idoffre }}">{{ projet.idoffre.titreoffre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="fas fa-search"></i> Rechercher
+            </button>
+        </div>
+    </form>
+
+    <div class="d-flex justify-content-end mb-3">
+        <a href="{{ path('app_projet_new') }}" class="btn btn-success">
+            <i class="fas fa-plus"></i> Créer un nouveau projet
+        </a>
+    </div>
+
+    <div class="row">
         {% for projet in projets %}
-            <tr>
-                <td>{{ projet.idprojet }}</td>
-                <td>{{ projet.titreprojet }}</td>
-                <td>{{ projet.descriptionprojet }}</td>
-                <td>{{ projet.datedebut ? projet.datedebut|date('Y-m-d') : '' }}</td>
-                <td>{{ projet.datefin ? projet.datefin|date('Y-m-d') : '' }}</td>
-                <td>
-                    <a href="{{ path('app_projet_show', {'idprojet': projet.idprojet}) }}">show</a>
-                    <a href="{{ path('app_projet_edit', {'idprojet': projet.idprojet}) }}">edit</a>
-                </td>
-            </tr>
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ projet.titreprojet }}</h5>
+                        <p class="card-text text-muted">{{ projet.descriptionprojet|length > 100 ? projet.descriptionprojet[:100] ~ '...' : projet.descriptionprojet }}</p>
+                        <p><strong>Début :</strong> {{ projet.datedebut|date('d/m/Y') }} | <strong>Fin :</strong> {{ projet.datefin|date('d/m/Y') }}</p>
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ path('app_projet_show', {'idprojet': projet.idprojet}) }}" class="btn btn-info btn-sm">
+                                <i class="fas fa-eye"></i> Voir Plus
+                            </a>
+                            <a href="{{ path('app_projet_edit', {'idprojet': projet.idprojet}) }}" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit"></i> Modifier
+                            </a>
+                            <form method="post" action="{{ path('app_projet_delete', {'idprojet': projet.idprojet}) }}" onsubmit="return confirm('Êtes-vous sûr ?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ projet.idprojet) }}">
+                                <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Supprimer</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         {% else %}
-            <tr>
-                <td colspan="6">no records found</td>
-            </tr>
+            <p class="text-center">Aucun projet trouvé.</p>
         {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('app_projet_new') }}">Create new</a>
+    </div>
+</div>
 {% endblock %}

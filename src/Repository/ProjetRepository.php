@@ -12,6 +12,4 @@ class ProjetRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Projet::class);
     }
-
-    // Add custom methods as needed
 }

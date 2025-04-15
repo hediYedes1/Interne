@@ -1,11 +1,74 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Projet{% endblock %}
+{% block title %}Nouveau Projet{% endblock %}
 
 {% block body %}
-    <h1>Create new Projet</h1>
+<div class="container d-flex justify-content-center mt-5">
+    <div class="card shadow-lg p-5 rounded col-md-8">
+        <div class="card-body">
+            <h2 class="text-center mb-4">Créer un nouveau projet</h2>
 
-    {{ include('projet/_form.html.twig') }}
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'class': 'needs-validation'}}) }}
 
-    <a href="{{ path('app_projet_index') }}">back to list</a>
+                {# Offre associée #}
+                <div class="mb-3">
+                    {{ form_label(form.idoffre, 'Offre associée', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.idoffre, {'attr': {'class': 'form-control'}}) }}
+                    <div class="text-danger small">
+                        {{ form_errors(form.idoffre) }}
+                    </div>
+                </div>
+
+                {# Titre du projet #}
+                <div class="mb-3">
+                    {{ form_label(form.titreprojet, 'Titre du projet', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.titreprojet, {'attr': {'class': 'form-control'}}) }}
+                    <div class="text-danger small">
+                        {{ form_errors(form.titreprojet) }}
+                    </div>
+                </div>
+
+                {# Description du projet #}
+                <div class="mb-3">
+                    {{ form_label(form.descriptionprojet, 'Description', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.descriptionprojet, {'attr': {'class': 'form-control'}}) }}
+                    <div class="text-danger small">
+                        {{ form_errors(form.descriptionprojet) }}
+                    </div>
+                </div>
+
+                {# Date de début #}
+                <div class="mb-3">
+                    {{ form_label(form.datedebut, 'Date de début', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.datedebut, {'attr': {'class': 'form-control'}}) }}
+                    <div class="text-danger small">
+                        {{ form_errors(form.datedebut) }}
+                    </div>
+                </div>
+
+                {# Date de fin #}
+                <div class="mb-3">
+                    {{ form_label(form.datefin, 'Date de fin', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.datefin, {'attr': {'class': 'form-control'}}) }}
+                    <div class="text-danger small">
+                        {{ form_errors(form.datefin) }}
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <button class="btn btn-success px-4" type="submit">
+                        <i class="fas fa-check-circle"></i> Valider
+                    </button>
+                </div>
+
+            {{ form_end(form) }}
+
+            <div class="text-center mt-3">
+                <a href="{{ path('app_projet_index') }}" class="btn btn-link">
+                    ← Retour à la liste des projets
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
