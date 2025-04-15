@@ -207,36 +207,32 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         {
             return $this->affectationinterviews;
         }
-        public function eraseCredentials(): void
-    {
-        // If you store any temporary sensitive data, clear it here
-    }
-    public function getUserIdentifier(): string
-    {
-        // Use email as the unique identifier
-        return $this->emailutilisateur;
-    }
-    public function getSalt(): ?string
-    {
-        return null;
-    }
-    public function getPassword(): string
-    {
-        return $this->motdepasseutilisateur;
-    }
-    public function getRoles(): array
-    {
-        // Return the role as an array
-        return [$this->role->value];
-    }
-    public function getUsername(): string
-    {
-        return $this->emailutilisateur;
-    }
+        public function getUserIdentifier(): string
+        {
+            // Use email as the unique identifier
+            return $this->emailutilisateur;
+        }
+        public function getSalt(): ?string
+        {
+            return null;
+        }
+        public function getPassword(): string
+        {
+            return $this->motdepasseutilisateur;
+        }
+        public function getRoles(): array
+        {
+            // Return the role as an array
+            return [$this->role->value];
+        }
+        public function getUsername(): string
+        {
+            return $this->emailutilisateur;
+        }
 
-    public function eraseCredentials(): void
-    {
-        // If you store any temporary sensitive data, clear it here
-        // $this->plainPassword = null;
-    }
+        public function eraseCredentials(): void
+        {
+            // If you store any temporary sensitive data, clear it here
+            // $this->plainPassword = null;
+        }
 }
