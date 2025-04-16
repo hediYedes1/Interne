@@ -21,11 +21,19 @@ class BrancheentrepriseType extends AbstractType
             ->add('nombreemploye')
             ->add('responsablebranche')
         
+            ->add('identreprise', EntityType::class, [
+                'class' => Entreprise::class,
+                'choice_label' => 'nomentreprise', // Remplacez par le champ à afficher dans le menu déroulant
+                'label' => 'Entreprise',
+                'placeholder' => 'Sélectionnez une entreprise',
+                'required' => true,
+            ])
+        
             ->add('idutilisateur', EntityType::class, [
                 'class' => Utilisateur::class,
-'choice_label' => 'idutilisateur',
-            ])
-        ;
+                'choice_label' => 'idutilisateur',
+                'label' => 'Utilisateur',
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

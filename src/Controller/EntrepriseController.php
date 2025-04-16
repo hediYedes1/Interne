@@ -3,6 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Entreprise;
+use App\Entity\Branche;
+use App\Entity\Departmententreprise;
+use App\Entity\Brancheentreprise;
 use App\Form\EntrepriseType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -40,7 +43,20 @@ final class EntrepriseController extends AbstractController
             'departments' => $entreprise->getDepartmententreprises(),
         ]);
     }
-
+  
+    #[Route('/rh', name: 'app_branches_back', methods: ['GET'])]
+    public function indexBack(EntityManagerInterface $entityManager): Response
+    {
+        // Récupérer l'utilisateur connecté
+        $user = $this->getUser();
+    
+        // Récupérer uniquement les branches associées à l'utilisateur
+        $branches = $entityManager->getRepository(Brancheentreprise::class)->findBy(['idutilisateur' => $user]);
+    
+        return $this->render('entreprise/indexBack.html.twig', [
+            'branches' => $branches,
+        ]);
+    }
     // Méthode pour afficher la liste des entreprises dans l'administration
     #[Route('/list', name: 'app_entreprise_index', methods: ['GET'])]
     public function index(EntityManagerInterface $entityManager): Response

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 class Departmententreprise
@@ -17,15 +18,32 @@ class Departmententreprise
     private Entreprise $identreprise;
 
     #[ORM\Column(type: "text")]
+    #[Assert\NotBlank(message: "Le nom du département est obligatoire.")]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: "Le nom du département ne peut pas dépasser {{ limit }} caractères."
+    )]
     private string $nomdepartement;
 
     #[ORM\Column(type: "text")]
+    #[Assert\NotBlank(message: "La description du département est obligatoire.")]
+    #[Assert\Length(
+        max: 500,
+        maxMessage: "La description ne peut pas dépasser {{ limit }} caractères."
+    )]
     private string $descriptiondepartement;
 
     #[ORM\Column(type: "text")]
+    #[Assert\NotBlank(message: "Le responsable du département est obligatoire.")]
+    #[Assert\Length(
+        max: 100,
+        maxMessage: "Le nom du responsable ne peut pas dépasser {{ limit }} caractères."
+    )]
     private string $responsabledepartement;
 
     #[ORM\Column(type: "integer")]
+    #[Assert\NotBlank(message: "Le nombre d'employés est obligatoire.")]
+    #[Assert\Positive(message: "Le nombre d'employés doit être un nombre positif.")]
     private int $nbremployedepartement;
 
     public function getIddepartement(): int

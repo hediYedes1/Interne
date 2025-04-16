@@ -5,13 +5,15 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Utilisateur;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use App\Entity\Partenariat;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 class Brancheentreprise
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue] // Ajout pour générer automatiquement l'ID
+    #[ORM\GeneratedValue]
     #[ORM\Column(type: "integer")]
     private int $idbranche;
 
@@ -24,22 +26,54 @@ class Brancheentreprise
     private Utilisateur $idutilisateur;
 
     #[ORM\Column(type: "text")]
+    #[Assert\NotBlank(message: "La localisation de la branche est obligatoire.")]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: "La localisation ne peut pas dépasser {{ limit }} caractères."
+    )]
     private string $localisationbranche;
 
-    #[ORM\Column(type: "text")]
-    private string $emailbranche;
+#[ORM\Column(type: "text")]
+#[Assert\NotBlank(message: "L'email de la branche est obligatoire.")]
+#[Assert\Email(message: "L'email '{{ value }}' n'est pas valide.")]
+#[Assert\Regex(
+    pattern: "/^[a-zA-Z0-9._%+-]+@esprit\.tn$/",
+    message: "L'email doit être au format 'nom.prenom@esprit.tn'."
+)]
+private string $emailbranche;
 
     #[ORM\Column(type: "string", length: 15)]
+    #[Assert\NotBlank(message: "Le contact de la branche est obligatoire.")]
+    #[Assert\Length(
+        max: 15,
+        maxMessage: "Le contact ne peut pas dépasser {{ limit }} caractères."
+    )]
+    #[Assert\Regex(
+        pattern: "/^[0-9\-\+]+$/",
+        message: "Le contact doit contenir uniquement des chiffres, des tirets ou des signes '+'"
+    )]
     private string $contactbranche;
 
     #[ORM\Column(type: "integer")]
+    #[Assert\NotBlank(message: "Le nombre d'employés est obligatoire.")]
+    #[Assert\Positive(message: "Le nombre d'employés doit être un nombre positif.")]
     private int $nombreemploye;
 
     #[ORM\Column(type: "text")]
+    #[Assert\NotBlank(message: "Le responsable de la branche est obligatoire.")]
+    #[Assert\Length(
+        max: 100,
+        maxMessage: "Le nom du responsable ne peut pas dépasser {{ limit }} caractères."
+    )]
     private string $responsablebranche;
 
     #[ORM\OneToMany(mappedBy: "idbranche", targetEntity: Partenariat::class)]
     private Collection $partenariats;
+
+    public function __construct()
+    {
+        $this->partenariats = new ArrayCollection();
+    }
 
     public function getIdbranche(): int
     {
@@ -148,7 +182,6 @@ class Brancheentreprise
     public function removePartenariat(Partenariat $partenariat): self
     {
         if ($this->partenariats->removeElement($partenariat)) {
-            // set the owning side to null (unless already changed)
             if ($partenariat->getIdbranche() === $this) {
                 $partenariat->setIdbranche(null);
             }
