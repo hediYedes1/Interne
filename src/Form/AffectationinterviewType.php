@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\Affectationinterview;
 use App\Entity\Interview;
 use App\Entity\Utilisateur;
+use App\Enum\Role;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -23,14 +24,21 @@ class AffectationinterviewType extends AbstractType
                     return $utilisateur->getNomutilisateur() . ' ' . $utilisateur->getPrenomutilisateur();
                 },
                 'query_builder' => function (EntityRepository $er) use ($options) {
-                    return $er->createQueryBuilder('u')
-                        ->leftJoin('u.affectationinterviews', 'a')
-                        ->andWhere('a.idutilisateur IS NULL OR a.idinterview != :interview')
-                        ->setParameter('interview', $options['interview']);
+                    $qb = $er->createQueryBuilder('u')
+                        ->andWhere('u.role = :role')
+                        ->setParameter('role', Role::CANDIDAT->value);
+
+                    if ($options['interview']) {
+                        $qb->leftJoin('u.affectationinterviews', 'a', 'WITH', 'a.idinterview = :interview')
+                            ->andWhere('a.idutilisateur IS NULL')
+                            ->setParameter('interview', $options['interview']);
+                    }
+
+                    return $qb;
                 },
-                'label' => 'Utilisateur',
-                'placeholder' => 'Sélectionnez un utilisateur',
-                'attr' => ['class' => 'select2'] // Pour améliorer l'UX avec Select2
+                'label' => 'Candidat',
+                'placeholder' => 'Sélectionnez un candidat',
+                'attr' => ['class' => 'select2']
             ]);
     }
 
