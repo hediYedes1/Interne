@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/departmententreprise')]
 final class DepartmententrepriseController extends AbstractController{
-    #[Route(name: 'app_departmententreprise_index', methods: ['GET'])]
+    #[Route('/list',name: 'app_departmententreprise_index', methods: ['GET'])]
     public function index(EntityManagerInterface $entityManager): Response
     {
         $departmententreprises = $entityManager
