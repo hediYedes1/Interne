@@ -9,14 +9,7 @@
         <div class="col-md-6">
             <input type="text" name="search" class="form-control" placeholder="Rechercher un projet...">
         </div>
-        <div class="col-md-4">
-            <select name="offre" class="form-select">
-                <option value="">-- Filtrer par offre --</option>
-                {% for projet in projets %}
-                    <option value="{{ projet.idoffre.idoffre }}">{{ projet.idoffre.titreoffre }}</option>
-                {% endfor %}
-            </select>
-        </div>
+        
         <div class="col-md-2">
             <button type="submit" class="btn btn-primary w-100">
                 <i class="fas fa-search"></i> Rechercher

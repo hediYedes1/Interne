@@ -55,9 +55,19 @@
         {{ form_errors(form.datelimite) }}
     </div>
 </div>
-
-{# Si tu as les champs idutilisateur et identreprise dans le form, tu peux les afficher aussi ici #}
-{# Sinon, Symfony va gérer ça côté controller ou service #}
+<div class="mb-3">
+    {{ form_label(form.projet, "Projet associé", {'label_attr': {'class': 'form-label'}}) }}
+    {{ form_widget(form.projet, {
+        'attr': {
+            'class': 'form-select',
+            'data-placeholder': 'Sélectionnez un projet'
+        }
+    }) }}
+    <small class="text-muted">Optionnel - sélectionnez le projet lié à cette offre</small>
+    <div class="text-danger">
+        {{ form_errors(form.projet) }}
+    </div>
+</div>
 
 <div class="text-center mt-4">
     <button class="btn btn-primary">

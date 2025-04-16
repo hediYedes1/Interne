@@ -8,7 +8,6 @@
     <p><strong>Description :</strong> {{ projet.descriptionprojet }}</p>
     <p><strong>Date début :</strong> {{ projet.datedebut|date('d/m/Y') }}</p>
     <p><strong>Date fin :</strong> {{ projet.datefin|date('d/m/Y') }}</p>
-    <p><strong>Offre liée :</strong> {{ projet.idoffre.titre }}</p>
 
     <div class="d-flex gap-2 mt-4">
         <a href="{{ path('app_projet_edit', {'idprojet': projet.idprojet}) }}" class="btn btn-warning">

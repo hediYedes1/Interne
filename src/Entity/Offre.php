@@ -63,6 +63,10 @@ class Offre
 
     #[ORM\OneToMany(mappedBy: "idoffre", targetEntity: Interview::class)]
     private Collection $interviews;
+    
+    #[ORM\ManyToOne(targetEntity: Projet::class, inversedBy: 'offres')]
+    #[ORM\JoinColumn(name: 'idprojet', referencedColumnName: 'idprojet')]
+    private ?Projet $projet = null;
 
     public function __construct()
     {
@@ -70,6 +74,18 @@ class Offre
         $this->projets = new ArrayCollection();
         $this->interviews = new ArrayCollection();
     }
+
+
+public function getProjet(): ?Projet
+{
+    return $this->projet;
+}
+
+public function setProjet(?Projet $projet): self
+{
+    $this->projet = $projet;
+    return $this;
+}
 
     public function getIdoffre(): ?int
     {

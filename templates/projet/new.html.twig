@@ -3,72 +3,121 @@
 {% block title %}Nouveau Projet{% endblock %}
 
 {% block body %}
-<div class="container d-flex justify-content-center mt-5">
-    <div class="card shadow-lg p-5 rounded col-md-8">
-        <div class="card-body">
-            <h2 class="text-center mb-4">Créer un nouveau projet</h2>
-
-            {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'class': 'needs-validation'}}) }}
-
-                {# Offre associée #}
-                <div class="mb-3">
-                    {{ form_label(form.idoffre, 'Offre associée', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(form.idoffre, {'attr': {'class': 'form-control'}}) }}
-                    <div class="text-danger small">
-                        {{ form_errors(form.idoffre) }}
-                    </div>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h5 mb-0 text-center">Création d'un nouveau projet</h2>
                 </div>
+                
+                <div class="card-body p-4">
+                    {{ form_start(form, {
+                        'attr': {
+                            'class': 'needs-validation',
+                            'novalidate': 'novalidate'
+                        }
+                    }) }}
 
-                {# Titre du projet #}
-                <div class="mb-3">
-                    {{ form_label(form.titreprojet, 'Titre du projet', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(form.titreprojet, {'attr': {'class': 'form-control'}}) }}
-                    <div class="text-danger small">
+                    {# Champ Titre #}
+                    <div class="mb-4">
+                        {{ form_label(form.titreprojet, 'Titre du projet*', {
+                            'label_attr': {'class': 'form-label fw-bold'}
+                        }) }}
+                        {{ form_widget(form.titreprojet, {
+                            'attr': {
+                                'class': 'form-control' ~ (form.titreprojet.vars.valid ? '' : ' is-invalid'),
+                                'placeholder': 'Nommez votre projet'
+                            }
+                        }) }}
                         {{ form_errors(form.titreprojet) }}
                     </div>
-                </div>
 
-                {# Description du projet #}
-                <div class="mb-3">
-                    {{ form_label(form.descriptionprojet, 'Description', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(form.descriptionprojet, {'attr': {'class': 'form-control'}}) }}
-                    <div class="text-danger small">
+                    {# Champ Description #}
+                    <div class="mb-4">
+                        {{ form_label(form.descriptionprojet, 'Description', {
+                            'label_attr': {'class': 'form-label fw-bold'}
+                        }) }}
+                        {{ form_widget(form.descriptionprojet, {
+                            'attr': {
+                                'class': 'form-control',
+                                'rows': 4,
+                                'placeholder': 'Décrivez les objectifs du projet...'
+                            }
+                        }) }}
+                        <small class="text-muted">Ce champ est optionnel</small>
                         {{ form_errors(form.descriptionprojet) }}
                     </div>
-                </div>
 
-                {# Date de début #}
-                <div class="mb-3">
-                    {{ form_label(form.datedebut, 'Date de début', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(form.datedebut, {'attr': {'class': 'form-control'}}) }}
-                    <div class="text-danger small">
-                        {{ form_errors(form.datedebut) }}
+                    {# Dates - en ligne #}
+                    <div class="row g-3 mb-4">
+                        {# Date de début - Aujourd'hui par défaut #}
+                        <div class="col-md-6">
+                            {{ form_label(form.datedebut, 'Date de début*', {
+                                'label_attr': {'class': 'form-label fw-bold'}
+                            }) }}
+                            {{ form_widget(form.datedebut, {
+                                'attr': {
+                                    'class': 'form-control' ~ (form.datedebut.vars.valid ? '' : ' is-invalid')
+                                },
+                                'data-date-format': 'DD/MM/YYYY',
+                                'data-date-default-date': "now"|date("Y-m-d")
+                            }) }}
+                            {{ form_errors(form.datedebut) }}
+                        </div>
+
+                        {# Date de fin - Demain par défaut #}
+                        <div class="col-md-6">
+                            {{ form_label(form.datefin, 'Date de fin*', {
+                                'label_attr': {'class': 'form-label fw-bold'}
+                            }) }}
+                            {{ form_widget(form.datefin, {
+                                'attr': {
+                                    'class': 'form-control' ~ (form.datefin.vars.valid ? '' : ' is-invalid')
+                                },
+                                'data-date-format': 'DD/MM/YYYY',
+                                'data-date-default-date': "+1 day"|date("Y-m-d")
+                            }) }}
+                            {{ form_errors(form.datefin) }}
+                        </div>
                     </div>
-                </div>
 
-                {# Date de fin #}
-                <div class="mb-3">
-                    {{ form_label(form.datefin, 'Date de fin', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(form.datefin, {'attr': {'class': 'form-control'}}) }}
-                    <div class="text-danger small">
-                        {{ form_errors(form.datefin) }}
+                    {# Boutons d'action #}
+                    <div class="d-flex justify-content-between mt-5">
+                        <a href="{{ path('app_projet_index') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Annuler
+                        </a>
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="fas fa-save me-2"></i>Enregistrer
+                        </button>
                     </div>
+
+                    {{ form_end(form) }}
                 </div>
-
-                <div class="text-center mt-4">
-                    <button class="btn btn-success px-4" type="submit">
-                        <i class="fas fa-check-circle"></i> Valider
-                    </button>
-                </div>
-
-            {{ form_end(form) }}
-
-            <div class="text-center mt-3">
-                <a href="{{ path('app_projet_index') }}" class="btn btn-link">
-                    ← Retour à la liste des projets
-                </a>
             </div>
         </div>
     </div>
 </div>
+
+{% block javascripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialiser les dates par défaut si le champ est vide
+    const today = new Date();
+    const tomorrow = new Date();
+    tomorrow.setDate(today.getDate() + 1);
+    
+    const dateDebutField = document.getElementById('{{ form.datedebut.vars.id }}');
+    const dateFinField = document.getElementById('{{ form.datefin.vars.id }}');
+    
+    if (dateDebutField && !dateDebutField.value) {
+        dateDebutField.value = today.toISOString().split('T')[0];
+    }
+    
+    if (dateFinField && !dateFinField.value) {
+        dateFinField.value = tomorrow.toISOString().split('T')[0];
+    }
+});
+</script>
+{% endblock %}
 {% endblock %}

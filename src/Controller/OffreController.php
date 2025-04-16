@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Offre;
+use App\Entity\Projet;
 use App\Form\OffreType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -12,12 +13,16 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 
 #[Route('/offre')]
-final class OffreController extends AbstractController
+class OffreController extends AbstractController
 {
+    public function __construct(
+        private EntityManagerInterface $entityManager
+    ) {}
+
     #[Route('/list', name: 'app_offre_index', methods: ['GET'])]
-    public function index(EntityManagerInterface $entityManager): Response
+    public function index(): Response
     {
-        $offres = $entityManager
+        $offres = $this->entityManager
             ->getRepository(Offre::class)
             ->findAll();
 
@@ -27,30 +32,35 @@ final class OffreController extends AbstractController
     }
 
     #[Route('/new', name: 'app_offre_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, Security $security): Response
+    public function new(Request $request, Security $security): Response
     {
         $offre = new Offre();
-        $form = $this->createForm(OffreType::class, $offre);
+        $form = $this->createForm(OffreType::class, $offre, [
+            'projets' => $this->entityManager->getRepository(Projet::class)->findAll()
+        ]);
+        
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Récupérer l'utilisateur connecté et l'affecter à l'offre
             $user = $security->getUser();
             if ($user) {
                 $offre->setIdutilisateur($user);
+                
+                // Si vous avez une relation entre User et Entreprise
+                if (method_exists($user, 'getEntreprise')) {
+                    $offre->setIdentreprise($user->getEntreprise());
+                }
             }
 
-            // Enregistrer l'offre dans la base de données
-            $entityManager->persist($offre);
-            $entityManager->flush();
+            $this->entityManager->persist($offre);
+            $this->entityManager->flush();
 
-            // Redirection vers la liste des offres
-            return $this->redirectToRoute('app_offre_index', [], Response::HTTP_SEE_OTHER);
+            $this->addFlash('success', 'Offre créée avec succès');
+            return $this->redirectToRoute('app_offre_index');
         }
 
         return $this->render('offre/new.html.twig', [
-            'offre' => $offre,
-            'form' => $form->createView(),  // Utiliser form->createView() pour rendre le formulaire
+            'form' => $form->createView(),
         ]);
     }
 
@@ -59,38 +69,40 @@ final class OffreController extends AbstractController
     {
         return $this->render('offre/show.html.twig', [
             'offre' => $offre,
+            'projet' => $offre->getProjet()
         ]);
     }
 
     #[Route('/{idoffre}/edit', name: 'app_offre_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Offre $offre, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Offre $offre): Response
     {
-        $form = $this->createForm(OffreType::class, $offre);
+        $form = $this->createForm(OffreType::class, $offre, [
+            'projets' => $this->entityManager->getRepository(Projet::class)->findAll()
+        ]);
+        
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Enregistrer les modifications de l'offre
-            $entityManager->flush();
-
-            // Redirection vers la liste des offres
-            return $this->redirectToRoute('app_offre_index', [], Response::HTTP_SEE_OTHER);
+            $this->entityManager->flush();
+            $this->addFlash('success', 'Offre modifiée avec succès');
+            return $this->redirectToRoute('app_offre_index');
         }
 
         return $this->render('offre/edit.html.twig', [
             'offre' => $offre,
-            'form' => $form->createView(),  // Utiliser form->createView() pour rendre le formulaire
+            'form' => $form->createView(),
         ]);
     }
 
     #[Route('/{idoffre}', name: 'app_offre_delete', methods: ['POST'])]
-    public function delete(Request $request, Offre $offre, EntityManagerInterface $entityManager): Response
+    public function delete(Request $request, Offre $offre): Response
     {
-        // Vérification du token CSRF
         if ($this->isCsrfTokenValid('delete'.$offre->getIdoffre(), $request->request->get('_token'))) {
-            $entityManager->remove($offre);
-            $entityManager->flush();
+            $this->entityManager->remove($offre);
+            $this->entityManager->flush();
+            $this->addFlash('success', 'Offre supprimée avec succès');
         }
 
-        return $this->redirectToRoute('app_offre_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_offre_index');
     }
 }

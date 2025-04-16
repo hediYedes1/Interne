@@ -3,8 +3,9 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Entity\Offre;
 
 #[ORM\Entity]
 class Projet
@@ -46,22 +47,17 @@ class Projet
     )]
     private ?\DateTimeInterface $datefin = null;
 
-    #[ORM\ManyToOne(targetEntity: Offre::class, inversedBy: "projets")]
-    #[ORM\JoinColumn(nullable: false, name: "idoffre", referencedColumnName: "idoffre", onDelete: "CASCADE")]
-    #[Assert\NotNull(message: "Veuillez sélectionner une offre.")]
-    private ?Offre $idoffre = null;
+    #[ORM\OneToMany(targetEntity: Offre::class, mappedBy: "projet")]
+    private Collection $offres;
 
-    // Getters & Setters
+    public function __construct()
+    {
+        $this->offres = new ArrayCollection();
+    }
 
     public function getIdprojet(): ?int
     {
         return $this->idprojet;
-    }
-
-    public function setIdprojet(int $idprojet): self
-    {
-        $this->idprojet = $idprojet;
-        return $this;
     }
 
     public function getTitreprojet(): ?string
@@ -108,14 +104,37 @@ class Projet
         return $this;
     }
 
-    public function getIdoffre(): ?Offre
+    /**
+     * @return Collection<int, Offre>
+     */
+    public function getOffres(): Collection
     {
-        return $this->idoffre;
+        return $this->offres;
     }
 
-    public function setIdoffre(?Offre $idoffre): self
+    public function addOffre(Offre $offre): self
     {
-        $this->idoffre = $idoffre;
+        if (!$this->offres->contains($offre)) {
+            $this->offres->add($offre);
+            $offre->setProjet($this);
+        }
         return $this;
+    }
+
+    public function removeOffre(Offre $offre): self
+    {
+        if ($this->offres->removeElement($offre)) {
+            // set the owning side to null (unless already changed)
+            if ($offre->getProjet() === $this) {
+                $offre->setProjet(null);
+            }
+        }
+        return $this;
+    }
+
+    // Méthode pour afficher le projet dans les sélecteurs
+    public function __toString(): string
+    {
+        return $this->titreprojet ?? '';
     }
 }
