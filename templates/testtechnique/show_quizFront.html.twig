@@ -1,4 +1,4 @@
-{% extends 'base1.html.twig' %}
+{% extends 'base.html.twig' %}
 
 {% block title %}Passer le Quiz - {{ testtechnique.titretesttechnique }}{% endblock %}
 {% block css %}
@@ -126,7 +126,12 @@
     }
 </style>
 {% endblock %}
-
+{% block appBar %}
+{{ parent() }}
+{% endblock %}
+{% block navBar %}
+{{ parent() }}
+{% endblock %}
 {% block body %}
 <div class="container-fluid quiz-container">
     <div class="card shadow mb-4">
@@ -137,7 +142,7 @@
             </div>
         </div>
         <div class="card-body">
-            <form id="quiz-form" action="{{ path('quiz_submit') }}" method="POST">
+            <form id="quiz-form" action="{{ path('quiz_submit_front') }}" method="POST">
                 <input type="hidden" name="test_id" value="{{ testtechnique.idtesttechnique }}">
                 
                 {% for question in testtechnique.questions %}
@@ -192,8 +197,13 @@
     </div>
 </div>
 {% endblock %}
-
-{% block javascripts %}
+{% block subscribe %}
+{{ parent() }}
+{% endblock %}
+{% block footer %}
+{{ parent() }}
+{% endblock %}
+{% block js %}
 {{ parent() }}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>

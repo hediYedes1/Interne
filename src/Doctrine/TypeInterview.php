@@ -4,7 +4,7 @@ namespace App\Doctrine;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\Type;
-use App\Enum\TypeInterview; // Assure-toi que l'énumération TypeInterview est bien définie.
+use App\Enum\TypeInterview; 
 use InvalidArgumentException;
 
 class TypeInterviewType extends Type // Modifie le nom de la classe en TypeInterviewType pour respecter la convention.

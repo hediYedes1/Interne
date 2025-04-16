@@ -27,6 +27,7 @@ class Testtechnique
     private string $titretesttechnique;
 
     #[Assert\NotBlank(message: "La description est obligatoire.")]
+    #[Assert\Length(min: 5, max: 255, minMessage: "La description doit contenir au moins {{ limit }} caractères.")]
     #[ORM\Column(type: "string", length: 255)]
     private string $descriptiontesttechnique;
 
@@ -35,8 +36,8 @@ class Testtechnique
     #[ORM\Column(type: "integer")]
     private int $dureetesttechnique;
 
-    #[Assert\NotBlank(message: "Le statut est obligatoire.")]
-    #[ORM\Column(type: "statuttesttechnique")]
+    
+    #[ORM\Column(type: "statuttesttechnique" , options: ["default" => "ENATTENTE"])]
     private StatutTestTechnique $statuttesttechnique;
 
     
@@ -110,6 +111,7 @@ private ?string $questions = null;
     public function __construct()
     {
         $this->datecreationtesttechnique = new \DateTimeImmutable();
+        $this->statuttesttechnique = StatutTestTechnique::ENATTENTE;
     }
     
     

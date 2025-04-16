@@ -10,11 +10,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Enum\StatutTestTechnique;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Response;
 
 class QuizController extends AbstractController
 {
     #[Route('/quiz/submit', name: 'quiz_submit', methods: ['POST'])]
-    public function submitQuiz(Request $request, TesttechniqueRepository $testRepo, EntityManagerInterface $em): JsonResponse
+    public function submitQuiz(Request $request, TesttechniqueRepository $testRepo, EntityManagerInterface $em): Response
     {
         try {
             $data = json_decode($request->getContent(), true) ?: $request->request->all();
@@ -27,33 +28,28 @@ class QuizController extends AbstractController
             if (!$test) throw new \Exception('Test non trouvé');
     
             $correctCount = 0;
-            $questions = $test->getQuestions(); // Cette méthode décode déjà le JSON
+            $questions = $test->getQuestions();
     
             foreach ($questions as $index => $question) {
-                if (!isset($data['answers'][$index])) continue;
-            
-                $userAnswer = $data['answers'][$index];
-                $correctAnswers = $question['correct_answers'] ?? [];
-            
-                $userAnswerKey = strtolower($userAnswer);
-            
-                if (array_key_exists($userAnswerKey, $correctAnswers)) {
-                    $isCorrect = filter_var($correctAnswers[$userAnswerKey], FILTER_VALIDATE_BOOLEAN);
-                    if ($isCorrect) {
-                        $correctCount++;
+                $userAnswer = $data['answers'][$index] ?? null;
+                $correctAnswers = $question['correctAnswers'] ?? [];
+                $correctAnswerKey = null;
+    
+                // Trouver la bonne réponse
+                foreach ($correctAnswers as $answerKey => $isCorrectAnswer) {
+                    if (filter_var($isCorrectAnswer, FILTER_VALIDATE_BOOLEAN)) {
+                        $correctAnswerKey = str_replace('_correct', '', $answerKey);
+                        break;
                     }
                 }
-                // Debug crucial
-                error_log("Question {$index}:");
-                error_log("Réponse utilisateur: {$userAnswer}");
-                error_log("Bonnes réponses: ".print_r($correctAnswers, true));
     
-                // Vérification robuste
-                if (array_key_exists($userAnswer, $correctAnswers)) {
-                    $isCorrect = $correctAnswers[$userAnswer];
-                    if ($isCorrect === true || $isCorrect === 'true' || $isCorrect === 1) {
+                // Vérifier si la réponse de l'utilisateur est correcte
+                if ($userAnswer) {
+                    $normalizedUserAnswer = strtolower(trim($userAnswer));
+                    $normalizedCorrectAnswer = strtolower(trim($correctAnswerKey));
+                    
+                    if ($normalizedUserAnswer === $normalizedCorrectAnswer) {
                         $correctCount++;
-                        error_log("Bonne réponse!");
                     }
                 }
             }
@@ -62,20 +58,75 @@ class QuizController extends AbstractController
             $test->setStatuttesttechnique($statut);
             $em->flush();
     
-            return new JsonResponse([
-                'success' => true,
-                'score' => $correctCount,
-                'total' => count($questions),
-                'statut' => $statut->value,
-                'message' => 'Quiz évalué avec succès'
+            $this->addFlash('success', 'Quiz soumis avec succès. Résultat: ' . $statut->value);
+            return $this->redirectToRoute('app_testtechnique_show', [
+                'idtesttechnique' => $test->getIdtesttechnique()
             ]);
     
         } catch (\Exception $e) {
             error_log("ERREUR: ".$e->getMessage());
-            return new JsonResponse([
-                'success' => false,
-                'error' => $e->getMessage()
-            ], 400);
+            $this->addFlash('error', $e->getMessage());
+            return $this->redirectToRoute('app_testtechnique_quiz', [
+                'idtesttechnique' => $data['test_id'] ?? null
+            ]);
+        }
+    }
+
+    #[Route('/quiz/submitFront', name: 'quiz_submit_front', methods: ['POST'])]
+    public function submitQuizFront(Request $request, TesttechniqueRepository $testRepo, EntityManagerInterface $em): Response
+    {
+        try {
+            $data = json_decode($request->getContent(), true) ?: $request->request->all();
+            
+            if (!$data) throw new \Exception('Aucune donnée reçue');
+            if (!isset($data['test_id'])) throw new \Exception('ID de test manquant');
+            if (!isset($data['answers'])) throw new \Exception('Réponses manquantes');
+    
+            $test = $testRepo->find($data['test_id']);
+            if (!$test) throw new \Exception('Test non trouvé');
+    
+            $correctCount = 0;
+            $questions = $test->getQuestions();
+    
+            foreach ($questions as $index => $question) {
+                $userAnswer = $data['answers'][$index] ?? null;
+                $correctAnswers = $question['correctAnswers'] ?? [];
+                $correctAnswerKey = null;
+    
+                // Trouver la bonne réponse
+                foreach ($correctAnswers as $answerKey => $isCorrectAnswer) {
+                    if (filter_var($isCorrectAnswer, FILTER_VALIDATE_BOOLEAN)) {
+                        $correctAnswerKey = str_replace('_correct', '', $answerKey);
+                        break;
+                    }
+                }
+    
+                // Vérifier si la réponse de l'utilisateur est correcte
+                if ($userAnswer) {
+                    $normalizedUserAnswer = strtolower(trim($userAnswer));
+                    $normalizedCorrectAnswer = strtolower(trim($correctAnswerKey));
+                    
+                    if ($normalizedUserAnswer === $normalizedCorrectAnswer) {
+                        $correctCount++;
+                    }
+                }
+            }
+    
+            $statut = $correctCount >= 8 ? StatutTestTechnique::ACCEPTE : StatutTestTechnique::REFUSE;
+            $test->setStatuttesttechnique($statut);
+            $em->flush();
+    
+            $this->addFlash('success', 'Quiz soumis avec succès. Résultat: ' . $statut->value);
+            return $this->redirectToRoute('app_testtechnique_show_front', [
+                'idtesttechnique' => $test->getIdtesttechnique()
+            ]);
+    
+        } catch (\Exception $e) {
+            error_log("ERREUR: ".$e->getMessage());
+            $this->addFlash('error', $e->getMessage());
+            return $this->redirectToRoute('app_testtechnique_quiz_front', [
+                'idtesttechnique' => $data['test_id'] ?? null
+            ]);
         }
     }
 }

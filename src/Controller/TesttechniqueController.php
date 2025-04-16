@@ -11,8 +11,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use App\Enum\StatutTestTechnique;
 use Symfony\Component\Routing\Attribute\Route;
-
+use App\Utils\EmailService;
 
 #[Route('/testtechnique')]
 final class TesttechniqueController extends AbstractController
@@ -79,7 +80,7 @@ final class TesttechniqueController extends AbstractController
             'form' => $form,
         ]);
     }
-
+   
 
         #[Route('/{idtesttechnique}', name: 'app_testtechnique_show', methods: ['GET'])]
 public function show(Testtechnique $testtechnique): Response
@@ -146,7 +147,7 @@ public function indexByInterview(
     $titre = $request->query->get('titretesttechnique');
     $statut = $request->query->get('statuttesttechnique');
 
-    // Modifier la méthode findByFilters dans le repository pour prendre en compte l'interview
+    
     $testtechniques = $testtechniqueRepository->findByFiltersForInterview(
         $idinterview, 
         $titre, 
@@ -168,7 +169,7 @@ public function indexByInterviewBack(
     $titre = $request->query->get('titretesttechnique');
     $statut = $request->query->get('statuttesttechnique');
 
-    // Modifier la méthode findByFilters dans le repository pour prendre en compte l'interview
+    
     $testtechniques = $testtechniqueRepository->findByFiltersForInterview(
         $idinterview, 
         $titre, 
@@ -210,7 +211,7 @@ public function newForInterview(Request $request, EntityManagerInterface $entity
     $testtechnique->setIdinterview($idinterview);
 
     $form = $this->createForm(TesttechniqueType::class, $testtechnique, [
-        'interview' => $idinterview, // This tells the form not to add the idinterview field
+        'interview' => $idinterview, 
     ]);
 
     $form->handleRequest($request);
@@ -245,7 +246,7 @@ public function addQuiz(
         try {
             $questions = $quizApiService->fetchQuizQuestions($category, $difficulty, $limit);
             
-            // Convertir les questions en format stockable
+            
             $storableQuestions = [];
             foreach ($questions as $question) {
                 $questionData = [
@@ -256,7 +257,7 @@ public function addQuiz(
                     'difficulty' => $question->getDifficulty()
                 ];
                 
-                // Ajoutez seulement si la propriété existe (parenthèse corrigée ici)
+           
                 if (method_exists($question, 'getDescription')) {
                     $questionData['description'] = $question->getDescription();
                 }
@@ -297,6 +298,7 @@ public function addQuiz(
         EntityManagerInterface $entityManager
     ): Response {
         $testtechnique->setQuestions([]);
+        $testtechnique->setStatuttesttechnique(StatutTestTechnique::ENATTENTE);
         $entityManager->flush();
 
         $this->addFlash('success', 'Quiz supprimé du test technique');
@@ -328,7 +330,7 @@ public function showQuizFront(Testtechnique $testtechnique): Response
         ]);
     }
 
-    return $this->render('testtechnique/show_quiz.html.twig', [
+    return $this->render('testtechnique/show_quizFront.html.twig', [
         'testtechnique' => $testtechnique
     ]);
 }
