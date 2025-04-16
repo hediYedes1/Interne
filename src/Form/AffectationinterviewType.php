@@ -17,16 +17,6 @@ class AffectationinterviewType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-        /*
-            ->add('idutilisateur', EntityType::class, [
-                'class' => Utilisateur::class,
-                'choice_label' => function(Utilisateur $utilisateur) {
-                    return $utilisateur->getNomutilisateur() . ' ' . $utilisateur->getPrenomutilisateur();
-                },
-                'label' => 'Utilisateur',
-                'placeholder' => 'Sélectionnez un utilisateur',
-                'attr' => ['class' => 'select2'] // Pour Select2 si vous l'utilisez
-            ]);*/
             ->add('idutilisateur', EntityType::class, [
                 'class' => Utilisateur::class,
                 'choice_label' => function(Utilisateur $utilisateur) {

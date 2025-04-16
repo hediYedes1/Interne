@@ -147,7 +147,7 @@ public function indexByInterview(
     $titre = $request->query->get('titretesttechnique');
     $statut = $request->query->get('statuttesttechnique');
 
-    // Modifier la méthode findByFilters dans le repository pour prendre en compte l'interview
+    
     $testtechniques = $testtechniqueRepository->findByFiltersForInterview(
         $idinterview, 
         $titre, 
@@ -169,7 +169,7 @@ public function indexByInterviewBack(
     $titre = $request->query->get('titretesttechnique');
     $statut = $request->query->get('statuttesttechnique');
 
-    // Modifier la méthode findByFilters dans le repository pour prendre en compte l'interview
+    
     $testtechniques = $testtechniqueRepository->findByFiltersForInterview(
         $idinterview, 
         $titre, 
@@ -211,7 +211,7 @@ public function newForInterview(Request $request, EntityManagerInterface $entity
     $testtechnique->setIdinterview($idinterview);
 
     $form = $this->createForm(TesttechniqueType::class, $testtechnique, [
-        'interview' => $idinterview, // This tells the form not to add the idinterview field
+        'interview' => $idinterview, 
     ]);
 
     $form->handleRequest($request);
@@ -246,7 +246,7 @@ public function addQuiz(
         try {
             $questions = $quizApiService->fetchQuizQuestions($category, $difficulty, $limit);
             
-            // Convertir les questions en format stockable
+            
             $storableQuestions = [];
             foreach ($questions as $question) {
                 $questionData = [
@@ -257,7 +257,7 @@ public function addQuiz(
                     'difficulty' => $question->getDifficulty()
                 ];
                 
-                // Ajoutez seulement si la propriété existe (parenthèse corrigée ici)
+           
                 if (method_exists($question, 'getDescription')) {
                     $questionData['description'] = $question->getDescription();
                 }
@@ -330,7 +330,7 @@ public function showQuizFront(Testtechnique $testtechnique): Response
         ]);
     }
 
-    return $this->render('testtechnique/show_quiz.html.twig', [
+    return $this->render('testtechnique/show_quizFront.html.twig', [
         'testtechnique' => $testtechnique
     ]);
 }

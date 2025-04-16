@@ -28,27 +28,7 @@ final class AffectationinterviewController extends AbstractController
             'affectationinterviews' => $affectationinterviews,
         ]);
     }
-/*
-    #[Route('/new', name: 'app_affectationinterview_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $affectationinterview = new Affectationinterview();
-        $form = $this->createForm(AffectationinterviewType::class, $affectationinterview);
-        $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($affectationinterview);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_affectationinterview_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('affectationinterview/new.html.twig', [
-            'affectationinterview' => $affectationinterview,
-            'form' => $form,
-        ]);
-    }
-*/
     #[Route('/{idinterview}', name: 'app_affectationinterview_show', methods: ['GET'])]
     public function show(Affectationinterview $affectationinterview): Response
     {

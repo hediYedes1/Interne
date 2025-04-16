@@ -149,7 +149,7 @@ class Interview
     public static function validateTimeInterview($timeinterview, ExecutionContextInterface $context)
     {
         if ($timeinterview === null) {
-            return; // Si le champ est vide, on ne fait rien
+            return; 
         }
         $now = new \DateTime();
         
