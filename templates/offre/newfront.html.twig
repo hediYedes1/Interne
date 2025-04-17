@@ -1,4 +1,4 @@
-{% extends 'base1.html.twig' %}
+{% extends 'base.html.twig' %}
 
 {% block title %}Nouvelle Offre{% endblock %}
 
@@ -80,7 +80,7 @@
                 {{ form_end(form) }}
 
                 <div class="text-center mt-3">
-                    <a href="{{ path('back_offre_index') }}" class="btn btn-link">← Retour à la liste</a>
+                    <a href="{{ path('front_offre_index') }}" class="btn btn-link">← Retour à la liste</a>
                 </div>
             </div>
         </div>

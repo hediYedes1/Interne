@@ -14,22 +14,39 @@ use Symfony\Component\Security\Core\Security;
 #[Route('/projet')]
 final class ProjetController extends AbstractController
 {
-    // Route pour afficher la liste des projets
-    #[Route('/list', name: 'app_projet_index', methods: ['GET'])]
-    public function index(EntityManagerInterface $entityManager): Response
+    private EntityManagerInterface $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $projets = $entityManager
+        $this->entityManager = $entityManager;
+    }
+
+    // Route pour la partie front (candidats)
+    #[Route('/list', name: 'front_projet_index', methods: ['GET'])]
+    public function indexFront(Request $request): Response
+    {
+        $projets = $this->entityManager
             ->getRepository(Projet::class)
             ->findAll();
 
+        return $this->render('projet/indexfront.html.twig', [
+            'projets' => $projets,
+        ]);
+    }
+
+    // Route pour la partie back (admin/RH)
+    #[Route('/admin/projets', name: 'back_projet_index', methods: ['GET'])]
+    public function indexBack(Request $request): Response
+    {
+        $projets = $this->entityManager->getRepository(Projet::class)->findAll();
         return $this->render('projet/index.html.twig', [
             'projets' => $projets,
         ]);
     }
 
-    // Route pour créer un nouveau projet
-    #[Route('/new', name: 'app_projet_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, Security $security): Response
+    // Route pour créer un nouveau projet (back)
+    #[Route('/admin/new', name: 'back_projet_new', methods: ['GET', 'POST'])]
+    public function newBack(Request $request, Security $security): Response
     {
         $projet = new Projet();
         $form = $this->createForm(ProjetType::class, $projet);
@@ -43,11 +60,11 @@ final class ProjetController extends AbstractController
             }
 
             // Sauvegarder le projet dans la base de données
-            $entityManager->persist($projet);
-            $entityManager->flush();
+            $this->entityManager->persist($projet);
+            $this->entityManager->flush();
 
             // Rediriger vers la liste des projets après création
-            return $this->redirectToRoute('app_projet_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('back_projet_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('projet/new.html.twig', [
@@ -56,28 +73,39 @@ final class ProjetController extends AbstractController
         ]);
     }
 
-    // Route pour afficher un projet spécifique
-    #[Route('/{idprojet}', name: 'app_projet_show', methods: ['GET'])]
-    public function show(Projet $projet): Response
+    // Route pour afficher un projet spécifique (front)
+    #[Route('/{idprojet}', name: 'front_projet_show', methods: ['GET'])]
+    public function showFront(Projet $projet): Response
     {
-        return $this->render('projet/show.html.twig', [
+        return $this->render('projet/showfront.html.twig', [
             'projet' => $projet,
+            'offres' => $projet->getOffres()
         ]);
     }
 
-    // Route pour modifier un projet existant
-    #[Route('/{idprojet}/edit', name: 'app_projet_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Projet $projet, EntityManagerInterface $entityManager): Response
+    // Route pour afficher un projet spécifique (back)
+    #[Route('/admin/{idprojet}', name: 'back_projet_show', methods: ['GET'])]
+    public function showBack(Projet $projet): Response
+    {
+        return $this->render('projet/show.html.twig', [
+            'projet' => $projet,
+            'offres' => $projet->getOffres()
+        ]);
+    }
+
+    // Route pour modifier un projet existant (back)
+    #[Route('/admin/{idprojet}/edit', name: 'back_projet_edit', methods: ['GET', 'POST'])]
+    public function editBack(Request $request, Projet $projet): Response
     {
         $form = $this->createForm(ProjetType::class, $projet);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             // Sauvegarder les modifications du projet dans la base de données
-            $entityManager->flush();
+            $this->entityManager->flush();
 
             // Rediriger vers la liste des projets après édition
-            return $this->redirectToRoute('app_projet_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('back_projet_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('projet/edit.html.twig', [
@@ -86,17 +114,17 @@ final class ProjetController extends AbstractController
         ]);
     }
 
-    // Route pour supprimer un projet
-    #[Route('/{idprojet}', name: 'app_projet_delete', methods: ['POST'])]
-    public function delete(Request $request, Projet $projet, EntityManagerInterface $entityManager): Response
+    // Route pour supprimer un projet (back)
+    #[Route('/admin/{idprojet}', name: 'back_projet_delete', methods: ['POST'])]
+    public function deleteBack(Request $request, Projet $projet): Response
     {
         // Vérification du token CSRF avant de supprimer le projet
         if ($this->isCsrfTokenValid('delete'.$projet->getIdprojet(), $request->request->get('_token'))) {
-            $entityManager->remove($projet);
-            $entityManager->flush();
+            $this->entityManager->remove($projet);
+            $this->entityManager->flush();
         }
 
         // Rediriger vers la liste des projets après suppression
-        return $this->redirectToRoute('app_projet_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('back_projet_index', [], Response::HTTP_SEE_OTHER);
     }
 }

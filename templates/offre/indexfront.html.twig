@@ -1,4 +1,4 @@
-{% extends 'base1.html.twig' %}
+{% extends 'base.html.twig' %}
 
 {% block title %}Liste des offres d'emploi{% endblock %}
 
@@ -10,7 +10,7 @@
                 <h1 class="display-5 fw-bold">
                     <i class="fas fa-briefcase me-2"></i>Nos offres d'emploi
                 </h1>
-                <a href="{{ path('back_offre_new') }}" class="btn btn-primary">
+                <a href="{{ path('front_offre_new') }}" class="btn btn-primary">
                     <i class="fas fa-plus me-2"></i>Nouvelle offre
                 </a>
             </div>
@@ -95,7 +95,7 @@
                                 <small class="text-muted">
                                     <i class="fas fa-envelope me-1"></i>{{ offre.emailrh }}
                                 </small>
-                                <a href="{{ path('back_offre_show', {'idoffre': offre.idoffre}) }}" 
+                                <a href="{{ path('front_offre_show', {'idoffre': offre.idoffre}) }}" 
                                    class="btn btn-sm btn-outline-primary">
                                     Voir détails <i class="fas fa-arrow-right ms-1"></i>
                                 </a>

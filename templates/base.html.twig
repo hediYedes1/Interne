@@ -116,9 +116,10 @@
 											<li><a href="#">Interview </a></li>
 											<li><a href="#">Partenariat </a></li>
 											<li><a href="#">Publication</a>
-												
-													<li><a href="#">Entreprise</a></li>
-							                        <li><a href="#">Partenariat</a></li>
+											<li><a href="{{ path('front_projet_index') }}">Projet</a></li>
+											<li><a href="{{ path('front_offre_index') }}">Offre</a></li>
+											<li><a href="#">Entreprise</a></li>
+							                <li><a href="#">Partenariat</a></li>
 							
 											<li><a href="contact.html">Contact Us</a></li>
 										</ul>
@@ -622,7 +623,16 @@
 									</div>
 									<div class="col-lg-6 col-md-6 col-12">
 										<ul>
-											<li><a href="#"><i class="fa fa-caret-right" aria-hidden="true"></i>Projet</a></li>
+											<li>
+												<a href="{{ path('front_projet_index') }}">
+													<i class="fa fa-caret-right" aria-hidden="true"></i> Projet
+												</a>
+											</li>
+											<li>
+												<a href="{{ path('front_offre_index') }}">
+													<i class="fa fa-caret-right" aria-hidden="true"></i> Offre
+												</a>
+											</li>		
 											<li><a href="#"><i class="fa fa-caret-right" aria-hidden="true"></i>Publications</a></li>
 											<li><a href="#"><i class="fa fa-caret-right" aria-hidden="true"></i>Entreprises</a></li>
 											<li><a href="#"><i class="fa fa-caret-right" aria-hidden="true"></i>Partenariat</a></li>

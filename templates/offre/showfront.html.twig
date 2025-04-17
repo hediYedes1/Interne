@@ -1,4 +1,4 @@
-{% extends 'base1.html.twig' %}
+{% extends 'base.html.twig' %}
 
 {% block title %}Offre{% endblock %}
 
@@ -44,10 +44,10 @@
         </table>
 
         <div class="d-flex justify-content-between mt-4">
-            <a href="{{ path('back_offre_index') }}" class="btn btn-primary text-white">
+            <a href="{{ path('front_offre_index') }}" class="btn btn-primary text-white">
                 <i class="fas fa-arrow-left"></i> Retour à la liste
             </a>
-            <a href="{{ path('back_offre_edit', {'idoffre': offre.idoffre}) }}" class="btn btn-warning text-white">
+            <a href="{{ path('front_offre_edit', {'idoffre': offre.idoffre}) }}" class="btn btn-warning text-white">
                 <i class="fas fa-edit"></i> Modifier
             </a>
 
@@ -72,7 +72,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
-                        <form action="{{ path('back_offre_delete', {'idoffre': offre.idoffre}) }}" method="POST" style="display:inline;">
+                        <form action="{{ path('front_offre_delete', {'idoffre': offre.idoffre}) }}" method="POST" style="display:inline;">
                             {{ csrf_token('delete' ~ offre.idoffre) }}
                             <button type="submit" class="btn btn-danger">Supprimer</button>
                         </form>
@@ -83,7 +83,7 @@
 
         <!-- Bouton pour créer une nouvelle offre -->
         <div class="d-flex justify-content-end mt-4">
-            <a href="{{ path('back_offre_new') }}" class="btn btn-success btn-lg text-white">
+            <a href="{{ path('front_offre_new') }}" class="btn btn-success btn-lg text-white">
                 <i class="fas fa-plus-circle"></i> Créer une nouvelle offre
             </a>
         </div>

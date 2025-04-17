@@ -12,4 +12,14 @@ class ProjetRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Projet::class);
     }
+public function search(string $query): array
+{
+    return $this->createQueryBuilder('p')
+        ->where('p.titreprojet LIKE :query')
+        ->orWhere('p.descriptionprojet LIKE :query')
+        ->setParameter('query', '%'.$query.'%')
+        ->getQuery()
+        ->getResult();
 }
+}
+
