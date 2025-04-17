@@ -18,8 +18,6 @@ class OffreController extends AbstractController
     public function __construct(
         private EntityManagerInterface $entityManager
     ) {}
-
-    // Route pour la partie front (candidats) - Liste des offres
     #[Route('/list', name: 'front_offre_index', methods: ['GET'])]
     public function indexFront(): Response
     {
@@ -31,12 +29,9 @@ class OffreController extends AbstractController
             'offres' => $offres,
         ]);
     }
-
-    // Route pour afficher une offre spécifique (front)
     #[Route('/{idoffre}', name: 'front_offre_show', methods: ['GET'])]
     public function showFront(Offre $offre): Response
     {
-        // Vérifie si l'offre existe
         if (!$offre) {
             throw $this->createNotFoundException('L\'offre demandée n\'a pas été trouvée');
         }
@@ -47,7 +42,6 @@ class OffreController extends AbstractController
         ]);
     }
 
-    // Route pour créer une nouvelle offre (front)
     #[Route('/offre/new', name: 'front_offre_new', methods: ['GET', 'POST'])]
     public function newFront(Request $request, Security $security): Response
     {
@@ -62,7 +56,6 @@ class OffreController extends AbstractController
             $user = $security->getUser();
             if ($user) {
                 $offre->setIdutilisateur($user);
-                // Si vous avez une relation entre User et Entreprise
                 if (method_exists($user, 'getEntreprise')) {
                     $offre->setIdentreprise($user->getEntreprise());
                 }
@@ -79,8 +72,6 @@ class OffreController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
-
-    // Route pour éditer une offre (front)
     #[Route('/{idoffre}/edit', name: 'front_offre_edit', methods: ['GET', 'POST'])]
     public function editFront(Request $request, Offre $offre): Response
     {
@@ -102,7 +93,6 @@ class OffreController extends AbstractController
         ]);
     }
 
-    // Route pour supprimer une offre (front)
     #[Route('/{idoffre}/delete', name: 'front_offre_delete', methods: ['POST'])]
     public function deleteFront(Request $request, Offre $offre): Response
     {
@@ -115,7 +105,6 @@ class OffreController extends AbstractController
         return $this->redirectToRoute('front_offre_index');
     }
 
-    // Route pour la partie back (admin/RH)
     #[Route('/admin/offres', name: 'back_offre_index', methods: ['GET'])]
     public function indexBack(): Response
     {
@@ -126,7 +115,6 @@ class OffreController extends AbstractController
         ]);
     }
 
-    // Route pour créer une nouvelle offre (back)
     #[Route('/admin/new', name: 'back_offre_new', methods: ['GET', 'POST'])]
     public function newBack(Request $request, Security $security): Response
     {
@@ -158,7 +146,6 @@ class OffreController extends AbstractController
         ]);
     }
 
-    // Route pour afficher une offre (back)
     #[Route('/admin/{idoffre}', name: 'back_offre_show', methods: ['GET'])]
     public function showBack(Offre $offre): Response
     {
@@ -168,7 +155,6 @@ class OffreController extends AbstractController
         ]);
     }
 
-    // Route pour éditer une offre (back)
     #[Route('/admin/{idoffre}/edit', name: 'back_offre_edit', methods: ['GET', 'POST'])]
     public function editBack(Request $request, Offre $offre): Response
     {
@@ -190,7 +176,6 @@ class OffreController extends AbstractController
         ]);
     }
 
-    // Route pour supprimer une offre (back)
     #[Route('/admin/{idoffre}', name: 'back_offre_delete', methods: ['POST'])]
     public function deleteBack(Request $request, Offre $offre): Response
     {

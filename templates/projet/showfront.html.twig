@@ -1,4 +1,4 @@
-{% extends 'base1.html.twig' %}
+{% extends 'base.html.twig' %}
 {% block title %}Détails du projet{% endblock %}
 
 {% block body %}
@@ -10,14 +10,14 @@
     <p><strong>Date fin :</strong> {{ projet.datefin|date('d/m/Y') }}</p>
 
     <div class="d-flex gap-2 mt-4">
-        <a href="{{ path('back_projet_edit', {'idprojet': projet.idprojet}) }}" class="btn btn-warning">
+        <a href="{{ path('front_projet_edit', {'idprojet': projet.idprojet}) }}" class="btn btn-warning">
             <i class="fas fa-edit"></i> Modifier
         </a>
-        <form method="post" action="{{ path('back_projet_delete', {'idprojet': projet.idprojet}) }}" onsubmit="return confirm('Supprimer ce projet ?');">
+        <form method="post" action="{{ path('front_projet_delete', {'idprojet': projet.idprojet}) }}" onsubmit="return confirm('Supprimer ce projet ?');">
             <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ projet.idprojet) }}">
             <button class="btn btn-danger"><i class="fas fa-trash"></i> Supprimer</button>
         </form>
-        <a href="{{ path('back_projet_index') }}" class="btn btn-secondary">
+        <a href="{{ path('front_projet_index') }}" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Retour à la liste
         </a>
     </div>
