@@ -1,0 +1,83 @@
+{{ form_start(form, {'attr': {'class': 'form-horizontal', 'novalidate': 'novalidate'}}) }}
+
+<div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">Informations du Département</h5>
+    </div>
+    <div class="card-body">
+
+        <!-- Nom du département -->
+        <div class="form-group row">
+            <div class="col-md-6 mb-3">
+                {{ form_label(form.nomdepartement, 'Nom du Département', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.nomdepartement, {
+                    'attr': {
+                        'class': 'form-control' ~ (app.request.isMethod('POST') and form.nomdepartement.vars.valid is same as(true) ? ' is-valid' : (form.nomdepartement.vars.valid is same as(false) ? ' is-invalid' : '')),
+                        'maxlength': '255',
+                        'required': 'required',
+                        'title': 'Veuillez entrer le nom du département (max. 255 caractères).'
+                    }
+                }) }}
+                {{ form_errors(form.nomdepartement) }}
+            </div>
+
+            <!-- Description -->
+            <div class="col-md-6 mb-3">
+                {{ form_label(form.descriptiondepartement, 'Description', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.descriptiondepartement, {
+                    'attr': {
+                        'class': 'form-control' ~ (app.request.isMethod('POST') and form.descriptiondepartement.vars.valid is same as(true) ? ' is-valid' : (form.descriptiondepartement.vars.valid is same as(false) ? ' is-invalid' : '')),
+                        'maxlength': '500',
+                        'required': 'required',
+                        'title': 'Veuillez entrer une description (max. 500 caractères).'
+                    }
+                }) }}
+                {{ form_errors(form.descriptiondepartement) }}
+            </div>
+        </div>
+
+        <!-- Responsable -->
+        <div class="form-group row">
+            <div class="col-md-6 mb-3">
+                {{ form_label(form.responsabledepartement, 'Responsable', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.responsabledepartement, {
+                    'attr': {
+                        'class': 'form-control' ~ (app.request.isMethod('POST') and form.responsabledepartement.vars.valid is same as(true) ? ' is-valid' : (form.responsabledepartement.vars.valid is same as(false) ? ' is-invalid' : '')),
+                        'maxlength': '100',
+                        'required': 'required',
+                        'title': 'Nom du responsable du département (max. 100 caractères).'
+                    }
+                }) }}
+                {{ form_errors(form.responsabledepartement) }}
+            </div>
+
+            <!-- Nombre d'employés -->
+            <div class="col-md-6 mb-3">
+                {{ form_label(form.nbremployedepartement, 'Nombre d\'Employés', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.nbremployedepartement, {
+                    'attr': {
+                        'class': 'form-control' ~ (app.request.isMethod('POST') and form.nbremployedepartement.vars.valid is same as(true) ? ' is-valid' : (form.nbremployedepartement.vars.valid is same as(false) ? ' is-invalid' : '')),
+                        'min': '1',
+                        'required': 'required',
+                        'title': 'Veuillez entrer un nombre positif.'
+                    }
+                }) }}
+                {{ form_errors(form.nbremployedepartement) }}
+            </div>
+        </div>
+
+       
+
+        <!-- Boutons -->
+        <div class="form-group text-end mt-4">
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-check-circle"></i> {{ button_label|default('Enregistrer') }}
+            </button>
+            <a href="{{ path('app_departmententreprise_index') }}" class="btn btn-secondary ms-2">
+                Annuler
+            </a>
+        </div>
+    </div>
+</div>
+
+{{ form_end(form) }}

@@ -106,8 +106,6 @@
 			<!-- End Topbar -->
 			<!-- Header Inner -->
             {% block navBar %}
-			<div class="header-inner">
-				<div class="container">
 					<div class="inner">
 						<div class="row">
 							<div class="col-lg-3 col-md-3 col-12">
@@ -130,11 +128,9 @@
 											<li><a href="{{ path('app_interview_index_front') }}">Interview</a></li>
 											<li><a href="#">Partenariat </a></li>
 											<li><a href="#">Publication</a>
-												
-													<li><a href="#">Entreprise</a></li>
-							                        <li><a href="#">Partenariat</a></li>
-							
-											<li><a href="contact.html">Contact Us</a></li>
+											<li><a href="{{path('app_entreprise_index_front')}}">Entreprise</a></li>
+							                <li><a href="#">Partenariat</a></li>
+							<li><a href="#">Contact Us</a></li>
 										</ul>
 									</nav>
 								</div>

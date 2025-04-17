@@ -114,7 +114,7 @@
           </a>
         </li>
         <li class="pc-item">
-          <a href="../pages/register.html" class="pc-link">
+          <a href="{{path('app_entreprise_index')}}" class="pc-link">
             <span class="pc-micon"><i class="ti ti-user-plus"></i></span>
             <span class="pc-mtext">Entreprise</span>
           </a>
@@ -131,18 +131,7 @@
             <span class="pc-mtext">Hebergement</span>
           </a>
         </li>
-         <li class="pc-item">
-          <a href="../pages/login.html" class="pc-link">
-            <span class="pc-micon"><i class="ti ti-lock"></i></span>
-            <span class="pc-mtext">Branche</span>
-          </a>
-        </li>
-        <li class="pc-item">
-          <a href="../pages/register.html" class="pc-link">
-            <span class="pc-micon"><i class="ti ti-user-plus"></i></span>
-            <span class="pc-mtext">Departement</span>
-          </a>
-        </li>
+        
          <li class="pc-item">
           <a href="../pages/login.html" class="pc-link">
             <span class="pc-micon"><i class="ti ti-lock"></i></span>
@@ -215,13 +204,27 @@
         
         
       </ul>
-      
+      <div class="card text-center">
+        <div class="card-body">
+          <img src="images/img-navbar-card.png" alt="images" class="img-fluid mb-2">
+          <h5>Upgrade To Pro</h5>
+          <p>To get more features and components</p>
+          <a href="https://codedthemes.com/item/berry-bootstrap-5-admin-template/" target="_blank"
+          class="btn btn-success">Buy Now</a>
+        </div>
+      </div>
     </div>
   </div>
 </nav>
 {% endblock %}
 <!-- [ Sidebar Menu ] end --> <!-- [ Header Topbar ] start -->
+
+
+
+
+
 {% block headside %}
+<!-- [ Sidebar Menu ] end --> <!-- [ Header Topbar ] start -->
 <!-- [ Sidebar Menu ] end --> <!-- [ Header Topbar ] start -->
 <header class="pc-header">
   <div class="header-wrapper"> <!-- [Mobile Media Block] start -->
@@ -442,8 +445,11 @@
 </div>
  </div>
 </header>
+<!-- [ Header ] end -->
+
 {% endblock %}
 <!-- [ Header ] end -->
+
 
 
 
@@ -753,6 +759,10 @@
           </div>
         </div>
       </div>
+{% endblock %}
+      </div>
+  </div>
+      
 {% endblock %}
       </div>
   </div>
