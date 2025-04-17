@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Testtechnique;
 use App\Entity\Interview;
+use App\Entity\QuizQuestion;
 use App\Utils\QuizApiService;
 use App\Form\TesttechniqueType;
 use App\Repository\TesttechniqueRepository;
@@ -334,5 +335,13 @@ public function showQuizFront(Testtechnique $testtechnique): Response
         'testtechnique' => $testtechnique
     ]);
 }
-   
+#[Route('/quiz/result/{id}', name: 'quiz_result')]
+public function showResult(Testtechnique $test , QuizQuestion $quiz): Response
+{
+    return $this->render('quiz/result.html.twig', [
+        'test' => $test,
+        'score' => $quiz->$test->getScore(), 
+        'statut' => $test->getStatuttesttechnique()
+    ]);
+}
 }
