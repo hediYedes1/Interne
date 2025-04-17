@@ -78,16 +78,7 @@
                 {{ form_errors(form.responsablebranche) }}
             </div>
 
-            <!-- Entreprise -->
-            <div class="col-md-6 mb-3">
-                {{ form_label(form.identreprise, 'Entreprise', {'label_attr': {'class': 'form-label'}}) }}
-                {{ form_widget(form.identreprise, {
-                    'attr': {
-                        'class': 'form-control' ~ (app.request.isMethod('POST') and form.identreprise.vars.valid is same as(true) ? ' is-valid' : (form.identreprise.vars.valid is same as(false) ? ' is-invalid' : ''))
-                    }
-                }) }}
-                {{ form_errors(form.identreprise) }}
-            </div>
+            
         </div>
 
         <!-- Utilisateur (si nécessaire) -->

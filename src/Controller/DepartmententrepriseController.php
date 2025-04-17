@@ -41,7 +41,10 @@ final class DepartmententrepriseController extends AbstractController{
             $entityManager->persist($departmententreprise);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_departmententreprise_index', [], Response::HTTP_SEE_OTHER);
+// ✅ Redirection vers la vue de l'entreprise avec ses branches/départements
+return $this->redirectToRoute('app_entreprise_show_back', [
+    'identreprise' => $entreprise->getIdentreprise(), // le paramètre attendu
+]);        
         }
 
         return $this->render('departmententreprise/new.html.twig', [

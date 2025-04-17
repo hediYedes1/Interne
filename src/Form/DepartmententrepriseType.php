@@ -45,17 +45,8 @@ class DepartmententrepriseType extends AbstractType
                     'class' => 'form-control',
                     'placeholder' => 'Entrez le nombre d\'employés',
                 ],
-            ])
-            ->add('identreprise', EntityType::class, [
-                'class' => Entreprise::class,
-                'choice_label' => 'nomentreprise', // Remplacez par le champ à afficher dans le menu déroulant
-                'label' => 'Entreprise',
-                'placeholder' => 'Sélectionnez une entreprise',
-                'required' => true,
-                'attr' => [
-                    'class' => 'form-control',
-                ],
             ]);
+            
     }
 
     public function configureOptions(OptionsResolver $resolver): void

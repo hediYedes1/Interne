@@ -25,14 +25,13 @@ final class BrancheentrepriseController extends AbstractController{
         ]);
     }
     #[Route('/new/{id}', name: 'app_brancheentreprise_new', methods: ['GET', 'POST'])]
-
-    public function new(Request $request, EntityManagerInterface $entityManager, $id): Response
+public function new(Request $request, EntityManagerInterface $entityManager, $id): Response
 {
     $brancheentreprise = new Brancheentreprise();
     $form = $this->createForm(BrancheentrepriseType::class, $brancheentreprise);
     $form->handleRequest($request);
 
-    // On récupère l'entreprise par son identifiant
+    // Récupération de l'entreprise
     $entreprise = $entityManager->getRepository(Entreprise::class)->find($id);
 
     if (!$entreprise) {
@@ -44,7 +43,9 @@ final class BrancheentrepriseController extends AbstractController{
         $entityManager->persist($brancheentreprise);
         $entityManager->flush();
 
-        return $this->redirectToRoute('app_brancheentreprise_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_entreprise_show_back', [
+            'identreprise' => $entreprise->getIdentreprise(), // le paramètre attendu
+        ]);
     }
 
     return $this->render('brancheentreprise/new.html.twig', [
@@ -52,7 +53,6 @@ final class BrancheentrepriseController extends AbstractController{
         'form' => $form,
     ]);
 }
-
 
     #[Route('/{idbranche}', name: 'app_brancheentreprise_show', methods: ['GET'])]
     public function show(Brancheentreprise $brancheentreprise): Response

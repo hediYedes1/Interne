@@ -92,14 +92,12 @@
 			<!-- End Topbar -->
 			<!-- Header Inner -->
             {% block navBar %}
-			<div class="header-inner">
-				<div class="container">
 					<div class="inner">
 						<div class="row">
 							<div class="col-lg-3 col-md-3 col-12">
 								<!-- Start Logo -->
 								<div class="logo">
-									<a href="index.html"><img src="img/logoIn.png" alt="#"></a>
+									<a href="#"><img src="{{ asset('img/logoIn.png')}}" alt="#"  style="width: 300px; height:200px;"></a>
 								</div>
 								<!-- End Logo -->
 								<!-- Mobile Nav -->
@@ -116,11 +114,9 @@
 											<li><a href="#">Interview </a></li>
 											<li><a href="#">Partenariat </a></li>
 											<li><a href="#">Publication</a>
-												
-													<li><a href="#">Entreprise</a></li>
-							                        <li><a href="#">Partenariat</a></li>
-							
-											<li><a href="contact.html">Contact Us</a></li>
+											<li><a href="{{path('app_entreprise_index_front')}}">Entreprise</a></li>
+							                <li><a href="#">Partenariat</a></li>
+							<li><a href="#">Contact Us</a></li>
 										</ul>
 									</nav>
 								</div>

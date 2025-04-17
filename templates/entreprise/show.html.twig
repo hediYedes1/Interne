@@ -139,6 +139,48 @@
               <th>Secteur</th>
               <td>{{ entreprise.secteurentreprise }}</td>
             </tr>
+            <tr>
+  <th>Branches associées</th>
+  <td>
+    {% if branches is not empty %}
+      <ul class="list-group mb-3">
+        {% for branche in branches %}
+          <li class="list-group-item">
+            📍 <em>{{ branche.localisationbranche }}</em><br>
+            📞 {{ branche.contactbranche}}<br>
+            👤 Responsable : {{ branche.responsablebranche }}<br>
+            👥 Employés : {{ branche.nombreemploye }}<br>
+            ✉️ {{ branche.emailbranche }}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <span class="text-muted">Aucune branche associée</span>
+    {% endif %}
+  </td>
+</tr>
+
+<tr>
+  <th>Départements associés</th>
+  <td>
+    {% if departments is not empty %}
+      <ul class="list-group">
+        {% for d in departments %}
+          <li class="list-group-item">
+         🏢 {{ d.nomdepartement }} <br>
+👤 Responsable : {{ d.responsabledepartement }}  <br>
+📋 Description :{{ d.descriptiondepartement }}
+          
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <span class="text-muted">Aucun département associé</span>
+    {% endif %}
+  </td>
+</tr>
+
+
           </tbody>
         </table>
       </div>

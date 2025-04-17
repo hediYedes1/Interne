@@ -36,12 +36,7 @@ class Entreprise
     private string $descriptionentreprise;
 
     #[ORM\Column(type: "string", length: 255)]
-    #[Assert\NotBlank(message: "Le logo de l'entreprise est requis.")]
-    #[Assert\Image(
-        mimeTypes: ["image/jpeg", "image/png", "image/jpg"],
-        maxSize: "5M",
-        maxSizeMessage: "Le logo ne doit pas dépasser {{ limit }} {{ suffix }}."
-    )]
+    
     private string $logoentreprise;
 
     #[ORM\Column(type: "text")]

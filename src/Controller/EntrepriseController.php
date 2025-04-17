@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Controller;
-
+use App\Repository\BrancheentrepriseRepository;
 use App\Entity\Entreprise;
 use App\Entity\Branche;
 use App\Entity\Departmententreprise;
@@ -110,14 +110,6 @@ final class EntrepriseController extends AbstractController
         ]);
     }
 
-    // Méthode pour afficher les détails d'une entreprise dans l'administration
-    #[Route('/{identreprise}', name: 'app_entreprise_show', methods: ['GET'])]
-    public function show(Entreprise $entreprise): Response
-    {
-        return $this->render('entreprise/show.html.twig', [
-            'entreprise' => $entreprise,
-        ]);
-    }
 
     // Méthode pour modifier les informations d'une entreprise
     #[Route('/{identreprise}/edit', name: 'app_entreprise_edit', methods: ['GET', 'POST'])]
@@ -164,5 +156,21 @@ final class EntrepriseController extends AbstractController
         }
 
         return $this->redirectToRoute('app_entreprise_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+
+    // Méthode pour afficher les détails d'une entreprise pour le front-end
+    #[Route('/back/{identreprise}', name: 'app_entreprise_show_back', methods: ['GET'])]
+    public function showBack(Entreprise $entreprise): Response
+    {
+        // Assurez-vous que les branches sont uniques
+        $branches = $entreprise->getBrancheentreprises()->toArray();
+        $branches = array_unique($branches, SORT_REGULAR);
+    
+        return $this->render('entreprise/show.html.twig', [
+            'entreprise' => $entreprise,
+            'branches' => $branches, // Branches uniques
+            'departments' => $entreprise->getDepartmententreprises(),
+        ]);
     }
 }

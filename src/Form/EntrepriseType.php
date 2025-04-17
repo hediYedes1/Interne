@@ -8,6 +8,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\FileType; // Import FileType
 use Symfony\Bridge\Doctrine\Form\Type\EntityType; // Import EntityType
+use Symfony\Component\Validator\Constraints as Assert;
 
 class EntrepriseType extends AbstractType
 {
@@ -26,8 +27,24 @@ class EntrepriseType extends AbstractType
             ->add('logoentreprise', FileType::class, [
                 'label' => 'Logo de l\'entreprise (facultatif)',
                 'required' => false,
-                'attr' => ['class' => 'form-control'],
-                'mapped' => false, // Important: handle file upload separately
+                'attr' => [
+                    'class' => 'form-control',
+                    'accept' => 'image/*' // Limite aux fichiers images
+                ],
+                'mapped' => false,
+                'constraints' => [
+                    new Assert\File([
+                        'maxSize' => '2M',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/png',
+                            'image/webp',
+                            'image/svg+xml',
+                        ],
+                        'mimeTypesMessage' => 'Veuillez uploader une image valide (JPEG, PNG, WebP ou SVG)',
+                    ]),
+
+                ],
             ])
             ->add('urlentreprise', null, [
                 'label' => 'Site Web de l\'entreprise',
