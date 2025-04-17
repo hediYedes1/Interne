@@ -1,0 +1,12 @@
+<form method="post"
+      action="{{ path('app_publication_delete', {'idPublication': publication.idPublication}) }}"
+      onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette publication ?');"
+      class="inline-block">
+
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ publication.idPublication) }}">
+
+    <button type="submit"
+            class="inline-flex items-center px-4 py-2 bg-red-600 text-white text-sm font-medium rounded hover:bg-red-700 transition">
+        🗑️ Supprimer
+    </button>
+</form>
