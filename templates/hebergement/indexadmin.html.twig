@@ -1,49 +1,65 @@
 {% extends 'baseadmin.html.twig' %}
 
-{% block title %}Hebergement index{% endblock %}
+{% block title %}Liste des hébergements{% endblock %}
 
 {% block body %}
-    <h1>Hebergement index</h1>
+    <div class="container mt-5">
+        <h1 class="mb-4 text-center">Liste des Hébergements</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Idhebergement</th>
-                <th>Nomhebergement</th>
-                <th>Adressehebergement</th>
-                <th>Typehebergement</th>
-                <th>Descriptionhebergement</th>
-                <th>Nbrnuitehebergement</th>
-                <th>Disponibilitehebergement</th>
-                <th>Localisationhebergement</th>
-                <th>Prixhebergement</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for hebergement in hebergements %}
-            <tr>
-                <td>{{ hebergement.idhebergement }}</td>
-                <td>{{ hebergement.nomhebergement }}</td>
-                <td>{{ hebergement.adressehebergement }}</td>
-                <td>{{ hebergement.typehebergement }}</td>
-                <td>{{ hebergement.descriptionhebergement }}</td>
-                <td>{{ hebergement.nbrnuitehebergement }}</td>
-                <td>{{ hebergement.disponibilitehebergement ? 'Yes' : 'No' }}</td>
-                <td>{{ hebergement.localisationhebergement }}</td>
-                <td>{{ hebergement.prixhebergement }}</td>
-                <td>
-                    <a href="{{ path('app_hebergement_show', {'idhebergement': hebergement.idhebergement}) }}">show</a>
-                    <a href="{{ path('app_hebergement_edit', {'idhebergement': hebergement.idhebergement}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="10">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+        <div class="mb-3 text-end">
+            <a href="{{ path('app_hebergement_new') }}" class="btn btn-success">
+                <i class="bi bi-plus-lg"></i> Ajouter un hébergement
+            </a>
+        </div>
 
-    <a href="{{ path('app_hebergement_new') }}">Create new</a>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped align-middle text-center">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Adresse</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                        <th>Nombre de nuitées</th>
+                        <th>Disponibilité</th>
+                        <th>Localisation</th>
+                        <th>Prix (€)</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for hebergement in hebergements %}
+                    <tr>
+                        <td>{{ hebergement.idhebergement }}</td>
+                        <td>{{ hebergement.nomhebergement }}</td>
+                        <td>{{ hebergement.adressehebergement }}</td>
+                        <td>{{ hebergement.typehebergement }}</td>
+                        <td>{{ hebergement.descriptionhebergement }}</td>
+                        <td>{{ hebergement.nbrnuitehebergement }}</td>
+                        <td>
+                            {% if hebergement.disponibilitehebergement %}
+                                <span class="badge bg-success">Disponible</span>
+                            {% else %}
+                                <span class="badge bg-danger">Indisponible</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ hebergement.localisationhebergement }}</td>
+                        <td>{{ hebergement.prixhebergement }}</td>
+                        <td>
+                            <a href="{{ path('app_hebergement_show', {'idhebergement': hebergement.idhebergement}) }}"
+                               class="btn btn-primary btn-sm">Voir</a>
+                            <a href="{{ path('app_hebergement_edit', {'idhebergement': hebergement.idhebergement}) }}"
+                               class="btn btn-warning btn-sm">Modifier</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="10">Aucun enregistrement trouvé.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 {% endblock %}

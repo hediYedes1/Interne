@@ -4,7 +4,7 @@
     {# Row 1 #}
     <div class="form-row">
         <div class="form-group">
-            {{ form_label(form.nomhebergement, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_label(form.nomhebergement, 'Nom', {'label_attr': {'class': 'form-label'}}) }}
             {{ form_widget(form.nomhebergement, {'attr': {
                 'class': 'form-input',
                 'placeholder': 'Nom de l\'hébergement'
@@ -13,7 +13,7 @@
         </div>
 
         <div class="form-group">
-            {{ form_label(form.adressehebergement, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_label(form.adressehebergement, 'Adresse', {'label_attr': {'class': 'form-label'}}) }}
             {{ form_widget(form.adressehebergement, {'attr': {
                 'class': 'form-input',
                 'placeholder': 'Adresse complète'
@@ -25,7 +25,7 @@
     {# Row 2 #}
     <div class="form-row">
         <div class="form-group">
-            {{ form_label(form.typehebergement, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_label(form.typehebergement, 'Type d\'hébergement', {'label_attr': {'class': 'form-label'}}) }}
             {{ form_widget(form.typehebergement, {'attr': {
                 'class': 'form-input',
                 'placeholder': 'Type d\'hébergement'
@@ -34,7 +34,7 @@
         </div>
 
         <div class="form-group">
-            {{ form_label(form.nbrnuitehebergement, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_label(form.nbrnuitehebergement, 'Nombre de nuits', {'label_attr': {'class': 'form-label'}}) }}
             {{ form_widget(form.nbrnuitehebergement, {'attr': {
                 'class': 'form-input',
                 'placeholder': 'Nombre de nuits'
@@ -45,7 +45,7 @@
 
     {# Description (full width) #}
     <div class="form-group full-width">
-        {{ form_label(form.descriptionhebergement, null, {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_label(form.descriptionhebergement, 'Description', {'label_attr': {'class': 'form-label'}}) }}
         {{ form_widget(form.descriptionhebergement, {'attr': {
             'class': 'form-textarea',
             'placeholder': 'Description détaillée',
@@ -57,7 +57,7 @@
     {# Row 3 #}
     <div class="form-row">
         <div class="form-group">
-            {{ form_label(form.localisationhebergement, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_label(form.localisationhebergement, 'Localisation', {'label_attr': {'class': 'form-label'}}) }}
             {{ form_widget(form.localisationhebergement, {'attr': {
                 'class': 'form-input',
                 'placeholder': 'Localisation'
@@ -66,7 +66,7 @@
         </div>
 
         <div class="form-group">
-            {{ form_label(form.prixhebergement, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_label(form.prixhebergement, 'Prix par nuit', {'label_attr': {'class': 'form-label'}}) }}
             {{ form_widget(form.prixhebergement, {'attr': {
                 'class': 'form-input',
                 'placeholder': 'Prix par nuit'
@@ -86,7 +86,7 @@
         </div>
 
         <div class="form-group">
-            {{ form_label(form.idpartenariat, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_label(form.idpartenariat, 'Partenariat associé', {'label_attr': {'class': 'form-label'}}) }}
             {{ form_widget(form.idpartenariat, {'attr': {'class': 'form-select'}}) }}
             {{ form_errors(form.idpartenariat, {'attr': {'class': 'form-error'}}) }}
         </div>
@@ -96,6 +96,7 @@
 </div>
 
 {{ form_end(form) }}
+
 
 <style>
 /* FORM CONTAINER */

@@ -1,35 +1,42 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Affectationhebergement index{% endblock %}
+{% block title %}Liste des Réservations{% endblock %}
 
 {% block body %}
-    <h1>Affectationhebergement index</h1>
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Liste des Réservations</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Datedebut</th>
-                <th>Datefin</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
+    <br><br><br>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         {% for affectationhebergement in affectationhebergements %}
-            <tr>
-                <td>{{ affectationhebergement.datedebut ? affectationhebergement.datedebut|date('Y-m-d') : '' }}</td>
-                <td>{{ affectationhebergement.datefin ? affectationhebergement.datefin|date('Y-m-d') : '' }}</td>
-                <td>
-<a href="{{ path('app_affectationhebergement_show', {'idhebergement': affectationhebergement.idhebergement.idhebergement}) }}">show</a>
-                    <a href="{{ path('app_affectationhebergement_edit', {'idhebergement': affectationhebergement.idhebergement.idhebergement}) }}">edit</a>
-                </td>
-            </tr>
+            <div class="col">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <span class="{% if affectationhebergement.datedebut < "now"|date("Y-m-d") %}text-danger{% else %}text-success{% endif %}">
+                                Réservation du {{ affectationhebergement.datedebut ? affectationhebergement.datedebut|date('d/m/Y') : '' }}
+                            </span>
+                            au 
+                            <span class="{% if affectationhebergement.datefin < "now"|date("Y-m-d") %}text-danger{% else %}text-success{% endif %}">
+                                {{ affectationhebergement.datefin ? affectationhebergement.datefin|date('d/m/Y') : '' }}
+                            </span>
+                        </h5>
+                        <p class="card-text">
+                            Hébergement : <strong>{{ affectationhebergement.idhebergement.nomhebergement }}</strong>
+                        </p>
+                    </div>
+                    <div class="card-footer text-end">
+                        <a href="{{ path('app_affectationhebergement_show', {'idhebergement': affectationhebergement.idhebergement.idhebergement}) }}" class="btn btn-primary btn-sm">Voir</a>
+                        <a href="{{ path('app_affectationhebergement_edit', {'idhebergement': affectationhebergement.idhebergement.idhebergement}) }}" class="btn btn-warning btn-sm">Modifier</a>
+                    </div>
+                </div>
+            </div>
         {% else %}
-            <tr>
-                <td colspan="3">no records found</td>
-            </tr>
+            <div class="col">
+                <div class="alert alert-info text-center w-100">Aucune réservation trouvée.</div>
+            </div>
         {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('app_affectationhebergement_new') }}">Create new</a>
+    </div>
+</div>
 {% endblock %}

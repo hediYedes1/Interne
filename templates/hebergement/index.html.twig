@@ -1,108 +1,197 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des Hébergements{% endblock %}
+{% block title %}
+  Liste des Hébergements
+{% endblock %}
 
 {% block body %}
-    <div class="container my-5">
-        <h1 class="mb-4">Liste des Hébergements</h1>
-        
-        <div class="row">
-            {% for hebergement in hebergements %}
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-header bg-primary text-white">
-                            <h5 class="card-title mb-0">{{ hebergement.nomhebergement }}</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="mb-2">
-                                <strong>Type:</strong> 
-                                <span class="badge bg-info" style="color: white;">
-                                    {{ hebergement.typehebergement }}
-                                </span>
-                            </div>
+  <div class="container my-5">
+    {% if weather %}
+      <div class="alert alert-info text-center">
+        🌤️ Météo actuelle à Tunis : <strong>{{ weather.tempC }}°C</strong> | {{ weather.description }}
+      </div>
+    {% else %}
+      <div class="alert alert-warning text-center">⚠️ Météo non disponible pour le moment.</div>
+    {% endif %}
+    <button class="btn btn-info mb-4" onclick="showUserLocation()">📍 Ma position actuelle</button>
 
-                            <div class="mb-2">
-                                <strong>Adresse:</strong> 
-                                <p class="mb-0">{{ hebergement.adressehebergement }}</p>
-                            </div>
-                            <div class="mb-2">
-                                <strong>Description:</strong>
-                                <p class="card-text">{{ hebergement.descriptionhebergement|slice(0, 100) }}{% if hebergement.descriptionhebergement|length > 100 %}...{% endif %}</p>
-                            </div>
-                            <div class="row">
-                                <div class="col-6">
-                                    <strong>Nuits:</strong> {{ hebergement.nbrnuitehebergement }}
-                                </div>
-                                <div class="col-6">
-                                    <strong>Prix:</strong> {{ hebergement.prixhebergement }} dt
-                                </div>
-                            </div>
-                            <div class="mt-2">
-                                <strong>Disponibilité:</strong> 
-                                <span class="badge {% if hebergement.disponibilitehebergement %}bg-success{% else %}bg-danger{% endif %}" style="color: white;">
-                                    {% if hebergement.disponibilitehebergement %}
-                                        ✔️ Disponible
-                                    {% else %}
-                                        ✖️ Non disponible
-                                    {% endif %}
-                                </span>
-
-
-                            </div>
-                        <div class="mt-4">
-            <a href="{{ path('app_hebergement_new') }}" class="btn btn-success">
-                <i class="fas fa-plus"></i> reserver</a>
-                        </div>
-                    </div>
-                       
-                </div>
-            </div>
-            {% else %}
-                <div class="col-12">
-                    <div class="alert alert-info">
-                        Aucun hébergement trouvé.
-                    </div>
-                </div>
-            {% endfor %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="mb-0">Liste des Hébergements</h1>
+      <a href="{{ path('app_affectationhebergement_index') }}" class="btn btn-outline-primary"><i class="fas fa-list"></i> Voir vos réservations</a>
     </div>
-</div>
+    <div class="row mb-4">
+      <div class="col-md-4">
+        <input type="text" id="searchInput" class="form-control" placeholder="🔍 Rechercher..." onkeyup="filterCards()" />
+      </div>
+      <div class="col-md-4">
+        <select id="typeFilter" class="form-select" onchange="filterCards()">
+          <option value="">Tous les types</option>
+          <option value="hotel">Hotel</option>
+          <option value="appartement">Appartement</option>
+          <option value="auberge">Auberge</option>
+        </select>
+      </div>
+    </div>
 
-    <style>
-        .card {
-            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-            border: none;
-            border-radius: 8px;
-            overflow: hidden;
+    <div class="row">
+      {% for hebergement in hebergements %}
+        <div class="col-md-4 mb-4">
+          <div class="card h-100 shadow-sm hebergement-card">
+            <div class="card-header bg-primary text-white">
+              <h5 class="card-title mb-0">{{ hebergement.nomhebergement }}</h5>
+            </div>
+            <div class="card-body">
+              <div class="mb-2">
+                <strong>Type:</strong>
+                <span class="badge bg-info" style="color: white;">{{ hebergement.typehebergement }}</span>
+              </div>
+
+              <div class="mb-2">
+                <strong>Adresse:</strong>
+                <p class="mb-0">{{ hebergement.adressehebergement }}</p>
+              </div>
+              <div class="mb-2">
+                <strong>Description:</strong>
+                <p class="card-text">
+                  {{ hebergement.descriptionhebergement|slice(0, 100) }}{% if (hebergement.descriptionhebergement|length) > 100 %}...{% endif %}
+                </p>
+              </div>
+              <div class="row">
+                <div class="col-6">
+                  <strong>Nuits:</strong> {{ hebergement.nbrnuitehebergement }}
+                </div>
+                <div class="col-6">
+                  <strong>Prix:</strong> {{ hebergement.prixhebergement }} dt
+                </div>
+              </div>
+              <div class="mt-2">
+                <strong>Disponibilité:</strong>
+                <span class="badge {% if hebergement.disponibilitehebergement %}{% endif %}" style="color: white;">
+                  {% if hebergement.disponibilitehebergement %}
+                    ✔️ Disponible
+                  {% else %}
+                    ✖️ Non disponible
+                  {% endif %}
+                </span>
+              </div>
+              <div class="mt-4">
+                <a href="{{ path('app_affectationhebergement_index') }}" class="btn btn-success"><i class="fas fa-calendar-check"></i> Réserver</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% else %}
+        <div class="col-12">
+          <div class="alert alert-info">Aucun hébergement trouvé.</div>
+        </div>
+      {% endfor %}
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="mapModal" tabindex="-1" aria-labelledby="mapModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="mapModalLabel">🌍 Ma position</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+          </div>
+          <div class="modal-body">
+            <div id="map" style="height: 400px; width: 100%;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .card {
+      transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+      border: none;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card-header {
+      border-bottom: none;
+    }
+    
+    .card-title {
+      font-weight: 600;
+    }
+    
+    .badge {
+      font-weight: 500;
+      padding: 0.35em 0.65em;
+    }
+    
+    .btn-sm {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.875rem;
+    }
+    
+    @media (max-width: 768px) {
+      .col-md-4 {
+        flex: 0 0 100%;
+        max-width: 100%;
+      }
+    }
+  </style>
+
+  <script>
+    function filterCards() {
+      const input = document.getElementById('searchInput').value.toLowerCase()
+      const selectedType = document.getElementById('typeFilter').value.toLowerCase()
+      const cards = document.querySelectorAll('.hebergement-card')
+    
+      cards.forEach((card) => {
+        const cardText = card.textContent.toLowerCase()
+        const matchSearch = cardText.includes(input)
+        const matchType = selectedType ? cardText.includes(selectedType) : true
+    
+        const isVisible = matchSearch && matchType
+        card.closest('.col-md-4').style.display = isVisible ? 'block' : 'none'
+      })
+    }
+    let map
+    
+    function showUserLocation() {
+      // Ouvre la modale Bootstrap
+      const mapModal = new bootstrap.Modal(document.getElementById('mapModal'))
+      mapModal.show()
+    
+      // Initialise la carte si ce n'est pas encore fait
+      setTimeout(() => {
+        if (!map) {
+          map = L.map('map').setView([0, 0], 13)
+    
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+          }).addTo(map)
         }
-        
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-        
-        .card-header {
-            border-bottom: none;
-        }
-        
-        .card-title {
-            font-weight: 600;
-        }
-        
-        .badge {
-            font-weight: 500;
-            padding: 0.35em 0.65em;
-        }
-        
-        .btn-sm {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.875rem;
-        }
-        
-        @media (max-width: 768px) {
-            .col-md-4 {
-                flex: 0 0 100%;
-                max-width: 100%;
+    
+        // Obtenir la géolocalisation du navigateur
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const lat = position.coords.latitude
+              const lng = position.coords.longitude
+    
+              map.setView([lat, lng], 13)
+    
+              L.marker([lat, lng]).addTo(map).bindPopup('Vous êtes ici 📍').openPopup()
+            },
+            (error) => {
+              alert('Impossible de récupérer la localisation !')
             }
+          )
+        } else {
+          alert('La géolocalisation n’est pas supportée par ce navigateur.')
         }
-    </style>
+      }, 300) // Timeout pour laisser le temps à la modale d'apparaître
+    }
+  </script>
 {% endblock %}

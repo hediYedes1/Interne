@@ -16,14 +16,44 @@ final class HebergementAdminController extends AbstractController
     #[Route(name: 'app_hebergement_admin_index', methods: ['GET'])]
     public function index(EntityManagerInterface $entityManager): Response
     {
-        $hebergements = $entityManager
-            ->getRepository(Hebergement::class)
-            ->findAll();
-
+        $hebergements = $entityManager->getRepository(Hebergement::class)->findAll();
+    
+        $stats = [
+            'total' => count($hebergements),
+            'parType' => [],
+            'disponibles' => 0,
+            'nonDisponibles' => 0,
+            'prixMoyen' => 0,
+        ];
+    
+        $totalPrix = 0;
+    
+        foreach ($hebergements as $h) {
+            $type = $h->getTypehebergement();
+            $stats['parType'][$type] = ($stats['parType'][$type] ?? 0) + 1;
+    
+            if ($h->getDisponibilitehebergement()) {
+                $stats['disponibles']++;
+            } else {
+                $stats['nonDisponibles']++;
+            }
+    
+            $totalPrix += $h->getPrixhebergement();
+        }
+    
+        $stats['prixMoyen'] = $stats['total'] > 0 ? round($totalPrix / $stats['total'], 2) : 0;
+    
+        $types = array_keys($stats['parType']);
+        $counts = array_values($stats['parType']);
+    
         return $this->render('hebergement_admin/index.html.twig', [
             'hebergements' => $hebergements,
+            'stats' => $stats,
+            'types' => $types,
+            'counts' => $counts,
         ]);
     }
+    
 
     #[Route('/new', name: 'app_hebergement_admin_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
@@ -74,7 +104,7 @@ final class HebergementAdminController extends AbstractController
     #[Route('/{idhebergement}', name: 'app_hebergement_admin_delete', methods: ['POST'])]
     public function delete(Request $request, Hebergement $hebergement, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$hebergement->getIdhebergement(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $hebergement->getIdhebergement(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($hebergement);
             $entityManager->flush();
         }
