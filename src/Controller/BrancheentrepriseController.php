@@ -67,18 +67,24 @@ public function new(Request $request, EntityManagerInterface $entityManager, $id
     {
         $form = $this->createForm(BrancheentrepriseType::class, $brancheentreprise);
         $form->handleRequest($request);
-
+    
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
-
-            return $this->redirectToRoute('app_brancheentreprise_index', [], Response::HTTP_SEE_OTHER);
+    
+            // Récupération de l'id de l'entreprise liée à la branche
+            $entrepriseId = $brancheentreprise->getIdentreprise()->getId();
+    
+            return $this->redirectToRoute('app_entreprise_show', [
+                'identreprise' => $entrepriseId
+            ], Response::HTTP_SEE_OTHER);
         }
-
+    
         return $this->render('brancheentreprise/edit.html.twig', [
-            'brancheentreprise' => $brancheentreprise,
-            'form' => $form,
+            'form' => $form->createView(),
+            'brancheentreprise' => $brancheentreprise
         ]);
     }
+    
 
     #[Route('/{idbranche}', name: 'app_brancheentreprise_delete', methods: ['POST'])]
     public function delete(Request $request, Brancheentreprise $brancheentreprise, EntityManagerInterface $entityManager): Response

@@ -152,6 +152,12 @@
             👥 Employés : {{ branche.nombreemploye }}<br>
             ✉️ {{ branche.emailbranche }}
           </li>
+          <a href="{{ path('app_brancheentreprise_edit', {'idbranche': branche.idbranche}) }}" class="btn btn-primary">
+          <i class="fas fa-edit mr-2"></i>Modifier
+        </a>
+          <div class="mt-3">
+        {{ include('brancheentreprise/_delete_form.html.twig') }}
+      </div>
         {% endfor %}
       </ul>
     {% else %}
