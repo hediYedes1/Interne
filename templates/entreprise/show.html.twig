@@ -156,7 +156,7 @@
           <i class="fas fa-edit mr-2"></i>Modifier
         </a>
           <div class="mt-3">
-        {{ include('brancheentreprise/_delete_form.html.twig') }}
+        {{ include('entreprise/_delete_form_branche.html.twig') }}
       </div>
         {% endfor %}
       </ul>
@@ -176,8 +176,18 @@
          🏢 {{ d.nomdepartement }} <br>
 👤 Responsable : {{ d.responsabledepartement }}  <br>
 📋 Description :{{ d.descriptiondepartement }}
-          
           </li>
+
+   <a href="{{ path('app_departmententreprise_edit', {'iddepartement': d.iddepartement}) }}" class="btn btn-primary">    
+         <i class="fas fa-edit mr-2"></i>Modifier
+        </a>
+              <div class="mt-3" >>
+
+     {{ include('entreprise/_delete_form_departement.html.twig') }}
+           </div>
+
+</div>
+   
         {% endfor %}
       </ul>
     {% else %}

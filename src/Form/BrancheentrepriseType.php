@@ -21,13 +21,7 @@ class BrancheentrepriseType extends AbstractType
             ->add('nombreemploye')
             ->add('responsablebranche')
         
-         
-        
-            ->add('idutilisateur', EntityType::class, [
-                'class' => Utilisateur::class,
-                'choice_label' => 'idutilisateur',
-                'label' => 'Utilisateur',
-            ]);
+         ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

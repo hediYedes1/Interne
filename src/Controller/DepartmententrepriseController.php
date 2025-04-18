@@ -70,8 +70,12 @@ return $this->redirectToRoute('app_entreprise_show_back', [
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_departmententreprise_index', [], Response::HTTP_SEE_OTHER);
-        }
+            $entrepriseId = $departmententreprise->getIdentreprise()->getIdentreprise();
+    
+            return $this->redirectToRoute('app_entreprise_show_back', [
+                'identreprise' => $entrepriseId
+            ], Response::HTTP_SEE_OTHER);
+                }
 
         return $this->render('departmententreprise/edit.html.twig', [
             'departmententreprise' => $departmententreprise,
@@ -87,6 +91,10 @@ return $this->redirectToRoute('app_entreprise_show_back', [
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('app_departmententreprise_index', [], Response::HTTP_SEE_OTHER);
-    }
+        $entrepriseId = $departmententreprise->getIdentreprise()->getIdentreprise();
+
+        return $this->redirectToRoute('app_entreprise_show_back', [
+            'identreprise' => $entrepriseId
+        ], Response::HTTP_SEE_OTHER);
+        }
 }

@@ -72,9 +72,9 @@ public function new(Request $request, EntityManagerInterface $entityManager, $id
             $entityManager->flush();
     
             // Récupération de l'id de l'entreprise liée à la branche
-            $entrepriseId = $brancheentreprise->getIdentreprise()->getId();
+            $entrepriseId = $brancheentreprise->getIdentreprise()->getIdentreprise();
     
-            return $this->redirectToRoute('app_entreprise_show', [
+            return $this->redirectToRoute('app_entreprise_show_back', [
                 'identreprise' => $entrepriseId
             ], Response::HTTP_SEE_OTHER);
         }
@@ -89,11 +89,16 @@ public function new(Request $request, EntityManagerInterface $entityManager, $id
     #[Route('/{idbranche}', name: 'app_brancheentreprise_delete', methods: ['POST'])]
     public function delete(Request $request, Brancheentreprise $brancheentreprise, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$brancheentreprise->getIdbranche(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $brancheentreprise->getIdbranche(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($brancheentreprise);
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('app_brancheentreprise_index', [], Response::HTTP_SEE_OTHER);
+        $entrepriseId = $brancheentreprise->getIdentreprise()->getIdentreprise();
+
+        return $this->redirectToRoute('app_entreprise_show_back', [
+            'identreprise' => $entrepriseId
+        ], Response::HTTP_SEE_OTHER);
     }
+
 }
