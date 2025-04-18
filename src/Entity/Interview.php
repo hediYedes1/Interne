@@ -42,11 +42,11 @@ class Interview
 
 
     #[ORM\Column(type: "string", length: 255, nullable: true)]
-    private string $lienmeet;
+    private ?string $lienmeet = null;
 
     #[Assert\NotBlank(message: "La localisation est obligatoire.")]
     #[ORM\Column(type: "string", length: 255, nullable: true)]
-    private string $localisation;
+    private ?string $localisation = null ;
 
     #[Assert\NotBlank(message: "L'heure est obligatoire.")]
     #[Assert\Callback([self::class, 'validateTimeInterview'])]
