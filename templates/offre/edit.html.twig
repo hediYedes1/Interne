@@ -1,13 +1,21 @@
 {% extends 'base1.html.twig' %}
 
-{% block title %}Edit Offre{% endblock %}
+{% block title %}Modifier l'Offre{% endblock %}
 
 {% block body %}
-    <h1>Edit Offre</h1>
+    <div class="container mt-5">
+        <div class="card shadow-lg p-4 rounded col-md-8 mx-auto">
+            <div class="card-body">
+                <h2 class="text-center mb-4">Modifier l'offre</h2>
 
-    {{ include('offre/_form.html.twig', {'button_label': 'Update'}) }}
+                {{ include('offre/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
 
-    <a href="{{ path('back_offre_index') }}">back to list</a>
+                <div class="text-center mt-3">
+                    <a href="{{ path('back_offre_index') }}" class="btn btn-link">← Retour à la liste</a>
+                </div>
 
-    {{ include('offre/_delete_form.html.twig') }}
+                {{ include('offre/_delete_form.html.twig') }}
+            </div>
+        </div>
+    </div>
 {% endblock %}

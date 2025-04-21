@@ -34,11 +34,24 @@
                 </tr>
                 <tr>
                     <th>Type de contrat</th>
-                    <td>{{ offre.typecontrat }}</td>
+                    <td>{{ offre.typecontrat.value }}</td>
                 </tr>
                 <tr>
                     <th>Date limite</th>
                     <td>{{ offre.datelimite ? offre.datelimite|date('Y-m-d') : '' }}</td>
+                </tr>
+                <tr>
+                    <th>Projet associé</th>
+                    <td>
+                        {% if offre.projet %}
+                            Titre : {{ offre.projet.titreprojet }} <br>
+                            Description : {{ offre.projet.descriptionprojet }} <br>
+                            Date de début : {{ offre.projet.datedebut|date('Y-m-d') }} <br>
+                            Date de fin : {{ offre.projet.datefin|date('Y-m-d') }} <br>
+                        {% else %}
+                            <span class="text-muted">Pas de projet associé</span>
+                        {% endif %}
+                    </td>
                 </tr>
             </tbody>
         </table>

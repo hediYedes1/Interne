@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controller;
 
 use App\Entity\Offre;
@@ -6,7 +7,6 @@ use App\Entity\Projet;
 use App\Form\OffreType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -18,31 +18,36 @@ class OffreController extends AbstractController
     public function __construct(
         private EntityManagerInterface $entityManager
     ) {}
-    #[Route('/list', name: 'front_offre_index', methods: ['GET'])]
-    public function indexFront(): Response
-    {
-        $offres = $this->entityManager
-            ->getRepository(Offre::class)
-            ->findAll();
 
+    #[Route('/list', name: 'front_offre_index', methods: ['GET'])]
+    public function indexFront(Request $request): Response
+    {
+        $selectedType = $request->query->get('typecontrat');
+        
+        $queryBuilder = $this->entityManager
+            ->getRepository(Offre::class)
+            ->createQueryBuilder('o');
+        
+        if ($selectedType && in_array($selectedType, ['CDI', 'CDD', 'STAGE'])) {
+            $queryBuilder
+                ->andWhere('o.typecontrat = :type')
+                ->setParameter('type', $selectedType);
+        }
+        
+        $offres = $queryBuilder->getQuery()->getResult();
+        
         return $this->render('offre/indexfront.html.twig', [
             'offres' => $offres,
-        ]);
-    }
-    #[Route('/{idoffre}', name: 'front_offre_show', methods: ['GET'])]
-    public function showFront(Offre $offre): Response
-    {
-        if (!$offre) {
-            throw $this->createNotFoundException('L\'offre demandée n\'a pas été trouvée');
-        }
-
-        return $this->render('offre/showfront.html.twig', [
-            'offre' => $offre,
-            'projet' => $offre->getProjet()
+            'typeContratOptions' => [
+                'CDI' => 'CDI',
+                'CDD' => 'CDD',
+                'Stage' => 'STAGE'
+            ],
+            'selectedType' => $selectedType
         ]);
     }
 
-    #[Route('/offre/new', name: 'front_offre_new', methods: ['GET', 'POST'])]
+    #[Route('/new', name: 'front_offre_new', methods: ['GET', 'POST'])]
     public function newFront(Request $request, Security $security): Response
     {
         $offre = new Offre();
@@ -65,16 +70,38 @@ class OffreController extends AbstractController
             $this->entityManager->flush();
 
             $this->addFlash('success', 'Offre créée avec succès');
-            return $this->redirectToRoute('front_offre_index');
+            return $this->redirectToRoute('front_offre_show', ['idoffre' => $offre->getIdoffre()]);
         }
 
         return $this->render('offre/newfront.html.twig', [
             'form' => $form->createView(),
         ]);
     }
-    #[Route('/{idoffre}/edit', name: 'front_offre_edit', methods: ['GET', 'POST'])]
-    public function editFront(Request $request, Offre $offre): Response
+
+    #[Route('/{idoffre}', name: 'front_offre_show', methods: ['GET'], requirements: ['idoffre' => '\d+'])]
+    public function showFront(int $idoffre): Response
     {
+        $offre = $this->entityManager->getRepository(Offre::class)->find($idoffre);
+        
+        if (!$offre) {
+            throw $this->createNotFoundException('Offre non trouvée');
+        }
+
+        return $this->render('offre/showfront.html.twig', [
+            'offre' => $offre,
+            'projet' => $offre->getProjet()
+        ]);
+    }
+
+    #[Route('/{idoffre}/edit', name: 'front_offre_edit', methods: ['GET', 'POST'], requirements: ['idoffre' => '\d+'])]
+    public function editFront(Request $request, int $idoffre): Response
+    {
+        $offre = $this->entityManager->getRepository(Offre::class)->find($idoffre);
+        
+        if (!$offre) {
+            throw $this->createNotFoundException('Offre non trouvée');
+        }
+
         $form = $this->createForm(OffreType::class, $offre, [
             'projets' => $this->entityManager->getRepository(Projet::class)->findAll()
         ]);
@@ -84,7 +111,7 @@ class OffreController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
             $this->addFlash('success', 'Offre modifiée avec succès');
-            return $this->redirectToRoute('front_offre_index');
+            return $this->redirectToRoute('front_offre_show', ['idoffre' => $offre->getIdoffre()]);
         }
 
         return $this->render('offre/editfront.html.twig', [
@@ -93,9 +120,15 @@ class OffreController extends AbstractController
         ]);
     }
 
-    #[Route('/{idoffre}/delete', name: 'front_offre_delete', methods: ['POST'])]
-    public function deleteFront(Request $request, Offre $offre): Response
+    #[Route('/{idoffre}/delete', name: 'front_offre_delete', methods: ['POST'], requirements: ['idoffre' => '\d+'])]
+    public function deleteFront(Request $request, int $idoffre): Response
     {
+        $offre = $this->entityManager->getRepository(Offre::class)->find($idoffre);
+        
+        if (!$offre) {
+            throw $this->createNotFoundException('Offre non trouvée');
+        }
+
         if ($this->isCsrfTokenValid('delete'.$offre->getIdoffre(), $request->request->get('_token'))) {
             $this->entityManager->remove($offre);
             $this->entityManager->flush();
@@ -138,7 +171,7 @@ class OffreController extends AbstractController
             $this->entityManager->flush();
 
             $this->addFlash('success', 'Offre créée avec succès');
-            return $this->redirectToRoute('back_offre_index');
+            return $this->redirectToRoute('back_offre_show', ['idoffre' => $offre->getIdoffre()]);
         }
 
         return $this->render('offre/new.html.twig', [
@@ -146,18 +179,30 @@ class OffreController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/{idoffre}', name: 'back_offre_show', methods: ['GET'])]
-    public function showBack(Offre $offre): Response
+    #[Route('/admin/{idoffre}', name: 'back_offre_show', methods: ['GET'], requirements: ['idoffre' => '\d+'])]
+    public function showBack(int $idoffre): Response
     {
+        $offre = $this->entityManager->getRepository(Offre::class)->find($idoffre);
+        
+        if (!$offre) {
+            throw $this->createNotFoundException('Offre non trouvée');
+        }
+
         return $this->render('offre/show.html.twig', [
             'offre' => $offre,
             'projet' => $offre->getProjet()
         ]);
     }
 
-    #[Route('/admin/{idoffre}/edit', name: 'back_offre_edit', methods: ['GET', 'POST'])]
-    public function editBack(Request $request, Offre $offre): Response
+    #[Route('/admin/{idoffre}/edit', name: 'back_offre_edit', methods: ['GET', 'POST'], requirements: ['idoffre' => '\d+'])]
+    public function editBack(Request $request, int $idoffre): Response
     {
+        $offre = $this->entityManager->getRepository(Offre::class)->find($idoffre);
+        
+        if (!$offre) {
+            throw $this->createNotFoundException('Offre non trouvée');
+        }
+
         $form = $this->createForm(OffreType::class, $offre, [
             'projets' => $this->entityManager->getRepository(Projet::class)->findAll()
         ]);
@@ -167,7 +212,7 @@ class OffreController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
             $this->addFlash('success', 'Offre modifiée avec succès');
-            return $this->redirectToRoute('back_offre_index');
+            return $this->redirectToRoute('back_offre_show', ['idoffre' => $offre->getIdoffre()]);
         }
 
         return $this->render('offre/edit.html.twig', [
@@ -176,9 +221,15 @@ class OffreController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/{idoffre}', name: 'back_offre_delete', methods: ['POST'])]
-    public function deleteBack(Request $request, Offre $offre): Response
+    #[Route('/admin/{idoffre}/delete', name: 'back_offre_delete', methods: ['POST'], requirements: ['idoffre' => '\d+'])]
+    public function deleteBack(Request $request, int $idoffre): Response
     {
+        $offre = $this->entityManager->getRepository(Offre::class)->find($idoffre);
+        
+        if (!$offre) {
+            throw $this->createNotFoundException('Offre non trouvée');
+        }
+
         if ($this->isCsrfTokenValid('delete'.$offre->getIdoffre(), $request->request->get('_token'))) {
             $this->entityManager->remove($offre);
             $this->entityManager->flush();

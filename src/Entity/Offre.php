@@ -5,6 +5,8 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Entreprise;
 use App\Entity\Interview;
+use App\Enum\TypeContrat;
+
 use App\Entity\Projet;
 use App\Entity\Utilisateur;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -49,9 +51,9 @@ class Offre
     #[Assert\Email(message: "Veuillez entrer un email valide.")]
     private string $emailrh;
 
-    #[ORM\Column(type: "text")]
-    #[Assert\NotBlank(message: "Le type de contrat est requis.")]
-    private string $typecontrat;
+    #[ORM\Column(type: 'string')]
+    private string $typecontrat;  // Ici on utilise 'string' pour le stockage
+    
 
     #[ORM\Column(type: "date")]
     #[Assert\NotBlank(message: "La date limite est requise.")]
@@ -167,14 +169,16 @@ public function setProjet(?Projet $projet): self
         $this->emailrh = $value;
     }
 
-    public function getTypecontrat(): string
-    {
-        return $this->typecontrat;
-    }
+    public function getTypecontrat(): TypeContrat
+{
+    return TypeContrat::from($this->typecontrat);  // Conversion de la chaîne en enum
+}
 
-    public function setTypecontrat(string $value): void
+
+    public function setTypecontrat(TypeContrat $typecontrat): self
     {
-        $this->typecontrat = $value;
+        $this->typecontrat = $typecontrat->value;  // Stockage de la valeur sous forme de chaîne
+        return $this;
     }
 
     public function getDatelimite(): \DateTimeInterface

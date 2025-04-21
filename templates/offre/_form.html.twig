@@ -42,11 +42,12 @@
 
 <div class="mb-3">
     {{ form_label(form.typecontrat, "Type de contrat", {'label_attr': {'class': 'form-label'}}) }}
-    {{ form_widget(form.typecontrat, {'attr': {'class': 'form-control'}}) }}
+    {{ form_widget(form.typecontrat, {'attr': {'class': 'form-select'}}) }}
     <div class="text-danger">
         {{ form_errors(form.typecontrat) }}
     </div>
 </div>
+
 
 <div class="mb-3">
     {{ form_label(form.datelimite, "Date limite", {'label_attr': {'class': 'form-label'}}) }}

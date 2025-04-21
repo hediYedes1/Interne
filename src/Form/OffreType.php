@@ -4,18 +4,18 @@ namespace App\Form;
 
 use App\Entity\Offre;
 use App\Entity\Projet;
+use App\Enum\TypeContrat;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\{
-    HiddenType,
-    DateType,
-    TextType,
-    NumberType,
-    EmailType,
-    TextareaType
-};
 
 class OffreType extends AbstractType
 {
@@ -44,9 +44,16 @@ class OffreType extends AbstractType
                 'label' => 'Email RH*',
                 'attr' => ['placeholder' => 'rh@entreprise.com'],
             ])
-            ->add('typecontrat', TextType::class, [
+            ->add('typecontrat', ChoiceType::class, [
                 'label' => 'Type de contrat*',
-                'attr' => ['placeholder' => 'Ex: CDI, CDD, Stage...'],
+                'choices' => [
+                    'CDI' => TypeContrat::CDI,
+                    'CDD' => TypeContrat::CDD,
+                    'Stage' => TypeContrat::STAGE,
+                ],
+                'choice_label' => fn($choice) => $choice->value,
+                'choice_value' => fn(?TypeContrat $enum) => $enum?->value,
+                'placeholder' => 'Choisir un type de contrat',
             ])
             ->add('datelimite', DateType::class, [
                 'widget' => 'single_text',
@@ -60,7 +67,7 @@ class OffreType extends AbstractType
                 'placeholder' => 'Sélectionnez un projet',
                 'required' => false,
                 'choices' => $options['projets'] ?? [],
-                'attr' => ['class' => 'select2'] // Optionnel pour Select2
+                'attr' => ['class' => 'select2']
             ]);
     }
 

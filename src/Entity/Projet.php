@@ -47,7 +47,7 @@ class Projet
     )]
     private ?\DateTimeInterface $datefin = null;
 
-    #[ORM\OneToMany(targetEntity: Offre::class, mappedBy: "projet")]
+    #[ORM\OneToMany(targetEntity: Offre::class, mappedBy: "projet", orphanRemoval: true, cascade: ['remove'])]
     private Collection $offres;
 
     public function __construct()
@@ -124,7 +124,6 @@ class Projet
     public function removeOffre(Offre $offre): self
     {
         if ($this->offres->removeElement($offre)) {
-            // set the owning side to null (unless already changed)
             if ($offre->getProjet() === $this) {
                 $offre->setProjet(null);
             }
