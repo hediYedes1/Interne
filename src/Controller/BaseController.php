@@ -13,8 +13,6 @@ final class BaseController extends AbstractController
     {
         return $this->render('base.html.twig');
     }
-
-
     #[Route('/base2', name: 'app_base2')]
     public function index2(): Response
     {
