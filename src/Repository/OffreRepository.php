@@ -12,6 +12,4 @@ class OffreRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Offre::class);
     }
-
-    // Add custom methods as needed
 }
