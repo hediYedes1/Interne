@@ -99,6 +99,10 @@
             <a href="{{ path('front_offre_new') }}" class="btn btn-success btn-lg text-white">
                 <i class="fas fa-plus-circle"></i> Créer une nouvelle offre
             </a>
+                <a href="{{ path('app_postuler', {'id': offre.idoffre}) }}" class="btn btn-success">
+                Vous pouvez Postuler à cette offre
+                 </a>
+                </div>
         </div>
     </div>
 {% endblock %}
