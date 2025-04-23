@@ -11,6 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 
 class InterviewType extends AbstractType
 {
@@ -23,7 +24,7 @@ class InterviewType extends AbstractType
                 'label' => 'Offre',
                 'placeholder' => 'Sélectionnez une offre',
             ])
-            ->add('dateinterview', null, [
+            ->add('dateinterview', DateType::class, [
                 'widget' => 'single_text',
                 'label' => 'Date de l\'interview',
             ])
@@ -32,10 +33,6 @@ class InterviewType extends AbstractType
                 'choice_label' => fn(TypeInterview $type) => $type->getLabel(),
                 'label' => 'Type d\'interview',
                 'placeholder' => 'Sélectionnez un type',
-            ])
-            ->add('lienmeet', null, [
-                'label' => 'Lien Meet',
-                'required' => false,
             ])
             ->add('localisation', null, [
                 'label' => 'Lieu',

@@ -1,7 +1,7 @@
 <?php
 // src/Service/GoogleMeetService.php
 
-namespace App\Service;
+namespace App\Utils;
 
 use Google\Service\Calendar;
 use Google\Service\Calendar\Event;
@@ -21,7 +21,7 @@ class GoogleMeetService
         $this->googleOAuthService = $googleOAuthService;
     }
 
-    public function createMeetLink(DateTimeInterface $startDateTime, DateTimeInterface $endDateTime, string $summary = 'Entretien en ligne', string $attendeeEmail = null): string
+    public function createMeetLink(DateTimeInterface $startDateTime, DateTimeInterface $endDateTime, string $summary = 'Entretien en ligne'): string
     {
         $calendarService = $this->googleOAuthService->getCalendarService();
 
@@ -50,10 +50,7 @@ class GoogleMeetService
         ]);
 
         // Ajouter l'email du participant si fourni
-        if ($attendeeEmail) {
-            $event->setAttendees([['hediyedes22@gmail.com' => $attendeeEmail]]);
-        }
-
+       
         // Insérer l'événement dans le calendrier
         $createdEvent = $calendarService->events->insert('primary', $event, [
             'conferenceDataVersion' => 1

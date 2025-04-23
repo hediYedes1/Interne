@@ -34,14 +34,6 @@
     </div>
 </div>
 
-<div class="form-group mb-3">
-    <label for="{{ form.lienmeet.vars.id }}" class="col-sm-4 col-form-label">Lien de Visio-conférence</label>
-    <div class="col-sm-10">
-        {{ form_widget(form.lienmeet, {'attr': {'class': 'form-control', 'placeholder': 'https://meet.google.com/...'}}) }}
-    </div>
-    {{ form_errors(form.lienmeet, {'attr': {'class': 'text-danger'}}) }}
-    <small class="form-text text-muted">Laissez vide si l'entretien est en présentiel</small>
-</div>
 
 <div class="form-group mb-3">
     <label for="{{ form.localisation.vars.id }}" class="col-sm-4 col-form-label">Lieu</label>

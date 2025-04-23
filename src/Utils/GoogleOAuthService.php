@@ -1,7 +1,7 @@
 <?php
 // src/Service/GoogleOAuthService.php
 
-namespace App\Service;
+namespace App\Utils;
 
 use Google\Client;
 use Google\Service\Calendar;
@@ -30,13 +30,14 @@ class GoogleOAuthService
         $credentialsPath = $this->params->get('kernel.project_dir').'/config/google/credentials.json';
         $tokenPath = $this->params->get('kernel.project_dir').'/config/google/token.json';
 
-        $this->client->setApplicationName('Intellij');
+        $this->client->setApplicationName('intellij');
         $this->client->setScopes([Calendar::CALENDAR, Calendar::CALENDAR_EVENTS]);
         $this->client->setAuthConfig($credentialsPath);
         $this->client->setAccessType('offline');
         $this->client->setPrompt('select_account consent');
+        $this->client->setRedirectUri('http://localhost:8000/auth/google/callback');
 
-        // Charger le token s'il existe
+        // Charger le token s'il existe 
         if (file_exists($tokenPath)) {
             $accessToken = json_decode(file_get_contents($tokenPath), true);
             $this->client->setAccessToken($accessToken);
@@ -68,4 +69,18 @@ class GoogleOAuthService
     {
         return new Calendar($this->getClient());
     }
+
+    public function exchangeCode(string $code): void
+{
+    $accessToken = $this->client->fetchAccessTokenWithAuthCode($code);
+    if (array_key_exists('error', $accessToken)) {
+        throw new \Exception("Erreur lors de l'obtention du token : " . $accessToken['error']);
+    }
+
+    file_put_contents(
+        $this->params->get('kernel.project_dir').'/config/google/token.json',
+        json_encode($accessToken)
+    );
+}
+
 }
