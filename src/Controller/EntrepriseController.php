@@ -1,10 +1,8 @@
 <?php
 
 namespace App\Controller;
-use App\Repository\BrancheentrepriseRepository;
+
 use App\Entity\Entreprise;
-use App\Entity\Branche;
-use App\Entity\Departmententreprise;
 use App\Entity\Brancheentreprise;
 use App\Form\EntrepriseType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -12,65 +10,82 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Writer\PngWriter;
+use Endroid\QrCode\Encoding\Encoding;
+use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
+use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
+use Endroid\QrCode\Label\Font\NotoSans;
+use Endroid\QrCode\Label\Alignment\LabelAlignmentCenter;
+use Endroid\QrCode\Label\Font\OpenSans;
 
 #[Route('/entreprise')]
 final class EntrepriseController extends AbstractController
 {
-    // Méthode pour afficher la liste des entreprises pour le front-end
     #[Route('/front', name: 'app_entreprise_index_front', methods: ['GET'])]
-    public function indexFront(EntityManagerInterface $entityManager): Response
+    public function indexFront(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $entreprises = $entityManager
-            ->getRepository(Entreprise::class)
-            ->findAll();
+        $search = $request->query->get('search', '');
+        $sortBy = $request->query->get('sort', 'nomentreprise');
+        $sortOrder = $request->query->get('order', 'asc');
 
-        return $this->render('entreprise/indexFront.html.twig', [
-            'entreprises' => $entreprises,
-        ]);
+        $queryBuilder = $entityManager->getRepository(Entreprise::class)->createQueryBuilder('e');
+
+        if ($search) {
+            $queryBuilder->where('e.nomentreprise LIKE :search OR e.secteurentreprise LIKE :search')
+                         ->setParameter('search', '%' . $search . '%');
+        }
+
+        $queryBuilder->orderBy('e.' . $sortBy, $sortOrder);
+
+        $entreprises = $queryBuilder->getQuery()->getResult();
+
+        return $this->render('entreprise/indexFront.html.twig', compact('entreprises', 'search', 'sortBy', 'sortOrder'));
     }
 
-    // Méthode pour afficher les détails d'une entreprise pour le front-end
     #[Route('/front/{identreprise}', name: 'app_entreprise_show_front', methods: ['GET'])]
     public function showFront(Entreprise $entreprise): Response
     {
-        // Assurez-vous que les branches sont uniques
-        $branches = $entreprise->getBrancheentreprises()->toArray();
-        $branches = array_unique($branches, SORT_REGULAR);
-    
+        $branches = array_unique($entreprise->getBrancheentreprises()->toArray(), SORT_REGULAR);
+
         return $this->render('entreprise/showFront.html.twig', [
             'entreprise' => $entreprise,
-            'branches' => $branches, // Branches uniques
+            'branches' => $branches,
             'departments' => $entreprise->getDepartmententreprises(),
         ]);
     }
-  
+
     #[Route('/rh', name: 'app_branches_back', methods: ['GET'])]
     public function indexBack(EntityManagerInterface $entityManager): Response
     {
-        // Récupérer l'utilisateur connecté
         $user = $this->getUser();
-    
-        // Récupérer uniquement les branches associées à l'utilisateur
         $branches = $entityManager->getRepository(Brancheentreprise::class)->findBy(['idutilisateur' => $user]);
-    
-        return $this->render('entreprise/indexBack.html.twig', [
-            'branches' => $branches,
-        ]);
+
+        return $this->render('entreprise/indexBack.html.twig', compact('branches'));
     }
-    // Méthode pour afficher la liste des entreprises dans l'administration
+
     #[Route('/list', name: 'app_entreprise_index', methods: ['GET'])]
-    public function index(EntityManagerInterface $entityManager): Response
+    public function index(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $entreprises = $entityManager
-            ->getRepository(Entreprise::class)
-            ->findAll();
+        $search = $request->query->get('search', '');
+        $sortBy = $request->query->get('sort', 'nomentreprise');
+        $sortOrder = $request->query->get('order', 'asc');
 
-        return $this->render('entreprise/index.html.twig', [
-            'entreprises' => $entreprises,
-        ]);
+        $queryBuilder = $entityManager->getRepository(Entreprise::class)->createQueryBuilder('e');
+
+        if ($search) {
+            $queryBuilder->where('e.nomentreprise LIKE :search OR e.secteurentreprise LIKE :search')
+                         ->setParameter('search', '%' . $search . '%');
+        }
+
+        $queryBuilder->orderBy('e.' . $sortBy, $sortOrder);
+
+        $entreprises = $queryBuilder->getQuery()->getResult();
+
+        return $this->render('entreprise/index.html.twig', compact('entreprises', 'search', 'sortBy', 'sortOrder'));
     }
 
-    // Méthode pour créer une nouvelle entreprise
     #[Route('/new', name: 'app_entreprise_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -82,36 +97,22 @@ final class EntrepriseController extends AbstractController
             $file = $form->get('logoentreprise')->getData();
 
             if ($file) {
-                // Générer un nom de fichier unique
                 $fileName = uniqid() . '.' . $file->guessExtension();
-
-                // Déplacer le fichier vers le dossier de destination
-                $file->move(
-                    $this->getParameter('logo_directory'), // Défini dans config/services.yaml
-                    $fileName
-                );
-
-                // Mettre à jour le champ de l'entité
+                $file->move($this->getParameter('logo_directory'), $fileName);
                 $entreprise->setLogoentreprise($fileName);
             } else {
-                // Si le champ n'est pas nullable, définir un logo par défaut
                 $entreprise->setLogoentreprise('default-logo.png');
             }
 
             $entityManager->persist($entreprise);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_entreprise_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_entreprise_index');
         }
 
-        return $this->render('entreprise/new.html.twig', [
-            'entreprise' => $entreprise,
-            'form' => $form,
-        ]);
+        return $this->render('entreprise/new.html.twig', compact('entreprise', 'form'));
     }
 
-
-    // Méthode pour modifier les informations d'une entreprise
     #[Route('/{identreprise}/edit', name: 'app_entreprise_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Entreprise $entreprise, EntityManagerInterface $entityManager): Response
     {
@@ -122,31 +123,19 @@ final class EntrepriseController extends AbstractController
             $file = $form->get('logoentreprise')->getData();
 
             if ($file) {
-                // Générer un nom de fichier unique
                 $fileName = uniqid() . '.' . $file->guessExtension();
-
-                // Déplacer le fichier vers le dossier de destination
-                $file->move(
-                    $this->getParameter('logo_directory'),
-                    $fileName
-                );
-
-                // Mettre à jour le champ de l'entité
+                $file->move($this->getParameter('logo_directory'), $fileName);
                 $entreprise->setLogoentreprise($fileName);
             }
 
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_entreprise_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_entreprise_index');
         }
 
-        return $this->render('entreprise/edit.html.twig', [
-            'entreprise' => $entreprise,
-            'form' => $form,
-        ]);
+        return $this->render('entreprise/edit.html.twig', compact('entreprise', 'form'));
     }
 
-    // Méthode pour supprimer une entreprise
     #[Route('/{identreprise}', name: 'app_entreprise_delete', methods: ['POST'])]
     public function delete(Request $request, Entreprise $entreprise, EntityManagerInterface $entityManager): Response
     {
@@ -155,22 +144,68 @@ final class EntrepriseController extends AbstractController
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('app_entreprise_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_entreprise_index');
     }
 
-
-    // Méthode pour afficher les détails d'une entreprise pour le front-end
     #[Route('/back/{identreprise}', name: 'app_entreprise_show_back', methods: ['GET'])]
     public function showBack(Entreprise $entreprise): Response
     {
-        // Assurez-vous que les branches sont uniques
-        $branches = $entreprise->getBrancheentreprises()->toArray();
-        $branches = array_unique($branches, SORT_REGULAR);
-    
+        $branches = array_unique($entreprise->getBrancheentreprises()->toArray(), SORT_REGULAR);
+
         return $this->render('entreprise/show.html.twig', [
             'entreprise' => $entreprise,
-            'branches' => $branches, // Branches uniques
+            'branches' => $branches,
             'departments' => $entreprise->getDepartmententreprises(),
+        ]);
+    }
+
+    #[Route('/front/{identreprise}/qr-code', name: 'app_entreprise_qr_code', methods: ['GET'])]
+    public function generateQrCode(Entreprise $entreprise): Response
+    {
+        $qrCode = Builder::create()
+            ->writer(new PngWriter())
+            ->writerOptions([])
+            ->data($this->generateUrl('app_entreprise_show_front', ['identreprise' => $entreprise->getIdentreprise()], UrlGeneratorInterface::ABSOLUTE_URL))
+            ->encoding(new Encoding('UTF-8'))
+            ->errorCorrectionLevel(new ErrorCorrectionLevelHigh())
+            ->size(300)
+            ->margin(10)
+            ->roundBlockSizeMode(new RoundBlockSizeModeMargin())
+            ->labelText($entreprise->getNomentreprise())
+            ->labelFont(new NotoSans(20))
+            ->labelAlignment(new LabelAlignmentCenter())
+            ->build();
+
+        return new Response($qrCode->getString(), 200, ['Content-Type' => 'image/png']);
+    }
+
+    #[Route('/front/{identreprise}/qr-code-page', name: 'app_entreprise_qr_code_page', methods: ['GET'])]
+    public function qrCodePage(Entreprise $entreprise): Response
+    {
+        $qrData = [
+            'nom' => $entreprise->getNomentreprise(),
+            'description' => $entreprise->getDescriptionentreprise(),
+            'url' => $entreprise->getUrlentreprise(),
+            'secteur' => $entreprise->getSecteurentreprise()
+        ];
+
+        $qrCode = Builder::create()
+            ->writer(new PngWriter())
+            ->writerOptions([])
+            ->data(json_encode($qrData))
+            ->encoding(new Encoding('UTF-8'))
+            ->errorCorrectionLevel(new ErrorCorrectionLevelHigh())
+            ->size(300)
+            ->margin(10)
+            ->roundBlockSizeMode(new RoundBlockSizeModeMargin())
+            ->labelText($entreprise->getNomentreprise())
+            ->labelFont(new OpenSans(20))
+            ->labelAlignment(new LabelAlignmentCenter())
+            ->build();
+
+        return $this->render('entreprise/qrCodePage.html.twig', [
+            'entreprise' => $entreprise,
+            'qrCode' => $qrCode->getDataUri(),
         ]);
     }
 }

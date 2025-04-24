@@ -1,94 +1,107 @@
-{{ form_start(form, {'attr': {'class': 'form-horizontal', 'novalidate': 'novalidate'}}) }}
+ {{ form_start(form, {'attr': {'class': 'form-horizontal', 'novalidate': 'novalidate'}}) }}
 
 <div class="card shadow-sm">
     <div class="card-header bg-primary text-white">
-        <h5 class="mb-0">Informations de l'Entreprise</h5>
+        <h5 class="mb-0">Informations de la Branche</h5>
     </div>
     <div class="card-body">
 
-        <!-- Nom de l'entreprise -->
+        <!-- Localisation -->
         <div class="form-group row">
             <div class="col-md-6 mb-3">
-                {{ form_label(form.nomentreprise, 'Nom de l\'Entreprise', {'label_attr': {'class': 'form-label'}}) }}
-                {{ form_widget(form.nomentreprise, {
+                {{ form_label(form.localisationbranche, 'Localisation', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.localisationbranche, {
                     'attr': {
-                        'class': 'form-control' ~ (app.request.isMethod('POST') and form.nomentreprise.vars.valid is same as(true) ? ' is-valid' : (form.nomentreprise.vars.valid is same as(false) ? ' is-invalid' : '')),
+                        'class': 'form-control' ~ (app.request.isMethod('POST') and form.localisationbranche.vars.valid is same as(true) ? ' is-valid' : (form.localisationbranche.vars.valid is same as(false) ? ' is-invalid' : '')),
+                        'maxlength': '255',
                         'required': 'required',
-                        'minlength': '3',
+                        'title': 'Veuillez entrer la localisation de la branche.'
+                    }
+                }) }}
+                {{ form_errors(form.localisationbranche) }}
+            </div>
+
+            <!-- Email -->
+            <div class="col-md-6 mb-3">
+                {{ form_label(form.emailbranche, 'Email', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.emailbranche, {
+                    'attr': {
+                        'class': 'form-control' ~ (app.request.isMethod('POST') and form.emailbranche.vars.valid is same as(true) ? ' is-valid' : (form.emailbranche.vars.valid is same as(false) ? ' is-invalid' : '')),
+                        'pattern': '^[a-zA-Z0-9._%+-]+@esprit\.tn$',
+                        'title': 'Format requis : nom.prenom@esprit.tn'
+                    }
+                }) }}
+                {{ form_errors(form.emailbranche) }}
+            </div>
+        </div>
+
+        <!-- Contact -->
+        <div class="form-group row">
+            <div class="col-md-6 mb-3">
+                {{ form_label(form.contactbranche, 'Contact', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.contactbranche, {
+                    'attr': {
+                        'class': 'form-control' ~ (app.request.isMethod('POST') and form.contactbranche.vars.valid is same as(true) ? ' is-valid' : (form.contactbranche.vars.valid is same as(false) ? ' is-invalid' : '')),
+                        'maxlength': '15',
+                        'pattern': '^[0-9\-\+]+$',
+                        'title': 'Uniquement des chiffres, tirets ou +'
+                    }
+                }) }}
+                {{ form_errors(form.contactbranche) }}
+            </div>
+
+            <!-- Nombre d'employés -->
+            <div class="col-md-6 mb-3">
+                {{ form_label(form.nombreemploye, 'Nombre d\'Employés', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.nombreemploye, {
+                    'attr': {
+                        'class': 'form-control' ~ (app.request.isMethod('POST') and form.nombreemploye.vars.valid is same as(true) ? ' is-valid' : (form.nombreemploye.vars.valid is same as(false) ? ' is-invalid' : '')),
+                        'min': '1',
+                        'title': 'Veuillez entrer un nombre positif'
+                    }
+                }) }}
+                {{ form_errors(form.nombreemploye) }}
+            </div>
+        </div>
+
+        <!-- Responsable -->
+        <div class="form-group row">
+            <div class="col-md-6 mb-3">
+                {{ form_label(form.responsablebranche, 'Responsable', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.responsablebranche, {
+                    'attr': {
+                        'class': 'form-control' ~ (app.request.isMethod('POST') and form.responsablebranche.vars.valid is same as(true) ? ' is-valid' : (form.responsablebranche.vars.valid is same as(false) ? ' is-invalid' : '')),
                         'maxlength': '100',
-                        'pattern': '[A-Za-z0-9À-ÿ\s\.\'\,\-]+',
-                        'title': 'Le nom doit contenir entre 3 et 100 caractères (lettres, chiffres, espaces, ponctuation).'
+                        'title': 'Nom du responsable de la branche'
                     }
                 }) }}
-                {{ form_errors(form.nomentreprise) }}
+                {{ form_errors(form.responsablebranche) }}
             </div>
+
+            
         </div>
 
-        <!-- Description -->
-        <div class="form-group row">
-            <div class="col-md-12 mb-3">
-                {{ form_label(form.descriptionentreprise, 'Description de l\'Entreprise', {'label_attr': {'class': 'form-label'}}) }}
-                {{ form_widget(form.descriptionentreprise, {
-                    'attr': {
-                        'class': 'form-control' ~ (app.request.isMethod('POST') and form.descriptionentreprise.vars.valid is same as(true) ? ' is-valid' : (form.descriptionentreprise.vars.valid is same as(false) ? ' is-invalid' : '')),
-                        'rows': 4,
-                        'maxlength': '500',
-                        'title': 'Maximum 500 caractères.'
-                    }
-                }) }}
-                {{ form_errors(form.descriptionentreprise) }}
-            </div>
-        </div>
-
-        <!-- Logo et URL -->
+        <!-- Utilisateur (si nécessaire) -->
+        {% if form.idutilisateur is defined %}
         <div class="form-group row">
             <div class="col-md-6 mb-3">
-                {{ form_label(form.logoentreprise, 'Logo de l\'Entreprise', {'label_attr': {'class': 'form-label'}}) }}
-                {{ form_widget(form.logoentreprise, {
+                {{ form_label(form.idutilisateur, 'Utilisateur', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.idutilisateur, {
                     'attr': {
-                        'class': 'form-control' ~ (app.request.isMethod('POST') and form.logoentreprise.vars.valid is same as(true) ? ' is-valid' : (form.logoentreprise.vars.valid is same as(false) ? ' is-invalid' : '')),
-                        'accept': 'image/png,image/jpeg,image/jpg',
-                        'title': 'Formats acceptés : PNG, JPG, JPEG.'
+                        'class': 'form-control'
                     }
                 }) }}
-                {{ form_errors(form.logoentreprise) }}
-            </div>
-
-            <div class="col-md-6 mb-3">
-                {{ form_label(form.urlentreprise, 'URL de l\'Entreprise', {'label_attr': {'class': 'form-label'}}) }}
-                {{ form_widget(form.urlentreprise, {
-                    'attr': {
-                        'class': 'form-control' ~ (app.request.isMethod('POST') and form.urlentreprise.vars.valid is same as(true) ? ' is-valid' : (form.urlentreprise.vars.valid is same as(false) ? ' is-invalid' : '')),
-                        'type': 'url',
-                        'pattern': 'https?://.+',
-                        'title': 'Entrez une URL valide commençant par http:// ou https://'
-                    }
-                }) }}
-                {{ form_errors(form.urlentreprise) }}
+                {{ form_errors(form.idutilisateur) }}
             </div>
         </div>
-
-        <!-- Secteur -->
-        <div class="form-group row">
-            <div class="col-md-12 mb-3">
-                {{ form_label(form.secteurentreprise, 'Secteur de l\'Entreprise', {'label_attr': {'class': 'form-label'}}) }}
-                {{ form_widget(form.secteurentreprise, {
-                    'attr': {
-                        'class': 'form-control' ~ (app.request.isMethod('POST') and form.secteurentreprise.vars.valid is same as(true) ? ' is-valid' : (form.secteurentreprise.vars.valid is same as(false) ? ' is-invalid' : '')),
-                        'required': 'required',
-                        'title': 'Veuillez sélectionner un secteur.'
-                    }
-                }) }}
-                {{ form_errors(form.secteurentreprise) }}
-            </div>
-        </div>
+        {% endif %}
 
         <!-- Boutons -->
-        <div class="form-group text-right mt-4">
-            <button type="submit" class="btn btn-primary">
-                {{ button_label|default('Enregistrer') }}
+        <div class="form-group text-end mt-4">
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-check-circle"></i> {{ button_label|default('Enregistrer') }}
             </button>
-            <a href="{{ path('app_entreprise_index') }}" class="btn btn-secondary ml-2">
+            <a href="{{ path('app_brancheentreprise_index') }}" class="btn btn-secondary ms-2">
                 Annuler
             </a>
         </div>
