@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Enum\StatutTestTechnique;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Utils\EmailService;
+use App\Utils\GrammarCheckerService;
 
 #[Route('/testtechnique')]
 final class TesttechniqueController extends AbstractController
@@ -63,7 +64,10 @@ final class TesttechniqueController extends AbstractController
    
 
     #[Route('/new', name: 'app_testtechnique_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(
+        Request $request,
+        EntityManagerInterface $entityManager, 
+        ): Response
     {
         $testtechnique = new Testtechnique();
         $form = $this->createForm(TesttechniqueType::class, $testtechnique);
@@ -136,7 +140,9 @@ public function showFront(Testtechnique $testtechnique): Response
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('app_testtechnique_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_testtechnique_by_interview', [
+            'idinterview' => $testtechnique->getIdinterview()->getIdinterview()
+        ], Response::HTTP_SEE_OTHER);
     }
  
 #[Route('/interview/{idinterview}/tests', name: 'app_testtechnique_by_interview', methods: ['GET'])]
@@ -206,8 +212,34 @@ public function indexByInterviewFront(
 }
 
 #[Route('/new/{idinterview}', name: 'app_testtechnique_new_for_interview', methods: ['GET', 'POST'])]
-public function newForInterview(Request $request, EntityManagerInterface $entityManager, Interview $idinterview): Response
+public function newForInterview(
+    Request $request,
+    EntityManagerInterface $entityManager,
+    Interview $idinterview,
+    GrammarCheckerService $grammarCheckerService
+): Response
 {
+    // Créer une réponse JSON pour les requêtes AJAX
+    if ($request->isXmlHttpRequest()) {
+        $text = $request->request->get('text', '');
+        
+        if (empty($text)) {
+            return $this->json([
+                'error' => 'Aucun texte à vérifier'
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        try {
+            $correctionResult = $grammarCheckerService->checkGrammar($text);
+            return $this->json($correctionResult);
+        } catch (\Exception $e) {
+            return $this->json([
+                'error' => 'Erreur lors de la vérification: ' . $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // Gestion normale du formulaire
     $testtechnique = new Testtechnique();
     $testtechnique->setIdinterview($idinterview);
 

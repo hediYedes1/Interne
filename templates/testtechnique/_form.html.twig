@@ -27,7 +27,17 @@
         <div class="form-group mb-3">
             <label class="col-form-label">Description</label>
             <div class="col-sm-12">
-                {{ form_widget(form.descriptiontesttechnique, {'attr': {'class': 'form-control', 'style': 'height: 120px'}}) }}
+                {{ form_widget(form.descriptiontesttechnique, {
+                    'attr': {
+                        'class': 'form-control', 
+                        'style': 'height: 120px',
+                        'id': 'testtechnique_description'
+                    }
+                }) }}
+                <button type="button" id="check-grammar-btn" class="btn btn-outline-secondary mt-2">
+                    <i class="fas fa-spell-check"></i> Vérifier la grammaire
+                </button>
+                <div id="grammar-correction" class="mt-2"></div>
                 {{ form_errors(form.descriptiontesttechnique, {'attr': {'class': 'text-danger'}}) }}
             </div>
         </div>
@@ -64,3 +74,146 @@
         {{ form_end(form) }}
     </div>
 </div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const descriptionField = document.querySelector('#{{ form.descriptiontesttechnique.vars.id }}');
+        const checkGrammarBtn = document.getElementById('check-grammar-btn');
+        const correctionContainer = document.getElementById('grammar-correction');
+
+        checkGrammarBtn.addEventListener('click', function() {
+            const text = descriptionField.value;
+            if (!text.trim()) {
+                correctionContainer.innerHTML = `
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>Veuillez saisir du texte à vérifier
+                    </div>
+                `;
+                return;
+            }
+
+            // Afficher un indicateur de chargement
+            correctionContainer.innerHTML = `
+                <div class="alert alert-info">
+                    <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                    Vérification en cours...
+                </div>
+            `;
+            checkGrammarBtn.disabled = true;
+
+            fetch('{{ path('app_testtechnique_new_for_interview', {'idinterview': testtechnique.idinterview.idinterview}) }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: new URLSearchParams({
+                    text: text
+                })
+            })
+            .then(response => {
+    if (!response.ok) {
+        throw new Error('Network response was not ok: ' + response.statusText);
+    }
+    return response.json();
+})
+        .then(data => {
+    console.log('API response:', data); // Pour débogage
+    
+    if (data.errors && (data.errors.error || data.errors.details?.length)) {
+        let errorsHtml = '';
+        if (data.errors.error) {
+            errorsHtml += `<div class="mt-2">${data.errors.error}</div>`;
+        }
+        if (data.errors.details?.length) {
+            errorsHtml += '<ul class="mt-2 mb-0">';
+            data.errors.details.forEach(error => {
+                errorsHtml += `<li>${error.message || 'Erreur'} (${error.rule || 'Non spécifié'})</li>`;
+            });
+            errorsHtml += '</ul>';
+        }
+        
+        correctionContainer.innerHTML = `
+            <div class="alert alert-warning">
+                <strong><i class="fas fa-exclamation-triangle me-2"></i>Corrections suggérées :</strong>
+                ${errorsHtml}
+                <div class="d-flex gap-2 mt-3">
+                    <button type="button" class="btn btn-sm btn-success" onclick="applyCorrection()">
+                        <i class="fas fa-check me-1"></i> Appliquer
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="dismissCorrection()">
+                        <i class="fas fa-times me-1"></i> Ignorer
+                    </button>
+                </div>
+                <input type="hidden" id="corrected-text" value="${data.errors.correction}">
+            </div>
+        `;
+    } else {
+        correctionContainer.innerHTML = `
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle me-2"></i> Aucune erreur détectée
+            </div>
+        `;
+    }
+})
+        });
+    });
+
+ // Remplacez les fonctions globales par ceci :
+window.applyCorrection = function() {
+    const correctedText = document.getElementById('corrected-text').value;
+    document.querySelector('#{{ form.descriptiontesttechnique.vars.id }}').value = correctedText;
+    document.getElementById('grammar-correction').innerHTML = `
+        <div class="alert alert-success">
+            <i class="fas fa-check-circle me-2"></i> Corrections appliquées
+        </div>
+    `;
+};
+
+window.dismissCorrection = function() {
+    document.getElementById('grammar-correction').innerHTML = '';
+};
+
+    
+</script>
+
+<style>
+    .card {
+        border-radius: 10px;
+        border-width: 2px;
+    }
+    .form-control:focus {
+        border-color: #4e73df;
+        box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+    }
+    .btn-primary {
+        background-color: #4e73df;
+        border-color: #4e73df;
+    }
+    .btn-primary:hover {
+        background-color: #2e59d9;
+        border-color: #2653d4;
+    }
+    #grammar-correction .alert {
+        padding: 12px;
+        border-radius: 6px;
+        margin-top: 10px;
+    }
+    #check-grammar-btn {
+        transition: all 0.3s ease;
+    }
+    #check-grammar-btn:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+    #grammar-correction button {
+        transition: all 0.2s ease;
+    }
+    #grammar-correction ul {
+        padding-left: 20px;
+    }
+    #grammar-correction li {
+        margin-bottom: 5px;
+    }
+</style>
