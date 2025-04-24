@@ -15,6 +15,10 @@ services:
         arguments:
             $params: '@parameter_bag'
 
+            # config/services.yaml
+    App\Twig\AppExtension:
+        tags: ['twig.extension']
+
     App\Utils\GoogleMeetService:
         arguments:
             $googleOAuthService: '@App\Utils\GoogleOAuthService'

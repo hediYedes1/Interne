@@ -1,0 +1,46 @@
+{# templates/emails/interview_reminder.html.twig #}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Rappel d'interview</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background-color: #f8f9fa; padding: 10px; text-align: center; }
+        .content { padding: 20px; }
+        .footer { margin-top: 20px; font-size: 0.8em; text-align: center; color: #6c757d; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Rappel d'interview</h2>
+        </div>
+        
+        <div class="content">
+            <p>Bonjour,</p>
+            
+            <p>Vous avez une interview prévue dans moins de 24 heures :</p>
+            
+            <ul>
+                <li><strong>Titre :</strong> {{ interview.titreoffre }}</li>
+                <li><strong>Date :</strong> {{ interview.dateinterview|date('d/m/Y') }}</li>
+                <li><strong>Heure :</strong> {{ interview.timeinterview|date('H:i') }}</li>
+                <li><strong>Type :</strong> {{ interview.typeinterview }}</li>
+                {% if interview.typeinterview == 'ENLIGNE' and interview.lienmeet %}
+                    <li><strong>Lien Meet :</strong> <a href="{{ interview.lienmeet }}">{{ interview.lienmeet }}</a></li>
+                {% elseif interview.localisation %}
+                    <li><strong>Localisation :</strong> {{ interview.localisation }}</li>
+                {% endif %}
+            </ul>
+            
+            <p>Merci de vous préparer pour cette interview.</p>
+        </div>
+        
+        <div class="footer">
+            <p>Ceci est un message automatique, merci de ne pas y répondre.</p>
+        </div>
+    </div>
+</body>
+</html>

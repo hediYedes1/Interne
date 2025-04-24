@@ -38,7 +38,20 @@ class InterviewRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
     
+    // src/Repository/InterviewRepository.php
+    public function findInterviewsInNext24Hours(): array
+    {
+        $now = new \DateTime();
+        $in24Hours = (new \DateTime())->add(new \DateInterval('PT24H'));
     
+        return $this->createQueryBuilder('i')
+            ->where('i.dateinterview BETWEEN :now AND :in24Hours')
+            ->andWhere('i.timeinterview IS NOT NULL')
+            ->setParameter('now', $now)
+            ->setParameter('in24Hours', $in24Hours)
+            ->getQuery()
+            ->getResult();
+    }
 
     // Add custom methods as needed
 }
