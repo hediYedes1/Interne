@@ -17,16 +17,34 @@ use Symfony\Component\Routing\Attribute\Route;
 final class PublicationController extends AbstractController
 {
     #[Route(name: 'app_publication_index', methods: ['GET'])]
-    public function index(EntityManagerInterface $entityManager): Response
+    public function index(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $publications = $entityManager
-            ->getRepository(Publication::class)
-            ->findAll();
-
+        $search = $request->query->get('search');
+        $sort = $request->query->get('sort', 'titre'); // Adjust to actual field
+        $order = $request->query->get('order', 'asc');
+    
+        $qb = $entityManager->getRepository(Publication::class)->createQueryBuilder('p');
+    
+        if ($search) {
+            $qb->andWhere('p.titre LIKE :search OR p.titre LIKE :search')
+               ->setParameter('search', '%' . $search . '%');
+        }
+    
+        if (in_array($sort, ['titre', 'datePublication'])) {
+            $qb->orderBy('p.' . $sort, strtoupper($order) === 'DESC' ? 'DESC' : 'ASC');
+        }
+    
+        $publications = $qb->getQuery()->getResult();
+    
         return $this->render('publication/index.html.twig', [
             'publications' => $publications,
+            'search' => $search,
+            'sort' => $sort,
+            'order' => $order,
         ]);
+        
     }
+    
 
     #[Route('/new', name: 'app_publication_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response

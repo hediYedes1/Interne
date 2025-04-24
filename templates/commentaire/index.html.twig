@@ -13,7 +13,7 @@
                 <th>DateCommentaire</th>
                 <th>Likes</th>
                 <th>Dislikes</th>
-                <th>actions</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -25,17 +25,21 @@
                 <td>{{ commentaire.likes }}</td>
                 <td>{{ commentaire.dislikes }}</td>
                 <td>
-                    <a href="{{ path('app_commentaire_show', {'idCommentaire': commentaire.idCommentaire}) }}">show</a>
-                    <a href="{{ path('app_commentaire_edit', {'idCommentaire': commentaire.idCommentaire}) }}">edit</a>
+                    <a href="{{ path('app_commentaire_show', {'idCommentaire': commentaire.idCommentaire}) }}">Show</a>
+                    <a href="{{ path('app_commentaire_edit', {'idCommentaire': commentaire.idCommentaire}) }}">Edit</a>
                 </td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="6">no records found</td>
+                <td colspan="6">No records found</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
 
     <a href="{{ path('app_commentaire_new') }}">Create new</a>
+    
+    <!-- Add link to stats page -->
+    <br>
+    <a href="{{ path('app_commentaire_stats') }}">View Commentaire Statistics</a>
 {% endblock %}

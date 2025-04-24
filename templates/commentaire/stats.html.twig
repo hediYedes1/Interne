@@ -1,0 +1,169 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Commentaire Statistics{% endblock %}
+
+{% block body %}
+    <h1 class="text-center">Commentaire Statistics</h1>
+
+    <!-- Overall Statistics Section -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h5>Total Comments</h5>
+                    <p class="display-4">{{ totalComments }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h5>Average Likes</h5>
+                    <p class="display-4">{{ avgLikes|number_format(2) }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h5>Average Dislikes</h5>
+                    <p class="display-4">{{ avgDislikes|number_format(2) }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter for Time Range (Optional) -->
+    <div class="mb-4 text-center">
+        <label for="timeRange" class="mr-2">Select Time Range:</label>
+        <select id="timeRange" class="form-select w-25 d-inline-block">
+            <option value="all">All Time</option>
+            <option value="week">Last Week</option>
+            <option value="month">Last Month</option>
+            <option value="year">Last Year</option>
+        </select>
+    </div>
+
+    <!-- Bar Chart for Likes vs Dislikes -->
+    <div class="mb-5">
+        <h3>Likes vs Dislikes (Bar Chart)</h3>
+        <canvas id="likesDislikesChart" width="400" height="200"></canvas>
+    </div>
+
+    <!-- Pie Chart for Likes vs Dislikes -->
+    <div class="mb-5">
+        <h3>Likes vs Dislikes (Pie Chart)</h3>
+        <canvas id="likesDislikesPieChart" width="400" height="200"></canvas>
+    </div>
+
+    <!-- Line Chart for Comment Trends (Likes and Dislikes over Time) -->
+    <div class="mb-5">
+        <h3>Likes & Dislikes Trend (Line Chart)</h3>
+        <canvas id="likesDislikesTrendChart" width="400" height="200"></canvas>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Data for Likes vs Dislikes Bar Chart
+        var ctxBar = document.getElementById('likesDislikesChart').getContext('2d');
+        var likesDislikesChart = new Chart(ctxBar, {
+            type: 'bar',
+            data: {
+                labels: ['Likes', 'Dislikes'],
+                datasets: [{
+                    label: 'Likes vs Dislikes',
+                    data: [{{ totalLikes }}, {{ totalDislikes }}],
+                    backgroundColor: ['rgba(54, 162, 235, 0.2)', 'rgba(255, 99, 132, 0.2)'],
+                    borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 99, 132, 1)'],
+                    borderWidth: 1,
+                    tension: 0.4,
+                    animation: {
+                        duration: 2000,
+                        easing: 'easeOutBounce'
+                    }
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Data for Likes vs Dislikes Pie Chart
+        var ctxPie = document.getElementById('likesDislikesPieChart').getContext('2d');
+        var pieChart = new Chart(ctxPie, {
+            type: 'pie',
+            data: {
+                labels: ['Likes', 'Dislikes'],
+                datasets: [{
+                    label: 'Likes vs Dislikes',
+                    data: [{{ totalLikes }}, {{ totalDislikes }}],
+                    backgroundColor: ['rgba(54, 162, 235, 0.2)', 'rgba(255, 99, 132, 0.2)'],
+                    borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 99, 132, 1)'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                animation: {
+                    duration: 2000,
+                    easing: 'easeOutElastic'
+                }
+            }
+        });
+
+        // Data for Likes and Dislikes Trend (Line Chart)
+        var ctxLine = document.getElementById('likesDislikesTrendChart').getContext('2d');
+        var trendChart = new Chart(ctxLine, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], // Monthly labels
+                datasets: [{
+                    label: 'Likes Trend',
+                    data: [15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90], // Example data for likes trend
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    fill: true,
+                    tension: 0.4,
+                    animation: {
+                        duration: 2000,
+                        easing: 'easeOutBounce'
+                    }
+                }, {
+                    label: 'Dislikes Trend',
+                    data: [5, 6, 7, 8, 9, 10, 12, 14, 16, 18, 20, 22], // Example data for dislikes trend
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    fill: true,
+                    tension: 0.4,
+                    animation: {
+                        duration: 2000,
+                        easing: 'easeOutBounce'
+                    }
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Time Range Filter
+        document.getElementById('timeRange').addEventListener('change', function () {
+            var timeRange = this.value;
+            // Implement logic to fetch and update charts based on selected time range
+            console.log('Selected time range: ' + timeRange);
+            // You can update the chart's data dynamically based on this value
+        });
+    </script>
+
+    <a href="{{ path('app_commentaire_index') }}">Back to Comments</a>
+{% endblock %}

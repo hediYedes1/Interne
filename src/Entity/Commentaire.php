@@ -91,5 +91,18 @@ class Commentaire
         $this->contenu = $contenu;
     }
 
+    public function getLikeDislikeRatio(): float
+    {
+        $likes = $this->getLikes();
+        $dislikes = $this->getDislikes();
+
+        // Avoid division by zero, return 0 if there are no likes or dislikes
+        if ($likes + $dislikes === 0) {
+            return 0;
+        }
+
+        return $likes / ($likes + $dislikes);
+    }
+
 
 }

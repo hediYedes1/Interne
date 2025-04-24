@@ -8,7 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Annotation\Route; // Fixed typo here
 
 #[Route('/commentaire')]
 final class CommentaireController extends AbstractController
@@ -22,6 +22,35 @@ final class CommentaireController extends AbstractController
 
         return $this->render('commentaire/index.html.twig', [
             'commentaires' => $commentaires,
+        ]);
+    }
+
+    #[Route('/stats', name: 'app_commentaire_stats', methods: ['GET'])]
+    public function stats(EntityManagerInterface $entityManager): Response
+    {
+        // Total number of comments
+        $totalComments = $entityManager->getRepository(Commentaire::class)->count([]);
+
+        // Average likes and dislikes
+        $likesDislikesStats = $entityManager->getRepository(Commentaire::class)
+            ->createQueryBuilder('c')
+            ->select('AVG(c.likes) as avgLikes, AVG(c.dislikes) as avgDislikes')
+            ->getQuery()
+            ->getSingleResult();
+
+        // Total likes and dislikes
+        $totalLikesDislikes = $entityManager->getRepository(Commentaire::class)
+            ->createQueryBuilder('c')
+            ->select('SUM(c.likes) as totalLikes, SUM(c.dislikes) as totalDislikes')
+            ->getQuery()
+            ->getSingleResult();
+
+        return $this->render('commentaire/stats.html.twig', [
+            'totalComments' => $totalComments,
+            'avgLikes' => $likesDislikesStats['avgLikes'],
+            'avgDislikes' => $likesDislikesStats['avgDislikes'],
+            'totalLikes' => $totalLikesDislikes['totalLikes'],
+            'totalDislikes' => $totalLikesDislikes['totalDislikes'],
         ]);
     }
 
@@ -74,7 +103,8 @@ final class CommentaireController extends AbstractController
     #[Route('/{idCommentaire}', name: 'app_commentaire_delete', methods: ['POST'])]
     public function delete(Request $request, Commentaire $commentaire, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$commentaire->getIdCommentaire(), $request->getPayload()->getString('_token'))) {
+        // Fixed CSRF token validation
+        if ($this->isCsrfTokenValid('delete' . $commentaire->getIdCommentaire(), $request->request->get('_token'))) {
             $entityManager->remove($commentaire);
             $entityManager->flush();
         }

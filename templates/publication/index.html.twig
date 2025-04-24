@@ -7,12 +7,11 @@
 
 {% block sideBar %}
 {{ parent() }}
-{% endblock %} 
+{% endblock %}
 
 {% block headside %}
   {{ parent() }}
 {% endblock %}
-
 
 {% block breadcrumb %}
     {{ parent() }}
@@ -27,6 +26,34 @@
                 ➕ Nouvelle publication
             </a>
         </div>
+
+        <!-- Search & Sort Form -->
+        <form method="get" class="flex flex-wrap items-center gap-4 mb-4">
+            <input type="text" name="search" value="{{ search ?? '' }}"
+                   placeholder="🔍 Rechercher par titre ou contenu"
+                   class="px-3 py-2 border rounded w-full md:w-64 text-sm"/>
+
+            <div class="flex items-center gap-2 text-sm">
+                <label for="sort">Trier par:</label>
+                <select name="sort" id="sort" class="border rounded px-2 py-1 text-sm">
+                    <option value="titre" {% if sort == 'titre' %}selected{% endif %}>Titre</option>
+                    <option value="datePublication" {% if sort == 'datePublication' %}selected{% endif %}>Date</option>
+                </select>
+            </div>
+
+            <div class="flex items-center gap-2 text-sm">
+                <label for="order">Ordre:</label>
+                <select name="order" id="order" class="border rounded px-2 py-1 text-sm">
+                    <option value="asc" {% if order == 'asc' %}selected{% endif %}>Croissant</option>
+                    <option value="desc" {% if order == 'desc' %}selected{% endif %}>Décroissant</option>
+                </select>
+            </div>
+
+            <button type="submit"
+                    class="bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700 text-sm">
+                🔄 Appliquer
+            </button>
+        </form>
 
         <div class="overflow-x-auto">
             <table class="min-w-full table-auto border border-gray-200 rounded-lg shadow-sm">
