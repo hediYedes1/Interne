@@ -371,7 +371,7 @@
               <h6 class="mb-1">{{ app.user ? app.user.nomutilisateur ~ ' ' ~ app.user.prenomutilisateur : 'Guest' }}</h6>
               <span>{{ app.user ? app.user.role.getLabel() : 'No Role' }}</span>
             </div>
-            <a href="{{ path('app_logout') }}" class="pc-head-link bg-transparent"><i class="ti ti-power text-danger"></i></a>
+            <a href="{% if app.user %}{{ path('app_logout') }}{% else %}#{% endif %}" class="pc-head-link bg-transparent"><i class="ti ti-power text-danger"></i></a>
           </div>
         </div>
         <ul class="nav drp-tabs nav-fill nav-tabs" id="mydrpTab" role="tablist">
@@ -412,7 +412,7 @@
               <i class="ti ti-user"></i>
               <span>View Profile</span>
             </a>
-            <a href="{{ path('app_base3') }}" class="dropdown-item">
+            <a href="{{ path('app_logout') }}" class="dropdown-item">
               <i class="ti ti-power"></i>
               <span>Se Déconnecter</span>
             </a>

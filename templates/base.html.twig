@@ -86,7 +86,7 @@
 								{%if app.user %}
 								<ul class="top-contact">
 									<li><i class="fa fa-user"></i>{{ app.user.username }}</li>
-									<li><a href="{{ path('app_base3') }}">Se Déconnecter</a></li>
+									<li><a href="{{ path('app_logout') }}">Se Déconnecter</a></li>
 									<li><a href="{{ path('app_userProfile') }}">Profile</a></li> 
 								</ul>
 								{% else %}
