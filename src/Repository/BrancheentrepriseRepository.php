@@ -20,5 +20,5 @@ class BrancheentrepriseRepository extends ServiceEntityRepository
         parent::__construct($registry, Brancheentreprise::class);
     }
 
-    // Add custom queries below if needed
+    
 }
