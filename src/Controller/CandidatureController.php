@@ -15,7 +15,6 @@ use Symfony\Component\Routing\Annotation\Route;
 class CandidatureController extends AbstractController
 {
     #[Route('/offre/{id}/postuler', name: 'app_postuler', methods: ['GET', 'POST'])]
-    
     public function postuler(
         Request $request,
         Offre $offre,
@@ -24,31 +23,36 @@ class CandidatureController extends AbstractController
         SimilarityService $similarityService
     ): Response {
         $similarityScore = null;
-        
+
         if ($request->isMethod('POST')) {
             $cvFile = $request->files->get('cv');
-            
+
             if ($cvFile) {
-                // 1. Upload CV
-                $cvUrl = $uploadService->uploadFile($cvFile);
-                
-                if ($cvUrl) {
-                    // 2. Parse CV text
-                    $cvText = $cvParserService->extractText($cvFile);
-                    
-                    // 3. Calculate similarity
-                    $similarityScore = $similarityService->calculateSimilarity(
-                        $cvText,
-                        $offre->getDescriptionoffre()
-                    );
-                    
-                    // Afficher le score directement sans enregistrement en base
-                    $this->addFlash('info', sprintf('Score de similarité: %.2f%%', $similarityScore));
-                } else {
-                    $this->addFlash('error', 'Erreur lors du téléchargement du CV');
+                try {
+                    // 1. Upload CV
+                    $cvUrl = $uploadService->uploadFile($cvFile);
+
+                    if (!$cvUrl) {
+                        $this->addFlash('error', 'Erreur lors du téléchargement du CV');
+                    } else {
+                        // 2. Parse CV text
+                        $cvText = $cvParserService->extractText($cvFile);
+
+                        // 3. Calculate similarity
+                        $similarityScore = $similarityService->calculateSimilarity(
+                            $cvText,
+                            $offre->getDescriptionoffre()
+                        );
+
+                        $this->addFlash('info', sprintf('Score de similarité : %.2f%%', $similarityScore));
+                    }
+                } catch (\RuntimeException $e) {
+                    $this->addFlash('error', $e->getMessage());
+                } catch (\Exception $e) {
+                    $this->addFlash('error', 'Une erreur inattendue est survenue lors de la candidature.');
                 }
             } else {
-                $this->addFlash('warning', 'Veuillez sélectionner un fichier CV');
+                $this->addFlash('warning', 'Veuillez sélectionner un fichier CV.');
             }
         }
 

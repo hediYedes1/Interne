@@ -18,6 +18,16 @@ class CVParserService
         'ne', 'pas', 'plus', 'moins', 'faire', 'compétence', 'nécessite', 'avoir'
     ];
 
+    private const REPLACEMENTS = [
+        'cacket cracer' => 'packet tracer',
+        'cisco cacket cracer' => 'cisco packet tracer',
+        'wiresh ark' => 'wireshark',
+        'wiresh' => 'wireshark',
+        'android stud io' => 'android studio',
+        'mic rosoft' => 'microsoft',
+        'ms office' => 'microsoft office',
+    ];
+
     private PdfParser $pdfParser;
     private LoggerInterface $logger;
     private ParameterBagInterface $params;
@@ -42,15 +52,22 @@ class CVParserService
                 'mimeType' => $file->getMimeType()
             ]);
 
+            // Extraction du texte brut du fichier
             $text = $this->extractTextFromFile($file);
+
+            // Nettoyage du texte extrait
             $cleanText = $this->cleanText($text);
 
-            $this->logger->debug('Extracted and cleaned text', [
+            // Résumer le texte pour un format plus concis
+            $summarizedText = $this->summarizeText($cleanText);
+
+            $this->logger->debug('Extracted, cleaned, and summarized text', [
                 'original_length' => strlen($text),
-                'clean_length' => strlen($cleanText)
+                'clean_length' => strlen($cleanText),
+                'summarized_length' => strlen($summarizedText)
             ]);
 
-            return $cleanText;
+            return $summarizedText;
 
         } catch (\Exception $e) {
             $this->logger->error('CV parsing failed', [
@@ -90,70 +107,76 @@ class CVParserService
         return strip_tags($content); // Basic extraction
     }
 
-    private function cleanText(string $text): string
+    public function cleanText(string $text): string
     {
-        // Normaliser les caractères
+        // Convert the text to lowercase
+        $text = strtolower($text);
+
+        // Replace known parsing errors
+        foreach (self::REPLACEMENTS as $wrong => $correct) {
+            $text = str_ireplace($wrong, $correct, $text);
+        }
+
+        // Replace punctuation marks with space
+        $text = preg_replace('/[.,;:!?()\[\]{}<>\/\\\|"\']+/', ' ', $text);
+
+        // Remove non-alphabetic characters
+        $text = preg_replace('/[^a-zA-ZÀ-ÿ\s]/u', '', $text);
+
+        // Remove accents
         $text = iconv('UTF-8', 'ASCII//TRANSLIT', $text);
-        
-        // Supprimer la ponctuation et les caractères spéciaux
-        $text = preg_replace('/[^a-zA-Z0-9\s]/', ' ', $text);
-        
-        // Supprimer les espaces multiples
-        $text = preg_replace('/\s+/', ' ', trim(strtolower($text)));
-        
-        // Filtrer les stopwords
-        $words = array_filter(
-            explode(' ', $text),
-            fn($word) => !in_array($word, self::STOPWORDS) && strlen($word) > 2
-        );
-        
-        return implode(' ', $words);
+
+        // Tokenize text
+        $words = preg_split('/\s+/', $text);
+
+        // Filter out stopwords and words shorter than 3 characters
+        $filtered = array_unique(array_filter($words, function ($word) {
+            return strlen($word) > 2 && !in_array($word, self::STOPWORDS);
+        }));
+
+        $cleanedText = implode(' ', $filtered);
+
+        $this->logger->info('Cleaned Text:', ['cleaned_text' => $cleanedText]);
+
+        return $cleanedText;
     }
 
-    public function compareCVWithOffre(string $cvText, string $offreDescription): float
+    private function summarizeText(string $text, int $summaryLength = 5): string
     {
-        if (empty($cvText)) {
-            $this->logger->warning('Empty CV text provided for comparison');
-            return 0.0;
+        $sentences = preg_split('/(?<=[.!?])\s+/', $text);
+
+        if (count($sentences) <= $summaryLength) {
+            return $text;
         }
 
-        if (empty($offreDescription)) {
-            $this->logger->warning('Empty job description provided for comparison');
-            return 0.0;
-        }
-
-        $cvWords = $this->getWeightedWords($cvText);
-        $offerWords = $this->getWeightedWords($offreDescription);
-
-        $commonScore = 0;
-        foreach ($offerWords as $word => $count) {
-            if (isset($cvWords[$word])) {
-                $commonScore += min($count, $cvWords[$word]);
+        $wordFrequencies = [];
+        foreach ($sentences as $sentence) {
+            $words = array_filter(explode(' ', $sentence), fn($word) => !in_array(strtolower($word), self::STOPWORDS));
+            foreach ($words as $word) {
+                $word = strtolower($word);
+                $wordFrequencies[$word] = ($wordFrequencies[$word] ?? 0) + 1;
             }
         }
 
-        $totalWords = array_sum($offerWords);
-        $similarity = ($totalWords > 0) ? ($commonScore / $totalWords) * 100 : 0;
-
-        $this->logger->info('Similarity calculation completed', [
-            'score' => $similarity,
-            'common_words' => array_intersect_key($cvWords, $offerWords)
-        ]);
-
-        return round($similarity, 2);
-    }
-
-    private function getWeightedWords(string $text): array
-    {
-        $words = explode(' ', $text);
-        $weighted = [];
-        
-        foreach ($words as $word) {
-            if (strlen($word) > 2) { // Ignorer les mots trop courts
-                $weighted[$word] = ($weighted[$word] ?? 0) + 1;
+        $sentenceScores = [];
+        foreach ($sentences as $index => $sentence) {
+            $score = 0;
+            $words = array_filter(explode(' ', $sentence), fn($word) => !in_array(strtolower($word), self::STOPWORDS));
+            foreach ($words as $word) {
+                $score += $wordFrequencies[strtolower($word)] ?? 0;
             }
+            $sentenceScores[$index] = $score;
         }
-        
-        return $weighted;
+
+        arsort($sentenceScores);
+        $topSentences = array_slice($sentenceScores, 0, $summaryLength, true);
+        ksort($topSentences);
+
+        $summary = '';
+        foreach ($topSentences as $index => $score) {
+            $summary .= $sentences[$index] . ' ';
+        }
+
+        return trim($summary);
     }
 }
