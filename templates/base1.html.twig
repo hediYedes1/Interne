@@ -241,6 +241,7 @@
     <!-- [Mobile Media Block] start -->
     <div class="me-auto pc-mob-drp">
       <ul class="list-unstyled">
+      
         <!-- ======= Menu collapse Icon ===== -->
         <li class="pc-h-item pc-sidebar-collapse">
           <a href="#" class="pc-head-link ms-0" id="sidebar-hide">
@@ -284,6 +285,7 @@
     <div class="ms-auto">
       <ul class="list-unstyled">
         <!-- Notification Dropdown -->
+        {{ render(controller('App\\Controller\\NotificationController::notificationWidget')) }}
         <li class="dropdown pc-h-item">
           <a
             class="pc-head-link dropdown-toggle arrow-none me-0"

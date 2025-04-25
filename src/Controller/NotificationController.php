@@ -34,4 +34,20 @@ public function getJson(): Response
     $json = file_get_contents($filePath);
     return new Response($json, 200, ['Content-Type' => 'application/json']);
 }
+// src/Controller/NotificationController.php
+// src/Controller/NotificationController.php
+#[Route('/notifications/widget', name: 'notifications_widget')]
+public function notificationWidget(ParameterBagInterface $params): Response
+{
+    $notifications = [];
+    $notificationFile = $params->get('kernel.project_dir').'/var/storage/notifications.json';
+    
+    if (file_exists($notificationFile)) {
+        $notifications = json_decode(file_get_contents($notificationFile), true) ?: [];
+    }
+
+    return $this->render('interview/interviewReminder.html.twig', [
+        'notifications' => $notifications
+    ]);
+}
 }
