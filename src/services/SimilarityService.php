@@ -16,8 +16,11 @@ class SimilarityService
     private LoggerInterface $logger;
     private CVParserService $cvParserService;
 
-    public function __construct(HttpClientInterface $httpClient, LoggerInterface $logger, CVParserService $cvParserService)
-    {
+    public function __construct(
+        HttpClientInterface $httpClient, 
+        LoggerInterface $logger,
+        CVParserService $cvParserService
+    ) {
         $this->httpClient = $httpClient;
         $this->logger = $logger;
         $this->cvParserService = $cvParserService;
@@ -26,11 +29,58 @@ class SimilarityService
     public function calculateSimilarity(string $cvText, string $descriptionText): float
     {
         try {
-            // Nettoyage avancé des deux textes (CV + description)
+            // Nettoyage des textes
             $cleanCv = $this->cvParserService->cleanText($cvText);
             $cleanDescription = $this->cvParserService->cleanText($descriptionText);
 
-            // Appel à l'API NLP
+            $this->logger->info('Cleaned CV Text:', ['cleaned_cv' => $cleanCv]);
+            $this->logger->info('Cleaned Description Text:', ['cleaned_description' => $cleanDescription]);
+
+            // Conversion en tableaux de mots uniques
+            $cvWords = array_unique(explode(' ', $cleanCv));
+            $descWords = array_unique(explode(' ', $cleanDescription));
+            
+            // Calcul du pourcentage de correspondance des mots
+            $matchingWords = array_intersect($descWords, $cvWords);
+            $matchCount = count($matchingWords);
+            $totalDescWords = count($descWords);
+            
+            $wordMatchPercent = ($totalDescWords > 0) ? ($matchCount / $totalDescWords) * 100 : 0;
+            
+            // Si correspondance parfaite, retourner 100%
+            if ($wordMatchPercent >= 100) {
+                $this->logger->info('All description words found in CV - returning 100%');
+                return 100.00;
+            }
+            
+            // Obtenir le score de similarité sémantique de l'API
+            $apiScore = $this->getApiSimilarityScore($cleanCv, $cleanDescription);
+            
+            // Calcul du score final (70% correspondance mots, 30% API)
+            $finalScore = ($wordMatchPercent * 0.7) + ($apiScore * 0.3);
+            
+            $this->logger->info('Similarity calculation results', [
+                'word_match_percent' => $wordMatchPercent,
+                'api_score' => $apiScore,
+                'final_score' => $finalScore,
+                'matching_words' => $matchingWords,
+                'missing_words' => array_diff($descWords, $cvWords)
+            ]);
+
+            return min(round($finalScore, 2), 100.00);
+
+        } catch (\Exception $e) {
+            $this->logger->error('Similarity calculation failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return 0;
+        }
+    }
+
+    private function getApiSimilarityScore(string $cleanCv, string $cleanDescription): float
+    {
+        try {
             $response = $this->httpClient->request('POST', self::API_URL, [
                 'headers' => [
                     'apikey' => self::API_KEY,
@@ -40,51 +90,22 @@ class SimilarityService
                     'text1' => $cleanCv,
                     'text2' => $cleanDescription,
                 ],
-                'timeout' => 60.0,
+                'timeout' => 30.0,
             ]);
-
-            $statusCode = $response->getStatusCode();
             $content = $response->toArray();
-
-            if ($statusCode !== 200) {
-                $this->logger->error('API error', [
-                    'statusCode' => $statusCode,
-                    'response' => $content,
-                ]);
-                return 0;
-            }
-
+            
             if (!isset($content['result'])) {
-                $this->logger->error('Result key not found in response', ['response' => $content]);
+                $this->logger->error('API response missing result field', ['response' => $content]);
                 return 0;
             }
 
-            // Récupération du score de similarité (entre 0 et 1)
-            $apiScore = (float) $content['result'];
-
-            // Transformation en tableaux de mots uniques
-            $cvWordsArray = array_unique(explode(' ', $cleanCv));
-            $descriptionWordsArray = array_unique(explode(' ', $cleanDescription));
-
-            // Comparaison des mots
-            $matchingWords = array_intersect($descriptionWordsArray, $cvWordsArray);
-            $allWordsMatched = count($descriptionWordsArray) > 0 && count($matchingWords) === count($descriptionWordsArray);
-
-            // Forcer à 100% uniquement si tous les mots sont présents et que le score est < 1.0
-            if ($allWordsMatched && $apiScore < 1.0) {
-                $this->logger->info('Forcing score to 1.0 (100%) as all description words are matched in CV.');
-                $apiScore = 1.0;
-            }
-
-            // Conversion finale en pourcentage
-            $percentage = round($apiScore * 100, 2);
-            return min($percentage, 100.00);
+            return (float) $content['result'] * 100;
 
         } catch (\Exception $e) {
             $this->logger->error('API request failed', [
                 'error' => $e->getMessage(),
-                'cvText' => $cvText,
-                'descriptionText' => $descriptionText,
+                'cv_sample' => substr($cleanCv, 0, 100) . '...',
+                'desc_sample' => substr($cleanDescription, 0, 100) . '...'
             ]);
             return 0;
         }

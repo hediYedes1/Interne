@@ -15,17 +15,27 @@ class CVParserService
         'le', 'la', 'les', 'un', 'une', 'des', 'de', 'du', 'au', 'aux', 'et', 'à', 'en',
         'par', 'pour', 'avec', 'sans', 'sur', 'dans', 'se', 'est', 'sont', 'qui', 'que',
         'dont', 'comme', 'ça', 'ce', 'cet', 'cette', 'ces', 'nous', 'vous', 'ils', 'elles',
-        'ne', 'pas', 'plus', 'moins', 'faire', 'compétence', 'nécessite', 'avoir'
+        'ne', 'pas', 'plus', 'moins', 'faire', 'compétence', 'nécessite', 'avoir',
+        'informations', 'professionnelles', 'formations', 'exp', 'eriences', 'mod', 'elisation'
     ];
 
     private const REPLACEMENTS = [
         'cacket cracer' => 'packet tracer',
         'cisco cacket cracer' => 'cisco packet tracer',
         'wiresh ark' => 'wireshark',
+        'wiresharkark' => 'wireshark',
+        'wiresharkarkark' => 'wireshark',
         'wiresh' => 'wireshark',
         'android stud io' => 'android studio',
         'mic rosoft' => 'microsoft',
         'ms office' => 'microsoft office',
+        'openss l' => 'openssl',
+        'open ssl' => 'openssl',
+        'zaineb' => 'zeineb',
+        'tayari comp' => 'tayari',
+        'ecouverte' => 'découverte',
+        'eseau' => 'réseau',
+        'ephonique' => 'téléphonique'
     ];
 
     private PdfParser $pdfParser;
@@ -52,13 +62,8 @@ class CVParserService
                 'mimeType' => $file->getMimeType()
             ]);
 
-            // Extraction du texte brut du fichier
             $text = $this->extractTextFromFile($file);
-
-            // Nettoyage du texte extrait
             $cleanText = $this->cleanText($text);
-
-            // Résumer le texte pour un format plus concis
             $summarizedText = $this->summarizeText($cleanText);
 
             $this->logger->debug('Extracted, cleaned, and summarized text', [
@@ -102,34 +107,24 @@ class CVParserService
 
     private function extractTextFromWord(string $path): string
     {
-        // Solution temporaire pour les fichiers Word - à remplacer par une librairie dédiée
         $content = file_get_contents($path);
-        return strip_tags($content); // Basic extraction
+        return strip_tags($content);
     }
 
     public function cleanText(string $text): string
     {
-        // Convert the text to lowercase
         $text = strtolower($text);
 
-        // Replace known parsing errors
         foreach (self::REPLACEMENTS as $wrong => $correct) {
             $text = str_ireplace($wrong, $correct, $text);
         }
 
-        // Replace punctuation marks with space
         $text = preg_replace('/[.,;:!?()\[\]{}<>\/\\\|"\']+/', ' ', $text);
-
-        // Remove non-alphabetic characters
         $text = preg_replace('/[^a-zA-ZÀ-ÿ\s]/u', '', $text);
-
-        // Remove accents
         $text = iconv('UTF-8', 'ASCII//TRANSLIT', $text);
+        $text = preg_replace('/\s+/', ' ', $text);
 
-        // Tokenize text
         $words = preg_split('/\s+/', $text);
-
-        // Filter out stopwords and words shorter than 3 characters
         $filtered = array_unique(array_filter($words, function ($word) {
             return strlen($word) > 2 && !in_array($word, self::STOPWORDS);
         }));
