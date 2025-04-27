@@ -188,7 +188,7 @@
     </a>
     
     <!-- Bouton Passer le Quiz (si questions existent) -->
-    {% if testtechnique.questions|length > 0 %}
+     {% if testtechnique.questions|length > 0 and testtechnique.statuttesttechnique.value == 'ENATTENTE' %}
         <a href="{{ path('app_testtechnique_quiz', {'idtesttechnique': testtechnique.idtesttechnique}) }}" 
            class="btn btn-success btn-sm">
             <i class="fas fa-play"></i> Quiz
