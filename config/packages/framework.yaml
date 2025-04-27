@@ -17,6 +17,9 @@ framework:
     php_errors:
         log: true
 
+        # config/packages/framework.yaml
+
+
 when@test:
     framework:
         test: true
