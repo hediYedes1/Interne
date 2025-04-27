@@ -329,7 +329,13 @@
                                         <span class="text-muted">N/A</span>
                                     {% endif %}
                                 </td>
-                                <td>{{ interview.localisation }}</td>
+                                <td>
+    {% if interview.localisation %}
+        {{ interview.localisation }}
+    {% else %}
+        <span class="text-muted">N/A</span>
+    {% endif %}
+</td>
                                 <td>{{ interview.timeinterview ? interview.timeinterview|date('H:i') : '' }}</td>
                                 <td class="action-buttons">
                                     <div class="btn-group" role="group">
