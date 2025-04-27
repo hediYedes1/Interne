@@ -33,10 +33,12 @@ class InterviewType extends AbstractType
                 'choice_label' => fn(TypeInterview $type) => $type->getLabel(),
                 'label' => 'Type d\'interview',
                 'placeholder' => 'Sélectionnez un type',
+
             ])
             ->add('localisation', null, [
-                'label' => 'Lieu',
-            ])
+            'label' => 'Lieu',
+            'required' => false, // Car ce champ n'est pas obligatoire pour les interviews en ligne
+])
             ->add('timeinterview', TimeType::class, [
                 'widget' => 'single_text',
                 'label' => 'Heure de l\'interview',

@@ -44,7 +44,6 @@ class Interview
     #[ORM\Column(type: "string", length: 255, nullable: true)]
     private ?string $lienmeet = null;
 
-    #[Assert\NotBlank(message: "La localisation est obligatoire.")]
     #[ORM\Column(type: "string", length: 255, nullable: true)]
     private ?string $localisation = null ;
 
