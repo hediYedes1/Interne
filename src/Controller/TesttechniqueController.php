@@ -217,9 +217,8 @@ public function newForInterview(
     EntityManagerInterface $entityManager,
     Interview $idinterview,
     GrammarCheckerService $grammarCheckerService
-): Response
-{
-    // Créer une réponse JSON pour les requêtes AJAX
+): Response {
+    // Gestion des requêtes AJAX pour la vérification grammaticale
     if ($request->isXmlHttpRequest()) {
         $text = $request->request->get('text', '');
         
@@ -230,6 +229,18 @@ public function newForInterview(
         }
 
         try {
+            // Limiter la fréquence des requêtes
+            $session = $request->getSession();
+            $lastCheck = $session->get('last_grammar_check', 0);
+            
+            if (time() - $lastCheck < 5) {
+                return $this->json([
+                    'error' => 'Veuillez attendre 5 secondes entre chaque vérification'
+                ], Response::HTTP_TOO_MANY_REQUESTS);
+            }
+            
+            $session->set('last_grammar_check', time());
+            
             $correctionResult = $grammarCheckerService->checkGrammar($text);
             return $this->json($correctionResult);
         } catch (\Exception $e) {

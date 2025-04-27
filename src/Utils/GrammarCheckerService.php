@@ -1,20 +1,21 @@
 <?php
-// GrammarCheckerService.php - Version améliorée
-
 namespace App\Utils;
 
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Psr\Log\LoggerInterface;
 
 class GrammarCheckerService
 {
     private $client;
+    private $logger;
     private $apiUrl;
     private $apiKey;
     private $apiHost;
 
-    public function __construct(HttpClientInterface $client)
+    public function __construct(HttpClientInterface $client, LoggerInterface $logger)
     {
         $this->client = $client;
+        $this->logger = $logger;
         $this->apiUrl = 'https://grammer-checker1.p.rapidapi.com/v1/grammer-checker';
         $this->apiKey = '0aa6a48b41msh412fa24b471d7e4p11376djsn2be804473491';
         $this->apiHost = 'grammer-checker1.p.rapidapi.com';
@@ -22,182 +23,253 @@ class GrammarCheckerService
 
     public function checkGrammar(string $text): array
     {
-        // Vérification manuelle des erreurs évidentes avant d'envoyer à l'API
-        $preCheckErrors = $this->preCheckGrammar($text);
-        if (!empty($preCheckErrors['errors']['details'])) {
-            return $preCheckErrors;
-        }
+        // Normaliser l'encodage du texte
+        $text = mb_convert_encoding($text, 'UTF-8', mb_detect_encoding($text));
+        $this->logger->info('Début de la vérification grammaticale', ['text' => $text]);
+        
+        // Pré-vérification des erreurs courantes
+        $preCheckResult = $this->preCheckGrammar($text);
+        $this->logger->info('Pré-vérification terminée', [
+            'errors_count' => count($preCheckResult['errors']['details'])
+        ]);
 
         try {
+            $requestPayload = [
+                'text' => $text,
+                'language' => 'fr',
+                'strictness' => 'strict'
+            ];
+
+            $this->logger->debug('Envoi de la requête à l\'API', [
+                'url' => $this->apiUrl,
+                'headers' => [
+                    'X-RapidAPI-Key' => '*'.substr($this->apiKey, -4),
+                    'X-RapidAPI-Host' => $this->apiHost
+                ],
+                'payload' => $requestPayload,
+                'text_length' => mb_strlen($text)
+            ]);
+
             $response = $this->client->request('POST', $this->apiUrl, [
                 'headers' => [
                     'Content-Type' => 'application/json',
                     'X-RapidAPI-Key' => $this->apiKey,
                     'X-RapidAPI-Host' => $this->apiHost
                 ],
-                'json' => [
-                    'text' => $text,
-                    'language' => 'fr',
-                    'strictness' => 'strict' // Option plus stricte si disponible
-                ],
+                'json' => $requestPayload,
                 'timeout' => 10
             ]);
 
-            return $this->processApiResponse($response, $text);
+            $statusCode = $response->getStatusCode();
+            $responseHeaders = $response->getHeaders();
+            $responseContent = $response->getContent(false);
+
+            $this->logger->debug('Réponse de l\'API', [
+                'status' => $statusCode,
+                'headers' => $responseHeaders,
+                'response_time' => $responseHeaders['x-response-time'][0] ?? null,
+                'content_length' => strlen($responseContent)
+            ]);
+
+            if ($statusCode !== 200) {
+                $this->logger->error('Erreur de l\'API', [
+                    'status' => $statusCode,
+                    'content' => $responseContent,
+                    'request_payload' => $requestPayload
+                ]);
+                throw new \RuntimeException("Erreur API: statut $statusCode");
+            }
+
+            $this->logger->debug('Contenu brut de la réponse API', ['content' => $responseContent]);
             
+            $apiResult = $this->processApiResponse($response, $text);
+            
+            // Fusionner les résultats de la pré-vérification et de l'API
+            $finalResult = $this->mergeResults($preCheckResult, $apiResult);
+            
+            $this->logger->info('Résultat final de la vérification', [
+                'errors_count' => count($finalResult['errors']['details']),
+                'original_length' => mb_strlen($text),
+                'corrected_length' => mb_strlen($finalResult['errors']['correction']),
+                'correction_ratio' => $finalResult['errors']['details'] ? 
+                    round(count($finalResult['errors']['details'])/mb_strlen($text)*100, 2).'%' : '0%'
+            ]);
+            
+            return $finalResult;
+
         } catch (\Exception $e) {
-            return [
-                'errors' => [
-                    'error' => 'Service indisponible: '.$e->getMessage(),
-                    'correction' => $text,
-                    'details' => []
-                ]
-            ];
+            $this->logger->error('Erreur lors de la vérification grammaticale', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'text_sample' => mb_substr($text, 0, 50).(mb_strlen($text) > 50 ? '...' : '')
+            ]);
+            
+            // Retourner au moins les erreurs de pré-vérification en cas d'échec API
+            return $preCheckResult;
         }
     }
 
     private function preCheckGrammar(string $text): array
     {
         $commonErrors = [
-            'magazin' => 'magasin',
-            'achéter' => 'acheter',
-            'pomme' => 'pommes',
-            'banane' => 'bananes',
-            'vas' => 'va',
-            'ces' => 'ses',
-            'legumes' => 'légumes' 
+            '/\bvue\b/i' => 'vu',
+            '/\bdes personne\b/i' => 'des personnes',
+            '/\btres\b/i' => 'très',
+            '/\bmotive\b/i' => 'motivées',
+            '/\btravaille\b/i' => 'travaillent',
+            '/\bequipe\b/i' => 'équipe'
         ];
 
-        $errors = [];
-        $corrections = [];
         $details = [];
         $correctedText = $text;
 
-        foreach ($commonErrors as $error => $correction) {
-            if (stripos($text, $error) !== false) {
-                $offset = stripos($text, $error);
-                $errors[] = "Faute d'orthographe : '$error' devrait être '$correction'";
-                $details[] = [
-                    'message' => "Faute d'orthographe courante",
-                    'context' => $text,
-                    'offset' => $offset,
-                    'length' => strlen($error),
-                    'rule' => 'Orthographe',
-                    'replacements' => [$correction]
-                ];
-                $correctedText = str_ireplace($error, $correction, $correctedText);
+        foreach ($commonErrors as $pattern => $correction) {
+            if (preg_match_all($pattern, $text, $matches, PREG_OFFSET_CAPTURE)) {
+                foreach ($matches[0] as $match) {
+                    $error = $match[0];
+                    $offset = $match[1];
+                    $details[] = [
+                        'message' => "Faute courante détectée: '$error'",
+                        'context' => $this->getErrorContext($text, $offset, strlen($error)),
+                        'offset' => $offset,
+                        'length' => strlen($error),
+                        'rule' => 'Orthographe/Accord',
+                        'replacements' => [$correction]
+                    ];
+                    $correctedText = substr_replace($correctedText, $correction, $offset, strlen($error));
+                }
             }
         }
 
-        if (!empty($errors)) {
-            return [
-                'errors' => [
-                    'error' => implode("\n", $errors),
-                    'correction' => $correctedText,
-                    'details' => $details
-                ]
-            ];
-        }
-
-        return ['errors' => ['error' => null, 'correction' => $text, 'details' => []]];
+        return [
+            'errors' => [
+                'error' => $details ? implode("\n", array_column($details, 'message')) : null,
+                'correction' => $correctedText,
+                'details' => $details
+            ]
+        ];
     }
 
     private function processApiResponse($response, string $originalText): array
 {
-    $content = $response->toArray();
+    $content = $response->getContent(false);
+    $data = json_decode($content, true);
 
-    // Corrections personnalisées simples
-    $frenchErrors = [
-        '/\bvas\b/i' => 'va',
-        '/\bces\b(?=\s+amis)/i' => 'ses',
-        '/\blegumes\b/i' => 'légumes'
-    ];
-
-    $errors = [];
-    $details = [];
-    $correctedText = $originalText;
-
-    // Appliquer les corrections personnalisées
-    foreach ($frenchErrors as $pattern => $correction) {
-        if (preg_match($pattern, $correctedText)) {
-            $correctedText = preg_replace($pattern, $correction, $correctedText);
-            $errors[] = "Erreur de conjugaison/orthographe détectée";
-            $details[] = [
-                'message' => "Correction automatique appliquée",
-                'rule' => 'Orthographe/Conjugaison'
-            ];
-        }
+    if (!isset($data['errors']['correction'])) {
+        return $this->postCheckGrammar($originalText);
     }
 
-    // Si l'API a retourné des suggestions
-    if (!empty($content['matches'])) {
-        // Tri des erreurs par position décroissante pour éviter les décalages lors du remplacement
-        usort($content['matches'], function($a, $b) {
-            return $b['offset'] <=> $a['offset'];
-        });
+    $correctedText = $data['errors']['correction'];
+    $rawErrors = $data['errors']['error'] ?? '';
 
-        foreach ($content['matches'] as $match) {
-            $errorDetail = [
-                'message' => $match['message'] ?? 'Erreur inconnue',
-                'context' => $match['context']['text'] ?? '',
-                'offset' => $match['offset'] ?? 0,
-                'length' => $match['length'] ?? 0,
-                'rule' => $match['rule']['description'] ?? '',
-                'replacements' => array_column($match['replacements'] ?? [], 'value')
-            ];
-
-            $details[] = $errorDetail;
-            $errors[] = $errorDetail['message'];
-
-            if (!empty($match['replacements'][0]['value'])) {
-                $replacement = $match['replacements'][0]['value'];
-                $correctedText = substr_replace(
-                    $correctedText,
-                    $replacement,
-                    $match['offset'],
-                    $match['length']
-                );
+    // Nouvelle regex pour le format anglais de l'API
+    $details = [];
+    if (preg_match_all('/\d+\.\s+"([^"]+)" should be (?:corrected to|")([^"]+)"/i', $rawErrors, $matches, PREG_SET_ORDER)) {
+        foreach ($matches as $match) {
+            $errorWord = $match[1];
+            $correction = $match[2];
+            $offset = mb_strpos($originalText, $errorWord);
+            
+            if ($offset !== false) {
+                $context = $this->getErrorContext($originalText, $offset, mb_strlen($errorWord));
+                $details[] = [
+                    'message' => "Correction suggérée: '$errorWord' → '$correction'",
+                    'context' => $context,
+                    'offset' => $offset,
+                    'length' => mb_strlen($errorWord),
+                    'rule' => 'Orthographe/Grammaire',
+                    'replacements' => [$correction]
+                ];
             }
         }
-    } elseif (empty($errors)) {
-        // Si l'API n'a rien retourné et qu'aucune correction personnalisée n'a été appliquée
-        return $this->postCheckGrammar($originalText);
     }
 
     return [
         'errors' => [
-            'error' => implode("\n", array_unique($errors)),
+            'error' => $rawErrors,
             'correction' => $correctedText,
             'details' => $details
         ]
     ];
 }
-
+    
 
     private function postCheckGrammar(string $text): array
     {
-        // Vérifications supplémentaires après l'API
-        // Par exemple, vérifier les accords pluriels basiques
-        if (preg_match('/\bdes \w+[^s]\b/', $text)) {
-            return [
-                'errors' => [
-                    'error' => 'Possible erreur de pluriel après "des"',
-                    'correction' => $text, // Pas de correction automatique ici
-                    'details' => [[
-                        'message' => 'Les noms après "des" doivent généralement être au pluriel',
-                        'context' => $text,
-                        'rule' => 'Accord pluriel'
-                    ]]
-                ]
-            ];
+        $details = [];
+        
+        // Vérification des accords
+        if (preg_match_all('/\bdes (\w+[^s])\b/i', $text, $matches, PREG_OFFSET_CAPTURE)) {
+            foreach ($matches[0] as $match) {
+                $error = $match[0];
+                $offset = $match[1];
+                $word = $matches[1][0];
+                $details[] = [
+                    'message' => "Possible erreur de pluriel après 'des': '$word'",
+                    'context' => $this->getErrorContext($text, $offset, strlen($error)),
+                    'offset' => $offset,
+                    'length' => strlen($error),
+                    'rule' => 'Accord pluriel',
+                    'replacements' => ['des '.$word.'s']
+                ];
+            }
         }
 
         return [
             'errors' => [
-                'error' => null,
+                'error' => $details ? implode("\n", array_column($details, 'message')) : null,
                 'correction' => $text,
-                'details' => []
+                'details' => $details
             ]
         ];
     }
+
+    private function mergeResults(array $preCheck, array $apiResult): array
+    {
+        // Priorité aux corrections de l'API
+        $correction = $apiResult['errors']['correction'] ?? $preCheck['errors']['correction'];
+        
+        // Fusionner les détails d'erreurs
+        $details = array_merge(
+            $preCheck['errors']['details'],
+            $apiResult['errors']['details']
+        );
+
+        // Supprimer les doublons
+        $uniqueDetails = [];
+        $seenOffsets = [];
+        foreach ($details as $detail) {
+            $key = $detail['offset'].'-'.$detail['length'];
+            if (!isset($seenOffsets[$key])) {
+                $uniqueDetails[] = $detail;
+                $seenOffsets[$key] = true;
+            }
+        }
+
+        return [
+            'errors' => [
+                'error' => $uniqueDetails ? implode("\n", array_column($uniqueDetails, 'message')) : null,
+                'correction' => $correction,
+                'details' => $uniqueDetails
+            ]
+        ];
+    }
+
+    private function getErrorContext(string $text, int $offset, int $length): string
+{
+    $start = max(0, $offset - 20);
+    $end = min(mb_strlen($text), $offset + $length + 20);
+    $context = mb_substr($text, $start, $end - $start);
+
+    if ($start > 0) $context = '...'.$context;
+    if ($end < mb_strlen($text)) $context = $context.'...';
+
+    $errorStart = $offset - $start;
+    $errorEnd = $errorStart + $length;
+    $before = mb_substr($context, 0, $errorStart);
+    $error = mb_substr($context, $errorStart, $length);
+    $after = mb_substr($context, $errorEnd);
+
+    return $before.'<mark>'.$error.'</mark>'.$after;
+}
 }

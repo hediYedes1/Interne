@@ -44,6 +44,153 @@
 
 {% block javascript %}
   {{ parent() }}
+  <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const descriptionField = document.querySelector('#{{ form.descriptiontesttechnique.vars.id }}');
+    const checkGrammarBtn = document.getElementById('check-grammar-btn');
+    const correctionContainer = document.getElementById('grammar-correction');
+    let lastCheckTime = 0;
+    let currentCorrection = '';
+
+    window.applyCorrection = function() {
+        if (currentCorrection) {
+            descriptionField.value = currentCorrection;
+            showAlert('success', 'Corrections appliquées');
+        }
+    };
+
+    window.dismissCorrection = function() {
+        correctionContainer.innerHTML = '';
+    };
+
+    checkGrammarBtn.addEventListener('click', function() {
+        const now = Date.now();
+        if (now - lastCheckTime < 5000) {
+            showAlert('warning', 'Veuillez attendre 5 secondes entre chaque vérification');
+            return;
+        }
+        lastCheckTime = now;
+
+        const text = descriptionField.value.trim();
+        if (!text) {
+            showAlert('info', 'Veuillez saisir du texte à vérifier');
+            return;
+        }
+
+        showLoading();
+        checkGrammarBtn.disabled = true;
+
+        fetch('{{ path('app_testtechnique_new_for_interview', {'idinterview': testtechnique.idinterview.idinterview}) }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: new URLSearchParams({ text: text })
+        })
+        .then(handleResponse)
+        .then(data => processGrammarResponse(data, text))
+        .catch(handleError)
+        .finally(() => {
+            checkGrammarBtn.disabled = false;
+        });
+    });
+
+    function showAlert(type, message, icon = '') {
+        const icons = {
+            'success': 'check-circle',
+            'warning': 'exclamation-triangle',
+            'info': 'info-circle',
+            'danger': 'exclamation-circle'
+        };
+        
+        icon = icon || icons[type] || '';
+        const iconHtml = icon ? `<i class="fas fa-${icon} me-2"></i>` : '';
+        
+        correctionContainer.innerHTML = `
+            <div class="alert alert-${type}">
+                ${iconHtml}${message}
+            </div>
+        `;
+    }
+
+    function showLoading() {
+        correctionContainer.innerHTML = `
+            <div class="alert alert-info">
+                <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                Vérification en cours...
+            </div>
+        `;
+    }
+
+    function handleResponse(response) {
+        if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
+        return response.json();
+    }
+
+   function processGrammarResponse(data, originalText) {
+    if (data.error) {
+        showAlert('danger', data.error);
+        return;
+    }
+
+    if (!data.errors?.details?.length) {
+        showAlert('success', 'Aucune erreur détectée');
+        return;
+    }
+
+    currentCorrection = data.errors.correction || originalText; // Correction ici pour le typo
+    const errorsHtml = data.errors.details.map(error => `
+        <li>
+            <strong>${error.message}</strong><br>
+            <small class="text-muted">${error.context || getErrorContext(originalText, error.offset, error.length)}</small>
+            ${error.replacements?.length ? `
+                <div class="mt-1">Suggestions: ${error.replacements.join(', ')}</div>
+            ` : ''}
+        </li>
+    `).join('');
+
+    correctionContainer.innerHTML = `
+        <div class="alert alert-warning">
+            <strong><i class="fas fa-exclamation-triangle me-2"></i>
+            ${data.errors.details.length} erreur(s) trouvée(s):</strong>
+            <ul class="mt-2 mb-0">${errorsHtml}</ul>
+            <div class="d-flex gap-2 mt-3">
+                <button type="button" class="btn btn-sm btn-success" onclick="applyCorrection()">
+                    <i class="fas fa-check me-1"></i> Appliquer
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="dismissCorrection()">
+                    <i class="fas fa-times me-1"></i> Ignorer
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+    function handleError(error) {
+        console.error('Erreur:', error);
+        showAlert('danger', `Erreur: ${error.message}`);
+    }
+
+    function getErrorContext(text, offset, length) {
+        const start = Math.max(0, offset - 20);
+        const end = Math.min(text.length, offset + length + 20);
+        let context = text.substring(start, end);
+        
+        if (start > 0) context = '...' + context;
+        if (end < text.length) context = context + '...';
+        
+        const errorStart = offset - start;
+        const errorEnd = errorStart + length;
+        const before = context.substring(0, errorStart);
+        const error = context.substring(errorStart, errorEnd);
+        const after = context.substring(errorEnd);
+        
+        return `${before}<strong class="text-danger">${error}</strong>${after}`;
+    }
+});
+
+</script>
 
 {% endblock %}
 
