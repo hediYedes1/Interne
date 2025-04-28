@@ -1,0 +1,62 @@
+{% extends 'base1.html.twig' %}
+
+{% block title %}User Ban Management{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="mb-4">User Ban Management</h1>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td>{{ user.nomutilisateur }} {{ user.prenomutilisateur }}</td>
+                        <td>{{ user.emailutilisateur }}</td>
+                        <td>{{ user.role.getLabel() }}</td>
+                        <td>
+                            {% if user.isBanned() %}
+                                <span class="badge bg-danger">Banned</span>
+                            {% else %}
+                                <span class="badge bg-success">Active</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if user.isBanned() %}
+                                <form action="{{ path('app_user_unban', {'id': user.idutilisateur}) }}" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-success btn-sm">Unban</button>
+                                </form>
+                            {% else %}
+                                <form action="{{ path('app_user_ban', {'id': user.idutilisateur}) }}" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-danger btn-sm">Ban</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %} 

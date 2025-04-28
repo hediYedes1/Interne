@@ -38,6 +38,18 @@
               <h3 class="mb-0"><b>Connexion</b></h3>
               <p class="mb-0">Vous n'avez pas de compte ? <a href="{{ path('app_base4') }}" class="text-primary">Inscrivez-vous</a></p>
             </div>
+            {% if error %}
+                <div class="alert alert-danger d-flex align-items-center" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <div>
+                        {% if error.messageKey == 'Your account has been banned. Please contact an administrator.' %}
+                            Votre compte a été banni. Veuillez contacter un administrateur.
+                        {% else %}
+                            {{ error.messageKey|trans(error.messageData, 'security') }}
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
             <form action="{{ path('app_login') }}" method="post" novalidate>
               <div class="form-group mb-3">
                 <label for="email" class="form-label">Adresse e-mail</label>
@@ -58,15 +70,13 @@
                 <button type="submit" class="btn btn-primary">Connexion</button>
               </div>
               <div class="saprator mt-3">
-                  <span>OR</span>
+                  <span>OU</span>
               </div>
               <div class="d-grid mt-3">
                   <a href="{{ path('app_face_login') }}" class="btn btn-outline-primary">
-                      <i class="fas fa-camera"></i> Login with Face ID
+                      <i class="fas fa-camera"></i> Connexion par reconnaissance faciale
                   </a>
               </div>
-              
-          
             </form>
 
             <div class="saprator mt-3">

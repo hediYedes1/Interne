@@ -6,6 +6,7 @@ use App\Enum\Role;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 final class BaseController extends AbstractController
 {
@@ -37,9 +38,15 @@ final class BaseController extends AbstractController
     }
 
     #[Route('/base3', name: 'app_base3')]
-    public function index3(): Response
+    public function index3(AuthenticationUtils $authenticationUtils): Response
     {
-        return $this->render('Utilisateur/login.html.twig');
+        $error = $authenticationUtils->getLastAuthenticationError();
+        $lastUsername = $authenticationUtils->getLastUsername();
+
+        return $this->render('Utilisateur/login.html.twig', [
+            'last_username' => $lastUsername,
+            'error' => $error,
+        ]);
     }
 
     #[Route('/base4', name: 'app_base4')]

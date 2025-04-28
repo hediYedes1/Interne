@@ -44,6 +44,9 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: "text", nullable: true)]
     private ?string $faceEmbedding = null;
 
+    #[ORM\Column]
+    private bool $isBanned = false;
+
     #[ORM\OneToMany(mappedBy: "idutilisateur", targetEntity: Affectationhebergement::class)]
     private Collection $affectationhebergements;
 
@@ -200,6 +203,17 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function isFaceRegistered(): bool
     {
         return !empty($this->faceEmbedding);
+    }
+
+    public function isBanned(): bool
+    {
+        return $this->isBanned;
+    }
+
+    public function setIsBanned(bool $isBanned): static
+    {
+        $this->isBanned = $isBanned;
+        return $this;
     }
 
 }
