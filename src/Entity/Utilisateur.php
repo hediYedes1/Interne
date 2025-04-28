@@ -173,7 +173,7 @@ class Utilisateur
     #[ORM\OneToMany(mappedBy: "idutilisateur", targetEntity: Commentairepublication::class)]
     private Collection $commentairepublications;
 
-    #[ORM\OneToMany(mappedBy: "idutilisateur", targetEntity: Offre::class)]
+    #[ORM\OneToMany(mappedBy: "utilisateur", targetEntity: Offre::class)]
     private Collection $offres;
 
     #[ORM\OneToMany(mappedBy: "idutilisateur", targetEntity: Repondre::class)]

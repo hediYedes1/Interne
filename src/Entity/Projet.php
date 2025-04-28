@@ -47,7 +47,7 @@ class Projet
     )]
     private ?\DateTimeInterface $datefin = null;
 
-    #[ORM\OneToMany(targetEntity: Offre::class, mappedBy: "projet", orphanRemoval: true, cascade: ['remove'])]
+    #[ORM\OneToMany(targetEntity: Offre::class, mappedBy: "projet", orphanRemoval: true)]
     private Collection $offres;
 
     public function __construct()
@@ -131,7 +131,6 @@ class Projet
         return $this;
     }
 
-    // Méthode pour afficher le projet dans les sélecteurs
     public function __toString(): string
     {
         return $this->titreprojet ?? '';

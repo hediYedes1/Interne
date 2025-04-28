@@ -123,6 +123,6 @@ class Entreprise
     #[ORM\OneToMany(mappedBy: "identreprise", targetEntity: Brancheentreprise::class)]
     private Collection $brancheentreprises;
 
-    #[ORM\OneToMany(mappedBy: "identreprise", targetEntity: Offre::class)]
+    #[ORM\OneToMany(mappedBy: "entreprise", targetEntity: Offre::class)]
     private Collection $offres;
 }

@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250401113125 extends AbstractMigration
+final class Version20250428213425 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -24,6 +24,9 @@ final class Version20250401113125 extends AbstractMigration
             ALTER TABLE interview CHANGE typeinterview typeinterview ENUM('ENLIGNE', 'ENPERSONNE') NOT NULL
         SQL);
         $this->addSql(<<<'SQL'
+            ALTER TABLE offre CHANGE idutilisateur idutilisateur INT DEFAULT NULL, CHANGE identreprise identreprise INT DEFAULT NULL
+        SQL);
+        $this->addSql(<<<'SQL'
             ALTER TABLE testtechnique CHANGE statuttesttechnique statuttesttechnique ENUM('REFUSE', 'ACCEPTE', 'ENATTENTE') NOT NULL
         SQL);
     }
@@ -32,7 +35,10 @@ final class Version20250401113125 extends AbstractMigration
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql(<<<'SQL'
-            ALTER TABLE interview CHANGE typeinterview typeinterview VARCHAR(20) NOT NULL
+            ALTER TABLE interview CHANGE typeinterview typeinterview VARCHAR(255) NOT NULL
+        SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE offre CHANGE idutilisateur idutilisateur INT NOT NULL, CHANGE identreprise identreprise INT NOT NULL
         SQL);
         $this->addSql(<<<'SQL'
             ALTER TABLE testtechnique CHANGE statuttesttechnique statuttesttechnique VARCHAR(255) NOT NULL

@@ -6,7 +6,6 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Entreprise;
 use App\Entity\Interview;
 use App\Enum\TypeContrat;
-
 use App\Entity\Projet;
 use App\Entity\Utilisateur;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -22,12 +21,12 @@ class Offre
     private ?int $idoffre = null;
 
     #[ORM\ManyToOne(targetEntity: Utilisateur::class, inversedBy: "offres")]
-    #[ORM\JoinColumn(name: "idutilisateur", referencedColumnName: "idutilisateur", onDelete: "CASCADE")]
-    private Utilisateur $idutilisateur;
+    #[ORM\JoinColumn(name: "idutilisateur", referencedColumnName: "idutilisateur", nullable: true, onDelete: "CASCADE")]
+    private ?Utilisateur $utilisateur = null;
 
     #[ORM\ManyToOne(targetEntity: Entreprise::class, inversedBy: "offres")]
-    #[ORM\JoinColumn(name: "identreprise", referencedColumnName: "identreprise", onDelete: "CASCADE")]
-    private Entreprise $identreprise;
+    #[ORM\JoinColumn(name: "identreprise", referencedColumnName: "identreprise", nullable: true, onDelete: "CASCADE")]
+    private ?Entreprise $entreprise = null;
 
     #[ORM\Column(type: "text")]
     #[Assert\NotBlank(message: "Le titre de l'offre est obligatoire.")]
@@ -51,72 +50,54 @@ class Offre
     #[Assert\Email(message: "Veuillez entrer un email valide.")]
     private string $emailrh;
 
-    #[ORM\Column(type: 'string')]
-    private string $typecontrat;  // Ici on utilise 'string' pour le stockage
-    
+    #[ORM\Column(type: "string", enumType: TypeContrat::class)]
+    private TypeContrat $typecontrat;
 
     #[ORM\Column(type: "date")]
     #[Assert\NotBlank(message: "La date limite est requise.")]
     #[Assert\GreaterThan("today", message: "La date limite doit être dans le futur.")]
     private \DateTimeInterface $datelimite;
 
-    #[ORM\OneToMany(mappedBy: "idoffre", targetEntity: Projet::class)]
-    private Collection $projets;
-
-    #[ORM\OneToMany(mappedBy: "idoffre", targetEntity: Interview::class)]
+    #[ORM\OneToMany(mappedBy: "offre", targetEntity: Interview::class, orphanRemoval: true, cascade: ["persist", "remove"])]
     private Collection $interviews;
-    
-    #[ORM\ManyToOne(targetEntity: Projet::class, inversedBy: 'offres')]
-    #[ORM\JoinColumn(name: 'idprojet', referencedColumnName: 'idprojet')]
+
+    #[ORM\ManyToOne(targetEntity: Projet::class, inversedBy: "offres")]
+    #[ORM\JoinColumn(name: "idprojet", referencedColumnName: "idprojet", nullable: true, onDelete: "CASCADE")]
     private ?Projet $projet = null;
 
     public function __construct()
     {
         $this->datelimite = new \DateTime('+1 day');
-        $this->projets = new ArrayCollection();
         $this->interviews = new ArrayCollection();
     }
 
-
-public function getProjet(): ?Projet
-{
-    return $this->projet;
-}
-
-public function setProjet(?Projet $projet): self
-{
-    $this->projet = $projet;
-    return $this;
-}
+    // Getters and Setters (no change except corrected types)
 
     public function getIdoffre(): ?int
     {
         return $this->idoffre;
     }
 
-    public function setIdoffre(int $value): void
+    public function getUtilisateur(): ?Utilisateur
     {
-        $this->idoffre = $value;
+        return $this->utilisateur;
     }
 
-    public function getIdutilisateur(): Utilisateur
+    public function setUtilisateur(?Utilisateur $utilisateur): self
     {
-        return $this->idutilisateur;
+        $this->utilisateur = $utilisateur;
+        return $this;
     }
 
-    public function setIdutilisateur(Utilisateur $value): void
+    public function getEntreprise(): ?Entreprise
     {
-        $this->idutilisateur = $value;
+        return $this->entreprise;
     }
 
-    public function getIdentreprise(): Entreprise
+    public function setEntreprise(?Entreprise $entreprise): self
     {
-        return $this->identreprise;
-    }
-
-    public function setIdentreprise(Entreprise $value): void
-    {
-        $this->identreprise = $value;
+        $this->entreprise = $entreprise;
+        return $this;
     }
 
     public function getTitreoffre(): string
@@ -124,9 +105,10 @@ public function setProjet(?Projet $projet): self
         return $this->titreoffre;
     }
 
-    public function setTitreoffre(string $value): void
+    public function setTitreoffre(string $titreoffre): self
     {
-        $this->titreoffre = $value;
+        $this->titreoffre = $titreoffre;
+        return $this;
     }
 
     public function getDescriptionoffre(): string
@@ -134,9 +116,10 @@ public function setProjet(?Projet $projet): self
         return $this->descriptionoffre;
     }
 
-    public function setDescriptionoffre(string $value): void
+    public function setDescriptionoffre(string $descriptionoffre): self
     {
-        $this->descriptionoffre = $value;
+        $this->descriptionoffre = $descriptionoffre;
+        return $this;
     }
 
     public function getSalaireoffre(): float
@@ -144,9 +127,10 @@ public function setProjet(?Projet $projet): self
         return $this->salaireoffre;
     }
 
-    public function setSalaireoffre(float $value): void
+    public function setSalaireoffre(float $salaireoffre): self
     {
-        $this->salaireoffre = $value;
+        $this->salaireoffre = $salaireoffre;
+        return $this;
     }
 
     public function getLocalisationoffre(): string
@@ -154,9 +138,10 @@ public function setProjet(?Projet $projet): self
         return $this->localisationoffre;
     }
 
-    public function setLocalisationoffre(string $value): void
+    public function setLocalisationoffre(string $localisationoffre): self
     {
-        $this->localisationoffre = $value;
+        $this->localisationoffre = $localisationoffre;
+        return $this;
     }
 
     public function getEmailrh(): string
@@ -164,20 +149,20 @@ public function setProjet(?Projet $projet): self
         return $this->emailrh;
     }
 
-    public function setEmailrh(string $value): void
+    public function setEmailrh(string $emailrh): self
     {
-        $this->emailrh = $value;
+        $this->emailrh = $emailrh;
+        return $this;
     }
 
     public function getTypecontrat(): TypeContrat
-{
-    return TypeContrat::from($this->typecontrat);  // Conversion de la chaîne en enum
-}
-
+    {
+        return $this->typecontrat;
+    }
 
     public function setTypecontrat(TypeContrat $typecontrat): self
     {
-        $this->typecontrat = $typecontrat->value;  // Stockage de la valeur sous forme de chaîne
+        $this->typecontrat = $typecontrat;
         return $this;
     }
 
@@ -186,18 +171,47 @@ public function setProjet(?Projet $projet): self
         return $this->datelimite;
     }
 
-    public function setDatelimite(\DateTimeInterface $value): void
+    public function setDatelimite(\DateTimeInterface $datelimite): self
     {
-        $this->datelimite = $value;
+        $this->datelimite = $datelimite;
+        return $this;
     }
 
-    public function getProjets(): Collection
+    public function getProjet(): ?Projet
     {
-        return $this->projets;
+        return $this->projet;
     }
 
+    public function setProjet(?Projet $projet): self
+    {
+        $this->projet = $projet;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Interview>
+     */
     public function getInterviews(): Collection
     {
         return $this->interviews;
+    }
+
+    public function addInterview(Interview $interview): self
+    {
+        if (!$this->interviews->contains($interview)) {
+            $this->interviews[] = $interview;
+            $interview->setOffre($this);
+        }
+        return $this;
+    }
+
+    public function removeInterview(Interview $interview): self
+    {
+        if ($this->interviews->removeElement($interview)) {
+            if ($interview->getOffre() === $this) {
+                $interview->setOffre(null);
+            }
+        }
+        return $this;
     }
 }
