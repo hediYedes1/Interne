@@ -39,6 +39,10 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: "string", length: 255, nullable: true)]
     private ?string $profilepictureurl = null;
+   
+
+    #[ORM\Column(type: "text", nullable: true)]
+    private ?string $faceEmbedding = null;
 
     #[ORM\OneToMany(mappedBy: "idutilisateur", targetEntity: Affectationhebergement::class)]
     private Collection $affectationhebergements;
@@ -181,4 +185,21 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
     }
+
+    public function getFaceEmbedding(): ?string
+    {
+        return $this->faceEmbedding;
+    }
+
+    public function setFaceEmbedding(?string $faceEmbedding): self
+    {
+        $this->faceEmbedding = $faceEmbedding;
+        return $this;
+    }
+
+    public function isFaceRegistered(): bool
+    {
+        return !empty($this->faceEmbedding);
+    }
+
 }

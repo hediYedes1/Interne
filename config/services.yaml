@@ -5,11 +5,19 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     profile_images_directory: '%kernel.project_dir%/public/uploads/profile_images'
+    face_api_key: '%env(FACE_API_KEY)%'
+    face_api_secret: '%env(FACE_API_SECRET)%'
+
 services:
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    # Register all commands in the Command directory
+    App\Command\:
+        resource: '../src/Command'
+        tags: ['console.command']
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -19,6 +27,7 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+            - '../src/Tests/'
 
     # add more service definitions when explicit configuration is needed
 
@@ -27,3 +36,17 @@ services:
         arguments:
             $router: '@router'
     # please note that last definitions always *replace* previous ones
+
+    # Face recognition service
+    App\Service\FaceRecognitionService:
+        public: true
+        arguments:
+            $httpClient: '@Symfony\Contracts\HttpClient\HttpClientInterface'
+            $params: '@parameter_bag'
+            $logger: '@logger'
+
+    # Face authenticator - SIMPLIFIED version
+    App\Security\FaceAuthenticator:
+        tags: [security.authenticator.custom]
+
+
