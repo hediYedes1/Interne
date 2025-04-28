@@ -1,10 +1,10 @@
 {% extends 'base1.html.twig' %}
 
-{% block title %}User Ban Management{% endblock %}
+{% block title %}Gestion des bannissements{% endblock %}
 
 {% block body %}
 <div class="container mt-5">
-    <h1 class="mb-4">User Ban Management</h1>
+    <h1 class="mb-4">Gestion des bannissements</h1>
 
     {% for message in app.flashes('success') %}
         <div class="alert alert-success">
@@ -18,14 +18,49 @@
         </div>
     {% endfor %}
 
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" 
+                               name="search" 
+                               class="form-control" 
+                               placeholder="Rechercher par nom, prénom ou email..." 
+                               value="{{ search }}">
+                        <button class="btn btn-outline-secondary" type="submit">
+                            <i class="fas fa-search"></i> Rechercher
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="btn-group" role="group">
+                        <a href="{{ path('app_user_ban_index', {'status': 'all'}) }}" 
+                           class="btn btn-outline-primary {{ status == 'all' ? 'active' : '' }}">
+                            Tous
+                        </a>
+                        <a href="{{ path('app_user_ban_index', {'status': 'banned'}) }}" 
+                           class="btn btn-outline-danger {{ status == 'banned' ? 'active' : '' }}">
+                            Bannis
+                        </a>
+                        <a href="{{ path('app_user_ban_index', {'status': 'active'}) }}" 
+                           class="btn btn-outline-success {{ status == 'active' ? 'active' : '' }}">
+                            Actifs
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div class="table-responsive">
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>Username</th>
+                    <th>Nom d'utilisateur</th>
                     <th>Email</th>
-                    <th>Role</th>
-                    <th>Status</th>
+                    <th>Rôle</th>
+                    <th>Statut</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -37,22 +72,26 @@
                         <td>{{ user.role.getLabel() }}</td>
                         <td>
                             {% if user.isBanned() %}
-                                <span class="badge bg-danger">Banned</span>
+                                <span class="badge bg-danger">Banni</span>
                             {% else %}
-                                <span class="badge bg-success">Active</span>
+                                <span class="badge bg-success">Actif</span>
                             {% endif %}
                         </td>
                         <td>
                             {% if user.isBanned() %}
                                 <form action="{{ path('app_user_unban', {'id': user.idutilisateur}) }}" method="post" class="d-inline">
-                                    <button type="submit" class="btn btn-success btn-sm">Unban</button>
+                                    <button type="submit" class="btn btn-success btn-sm">Débannir</button>
                                 </form>
                             {% else %}
                                 <form action="{{ path('app_user_ban', {'id': user.idutilisateur}) }}" method="post" class="d-inline">
-                                    <button type="submit" class="btn btn-danger btn-sm">Ban</button>
+                                    <button type="submit" class="btn btn-danger btn-sm">Bannir</button>
                                 </form>
                             {% endif %}
                         </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center">Aucun utilisateur trouvé</td>
                     </tr>
                 {% endfor %}
             </tbody>

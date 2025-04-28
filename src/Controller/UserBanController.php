@@ -15,18 +15,32 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class UserBanController extends AbstractController
 {
     #[Route('/', name: 'app_user_ban_index', methods: ['GET'])]
-    public function index(EntityManagerInterface $entityManager): Response
+    public function index(Request $request, EntityManagerInterface $entityManager): Response
     {
-        // Get all users except admins
-        $users = $entityManager->getRepository(Utilisateur::class)
+        $search = $request->query->get('search', '');
+        $status = $request->query->get('status', 'all');
+
+        $qb = $entityManager->getRepository(Utilisateur::class)
             ->createQueryBuilder('u')
             ->where('u.role != :adminRole')
-            ->setParameter('adminRole', Role::ADMIN)
-            ->getQuery()
-            ->getResult();
+            ->setParameter('adminRole', Role::ADMIN);
+
+        if ($search) {
+            $qb->andWhere('u.nomutilisateur LIKE :search OR u.prenomutilisateur LIKE :search OR u.emailutilisateur LIKE :search')
+                ->setParameter('search', '%' . $search . '%');
+        }
+
+        if ($status !== 'all') {
+            $qb->andWhere('u.isBanned = :status')
+                ->setParameter('status', $status === 'banned');
+        }
+
+        $users = $qb->getQuery()->getResult();
 
         return $this->render('user_ban/index.html.twig', [
             'users' => $users,
+            'search' => $search,
+            'status' => $status,
         ]);
     }
 
@@ -34,14 +48,14 @@ class UserBanController extends AbstractController
     public function ban(Utilisateur $user, EntityManagerInterface $entityManager): Response
     {
         if ($user->getRole() === Role::ADMIN) {
-            $this->addFlash('error', 'Cannot ban an admin user');
+            $this->addFlash('error', 'Impossible de bannir un administrateur');
             return $this->redirectToRoute('app_user_ban_index');
         }
 
         $user->setIsBanned(true);
         $entityManager->flush();
 
-        $this->addFlash('success', 'User has been banned successfully');
+        $this->addFlash('success', 'L\'utilisateur a été banni avec succès');
         return $this->redirectToRoute('app_user_ban_index');
     }
 
@@ -49,14 +63,14 @@ class UserBanController extends AbstractController
     public function unban(Utilisateur $user, EntityManagerInterface $entityManager): Response
     {
         if ($user->getRole() === Role::ADMIN) {
-            $this->addFlash('error', 'Cannot unban an admin user');
+            $this->addFlash('error', 'Impossible de débannir un administrateur');
             return $this->redirectToRoute('app_user_ban_index');
         }
 
         $user->setIsBanned(false);
         $entityManager->flush();
 
-        $this->addFlash('success', 'User has been unbanned successfully');
+        $this->addFlash('success', 'L\'utilisateur a été débanni avec succès');
         return $this->redirectToRoute('app_user_ban_index');
     }
 } 
