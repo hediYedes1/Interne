@@ -58,11 +58,11 @@ class Offre
     #[Assert\GreaterThan("today", message: "La date limite doit être dans le futur.")]
     private \DateTimeInterface $datelimite;
 
-    #[ORM\OneToMany(mappedBy: "offre", targetEntity: Interview::class, orphanRemoval: true, cascade: ["persist", "remove"])]
+    #[ORM\OneToMany(mappedBy: "offre", targetEntity: Interview::class, orphanRemoval: false, cascade: ["persist", "remove"])]
     private Collection $interviews;
 
     #[ORM\ManyToOne(targetEntity: Projet::class, inversedBy: "offres")]
-    #[ORM\JoinColumn(name: "idprojet", referencedColumnName: "idprojet", nullable: true, onDelete: "CASCADE")]
+    #[ORM\JoinColumn(name: "idprojet", referencedColumnName: "idprojet", nullable: true, onDelete: "SET NULL")]
     private ?Projet $projet = null;
 
     public function __construct()

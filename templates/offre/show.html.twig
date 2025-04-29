@@ -3,110 +3,114 @@
 {% block title %}Offre{% endblock %}
 
 {% block body %}
-    <div class="container mt-4">
-        <h1 class="text-center mb-4">Détails de l'Offre</h1>
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Détails de l'Offre</h1>
 
-        <table class="table table-striped table-bordered">
-            <tbody>
-                <tr>
-                    <th>Id de l'offre</th>
-                    <td>{{ offre.idoffre }}</td>
-                </tr>
-                <tr>
-                    <th>Titre de l'offre</th>
-                    <td>{{ offre.titreoffre }}</td>
-                </tr>
-                <tr>
-                    <th>Description</th>
-                    <td>{{ offre.descriptionoffre }}</td>
-                </tr>
-                <tr>
-                    <th>Salaire</th>
-                    <td>{{ offre.salaireoffre }} TND</td>
-                </tr>
-                <tr>
-                    <th>Localisation</th>
-                    <td>{{ offre.localisationoffre }}</td>
-                </tr>
-                <tr>
-                    <th>Email du RH</th>
-                    <td>{{ offre.emailrh }}</td>
-                </tr>
-                <tr>
-                    <th>Type de contrat</th>
-                    <td>{{ offre.typecontrat.value }}</td>
-                </tr>
-                <tr>
-                    <th>Date limite</th>
-                    <td>{{ offre.datelimite ? offre.datelimite|date('Y-m-d') : '' }}</td>
-                </tr>
-                <tr>
-                    <th>Projet associé</th>
-                    <td>
-                        {% if offre.projet %}
-                            Titre : {{ offre.projet.titreprojet }} <br>
-                            Description : {{ offre.projet.descriptionprojet }} <br>
-                            Date de début : {{ offre.projet.datedebut|date('Y-m-d') }} <br>
-                            Date de fin : {{ offre.projet.datefin|date('Y-m-d') }}
-                        {% else %}
-                            <span class="text-muted">Pas de projet associé</span>
-                        {% endif %}
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <table class="table table-striped table-bordered">
+        <tbody>
+            <tr>
+                <th>Id de l'offre</th>
+                <td>{{ offre.idoffre }}</td>
+            </tr>
+            <tr>
+                <th>Titre de l'offre</th>
+                <td>{{ offre.titreoffre }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ offre.descriptionoffre }}</td>
+            </tr>
+            <tr>
+                <th>Salaire</th>
+                <td>{{ offre.salaireoffre }} TND</td>
+            </tr>
+            <tr>
+                <th>Localisation</th>
+                <td>{{ offre.localisationoffre }}</td>
+            </tr>
+            <tr>
+                <th>Email du RH</th>
+                <td>{{ offre.emailrh }}</td>
+            </tr>
+            <tr>
+                <th>Type de contrat</th>
+                <td>{{ offre.typecontrat.value }}</td>
+            </tr>
+            <tr>
+                <th>Date limite</th>
+                <td>{{ offre.datelimite ? offre.datelimite|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Projet associé</th>
+                <td>
+                    {% if offre.projet %}
+                        Titre : {{ offre.projet.titreprojet }} <br>
+                        Description : {{ offre.projet.descriptionprojet }} <br>
+                        Date de début : {{ offre.projet.datedebut|date('Y-m-d') }} <br>
+                        Date de fin : {{ offre.projet.datefin|date('Y-m-d') }}
+                    {% else %}
+                        <span class="text-muted">Pas de projet associé</span>
+                    {% endif %}
+                </td>
+            </tr>
+        </tbody>
+    </table>
 
-        <div class="d-flex justify-content-between mt-4">
-            <a href="{{ path('back_offre_index') }}" class="btn btn-primary text-white">
-                <i class="fas fa-arrow-left"></i> Retour à la liste
-            </a>
-            <a href="{{ path('back_offre_edit', {'idoffre': offre.idoffre}) }}" class="btn btn-warning text-white">
-                <i class="fas fa-edit"></i> Modifier
-            </a>
+    <div class="d-flex justify-content-between mt-4">
+        <a href="{{ path('back_offre_index') }}" class="btn btn-primary text-white">
+            <i class="fas fa-arrow-left"></i> Retour à la liste
+        </a>
+        <a href="{{ path('back_offre_edit', {'idoffre': offre.idoffre}) }}" class="btn btn-warning text-white">
+            <i class="fas fa-edit"></i> Modifier
+        </a>
 
-            <!-- Bouton de suppression pour chaque offre -->
-            <button type="button" class="btn btn-danger text-white" data-toggle="modal" data-target="#deleteModal{{ offre.idoffre }}">
-                <i class="fas fa-trash-alt"></i> Supprimer
-            </button>
-        </div>
+        <!-- Bouton de suppression (modale Bootstrap 5) -->
+        <button type="button" class="btn btn-danger text-white" data-bs-toggle="modal" data-bs-target="#deleteModal{{ offre.idoffre }}">
+            <i class="fas fa-trash-alt"></i> Supprimer
+        </button>
+    </div>
 
-        <!-- Modal de confirmation pour la suppression -->
-        <div class="modal fade" id="deleteModal{{ offre.idoffre }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel{{ offre.idoffre }}" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="deleteModalLabel{{ offre.idoffre }}">Confirmation de suppression</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        Êtes-vous sûr de vouloir supprimer cette offre ?
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
-                        <form action="{{ path('back_offre_delete', {'idoffre': offre.idoffre}) }}" method="POST" style="display:inline;">
-                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ offre.idoffre) }}">
-                            <button type="submit" class="btn btn-danger">Supprimer</button>
-                        </form>
-                    </div>
+    <!-- Modal Bootstrap 5 -->
+    <div class="modal fade" id="deleteModal{{ offre.idoffre }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ offre.idoffre }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel{{ offre.idoffre }}">Confirmation de suppression</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    Êtes-vous sûr de vouloir supprimer cette offre ?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <form action="{{ path('back_offre_delete', {'idoffre': offre.idoffre}) }}" method="POST" style="display:inline;">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ offre.idoffre) }}">
+                        <button type="submit" class="btn btn-danger">Supprimer</button>
+                    </form>
                 </div>
             </div>
         </div>
-
-        <!-- Bouton pour créer une nouvelle offre -->
-        <div class="d-flex justify-content-end mt-4">
-            <a href="{{ path('back_offre_new') }}" class="btn btn-success btn-lg text-white">
-                <i class="fas fa-plus-circle"></i> Créer une nouvelle offre
-            </a>
-        </div>
     </div>
 
-    <!-- Affichage des messages flash -->
-    {% for msg in app.flashes('success') %}
-        <div class="alert alert-success">{{ msg }}</div>
-    {% endfor %}
-    {% for msg in app.flashes('error') %}
-        <div class="alert alert-danger">{{ msg }}</div>
-    {% endfor %}
+    <!-- Bouton pour créer une nouvelle offre -->
+    <div class="d-flex justify-content-end mt-4">
+        <a href="{{ path('back_offre_new') }}" class="btn btn-success btn-lg text-white">
+            <i class="fas fa-plus-circle"></i> Créer une nouvelle offre
+        </a>
+    </div>
+</div>
+
+<!-- Flash messages -->
+{% for msg in app.flashes('success') %}
+    <div class="alert alert-success mt-3">{{ msg }}</div>
+{% endfor %}
+{% for msg in app.flashes('error') %}
+    <div class="alert alert-danger mt-3">{{ msg }}</div>
+{% endfor %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <!-- Bootstrap 5 JS Bundle with Popper (si non inclus via Webpack) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}

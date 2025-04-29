@@ -13,13 +13,37 @@
         <a href="{{ path('front_projet_edit', {'idprojet': projet.idprojet}) }}" class="btn btn-warning">
             <i class="fas fa-edit"></i> Modifier
         </a>
-        <form method="post" action="{{ path('front_projet_delete', {'idprojet': projet.idprojet}) }}" onsubmit="return confirm('Supprimer ce projet ?');">
-            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ projet.idprojet) }}">
-            <button class="btn btn-danger"><i class="fas fa-trash"></i> Supprimer</button>
-        </form>
+
+        <!-- Bouton pour afficher la modale -->
+        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ projet.idprojet }}">
+            <i class="fas fa-trash"></i> Supprimer
+        </button>
+
         <a href="{{ path('front_projet_index') }}" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Retour à la liste
         </a>
+    </div>
+</div>
+
+<!-- Modale de confirmation -->
+<div class="modal fade" id="deleteModal{{ projet.idprojet }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ projet.idprojet }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel{{ projet.idprojet }}">Confirmation de suppression</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                Êtes-vous sûr de vouloir supprimer ce projet ?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <form method="post" action="{{ path('front_projet_delete', {'idprojet': projet.idprojet}) }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ projet.idprojet) }}">
+                    <button class="btn btn-danger" type="submit">Supprimer</button>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
