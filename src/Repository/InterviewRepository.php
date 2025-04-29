@@ -53,5 +53,17 @@ class InterviewRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    // Add custom methods as needed
+    public function getStatisticsByType(): array
+    {
+        return $this->createQueryBuilder('i')
+            ->select([
+                'i.typeinterview as type',
+                'COUNT(i.idinterview) as count',
+                'MIN(i.dateinterview) as earliest_date',
+                'MAX(i.dateinterview) as latest_date'
+            ])
+            ->groupBy('i.typeinterview')
+            ->getQuery()
+            ->getResult();
+    }
 }

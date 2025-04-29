@@ -16,6 +16,7 @@ use App\Utils\GoogleMeetService;
 use App\Utils\GoogleOAuthService;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Psr\Log\LoggerInterface;
+use App\Utils\InterviewStatisticsService;
 
 
 
@@ -203,4 +204,13 @@ public function new(
         ]);
     }
    
+    #[Route('/interview/statistics', name: 'app_interview_stats', methods: ['GET'])]
+    public function statistics(InterviewStatisticsService $statisticsService): Response
+    {
+        $stats = $statisticsService->getInterviewStatistics();
+        
+        return $this->render('interview/stat.html.twig', [
+            'statistics' => $stats
+        ]);
+    }
 }
