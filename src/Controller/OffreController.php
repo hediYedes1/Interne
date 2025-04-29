@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\Offre;
 use App\Entity\Projet;
 use App\Form\OffreType;
+use App\Repository\OffreRepository;
+use Knp\Component\Pager\PaginatorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,36 +18,37 @@ use Symfony\Component\Security\Core\Security;
 class OffreController extends AbstractController
 {
     public function __construct(
-        private EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager,
+        private OffreRepository $offreRepository
     ) {}
 
     #[Route('/list', name: 'front_offre_index', methods: ['GET'])]
-    public function indexFront(Request $request): Response
-    {
-        $selectedType = $request->query->get('typecontrat');
-        
-        $queryBuilder = $this->entityManager
-            ->getRepository(Offre::class)
-            ->createQueryBuilder('o');
-        
-        if ($selectedType && in_array($selectedType, ['CDI', 'CDD', 'STAGE'])) {
-            $queryBuilder
-                ->andWhere('o.typecontrat = :type')
-                ->setParameter('type', $selectedType);
-        }
-        
-        $offres = $queryBuilder->getQuery()->getResult();
-        
-        return $this->render('offre/indexfront.html.twig', [
+public function indexFront(Request $request, PaginatorInterface $paginator): Response
+{
+    $searchQuery = $request->query->get('search', '');
+    $typeContrat = $request->query->get('typecontrat', '');
+    
+    $query = $this->offreRepository->getSearchQuery($searchQuery, $typeContrat);
+    $offres = $paginator->paginate(
+        $query,
+        $request->query->getInt('page', 1),
+        3 // Nombre d'offres par page
+    );
+
+    if ($request->isXmlHttpRequest()) {
+        return $this->render('offre/_offres_list.html.twig', [
             'offres' => $offres,
-            'typeContratOptions' => [
-                'CDI' => 'CDI',
-                'CDD' => 'CDD',
-                'Stage' => 'STAGE'
-            ],
-            'selectedType' => $selectedType
+            'searchQuery' => $searchQuery, // Ajouté
+            'selectedType' => $typeContrat, // Ajouté
         ]);
     }
+
+    return $this->render('offre/indexfront.html.twig', [
+        'offres' => $offres,
+        'searchQuery' => $searchQuery,
+        'selectedType' => $typeContrat
+    ]);
+}
 
     #[Route('/new', name: 'front_offre_new', methods: ['GET', 'POST'])]
     public function newFront(Request $request, Security $security): Response
@@ -139,15 +142,30 @@ class OffreController extends AbstractController
     }
 
     #[Route('/admin/offres', name: 'back_offre_index', methods: ['GET'])]
-    public function indexBack(): Response
-    {
-        $offres = $this->entityManager->getRepository(Offre::class)->findAll();
+public function indexBack(Request $request, PaginatorInterface $paginator): Response
+{
+    $searchQuery = $request->query->get('search', '');
+    $typeContrat = $request->query->get('typecontrat', '');
+    
+    $query = $this->offreRepository->getSearchQuery($searchQuery, $typeContrat);
+    $offres = $paginator->paginate(
+        $query,
+        $request->query->getInt('page', 1),
+        2 // Nombre d'offres par page
+    );
 
-        return $this->render('offre/index.html.twig', [
-            'offres' => $offres,
+    if ($request->isXmlHttpRequest()) {
+        return $this->render('offre/_offres_list.html.twig', [
+            'offres' => $offres
         ]);
     }
 
+    return $this->render('offre/index.html.twig', [
+        'offres' => $offres,
+        'searchQuery' => $searchQuery,
+        'selectedType' => $typeContrat
+    ]);
+}
     #[Route('/admin/new', name: 'back_offre_new', methods: ['GET', 'POST'])]
     public function newBack(Request $request, Security $security): Response
     {
