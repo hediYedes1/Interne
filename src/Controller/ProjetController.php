@@ -1,9 +1,10 @@
 <?php
-
+// src/Controller/ProjetController.php
 namespace App\Controller;
 
 use App\Entity\Projet;
 use App\Form\ProjetType;
+use App\Repository\ProjetRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,21 +16,31 @@ use Symfony\Component\Security\Core\Security;
 final class ProjetController extends AbstractController
 {
     private EntityManagerInterface $entityManager;
+    private ProjetRepository $projetRepository;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, ProjetRepository $projetRepository)
     {
         $this->entityManager = $entityManager;
+        $this->projetRepository = $projetRepository;
     }
 
-    #[Route('/front/list', name: 'front_projet_index', methods: ['GET'])]
-    public function indexFront(): Response
-    {
-        $projets = $this->entityManager->getRepository(Projet::class)->findAll();
+#[Route('/front/list', name: 'front_projet_index', methods: ['GET'])]
+public function indexFront(Request $request): Response
+{
+    $searchQuery = $request->query->get('search', '');
+    $projets = $this->projetRepository->search($searchQuery);
 
-        return $this->render('projet/indexfront.html.twig', [
-            'projets' => $projets,
+    if ($request->isXmlHttpRequest()) {
+        return $this->render('projet/_projets_list.html.twig', [
+            'projets' => $projets
         ]);
     }
+
+    return $this->render('projet/indexfront.html.twig', [
+        'projets' => $projets,
+        'searchQuery' => $searchQuery
+    ]);
+}
 
     #[Route('/front/new', name: 'front_projet_new', methods: ['GET', 'POST'])]
     public function newFront(Request $request, Security $security): Response
@@ -94,14 +105,22 @@ final class ProjetController extends AbstractController
     }
 
     #[Route('/admin/projets', name: 'back_projet_index', methods: ['GET'])]
-    public function indexBack(): Response
-    {
-        $projets = $this->entityManager->getRepository(Projet::class)->findAll();
+public function indexBack(Request $request): Response
+{
+    $searchQuery = $request->query->get('search', '');
+    $projets = $this->projetRepository->search($searchQuery);
 
-        return $this->render('projet/index.html.twig', [
-            'projets' => $projets,
+    if ($request->isXmlHttpRequest()) {
+        return $this->render('projet/_projets_list.html.twig', [
+            'projets' => $projets
         ]);
     }
+
+    return $this->render('projet/index.html.twig', [
+        'projets' => $projets,
+        'searchQuery' => $searchQuery
+    ]);
+}
 
     #[Route('/admin/new', name: 'back_projet_new', methods: ['GET', 'POST'])]
     public function newBack(Request $request, Security $security): Response
