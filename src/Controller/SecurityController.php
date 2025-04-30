@@ -16,32 +16,51 @@ use App\Service\FaceRecognitionService;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface; 
 use Psr\Log\LoggerInterface;
-
-
+use App\Service\CaptchaService;
 
 class SecurityController extends AbstractController
 {
-    #[Route('/login', name: 'app_login')]
-    public function login(AuthenticationUtils $authenticationUtils): Response
-    {
-        $error = $authenticationUtils->getLastAuthenticationError();
-        $lastUsername = $authenticationUtils->getLastUsername();
+    private CaptchaService $captchaService;
 
-        // If the user is already logged in, redirect to the appropriate page based on their role
-        $user = $this->getUser();
-        if ($user) {
-            $roles = $user->getRoles();
-            if (in_array(Role::CANDIDAT->value, $roles, true)) {
-                return $this->redirectToRoute('app_base');
-            } else {
-                return $this->redirectToRoute('app_base2');
-            }
-            
+    public function __construct(CaptchaService $captchaService)
+    {
+        $this->captchaService = $captchaService;
+    }
+
+    #[Route(path: '/login', name: 'app_login')]
+    public function login(Request $request, AuthenticationUtils $authenticationUtils): Response
+    {
+        if ($this->getUser()) {
+            return $this->redirectToRoute('app_base3');
         }
+
+        // Generate CAPTCHA
+        $captcha = $this->captchaService->generateCaptcha();
+
+        // Handle AJAX request for credential validation
+        if ($request->isXmlHttpRequest()) {
+            $email = $request->request->get('_email');
+            $password = $request->request->get('_password');
+
+            if (empty($email) || empty($password)) {
+                return new JsonResponse(['message' => 'Veuillez remplir tous les champs requis'], Response::HTTP_BAD_REQUEST);
+            }
+
+            // Here you would typically validate the credentials against your user provider
+            // For now, we'll just return success to show the CAPTCHA
+            return new JsonResponse(['success' => true]);
+        }
+
+        // Get the login error if there is one
+        $error = $authenticationUtils->getLastAuthenticationError();
+        
+        // Last username entered by the user
+        $lastUsername = $authenticationUtils->getLastUsername();
 
         return $this->render('utilisateur/login.html.twig', [
             'last_username' => $lastUsername,
             'error' => $error,
+            'captcha' => $captcha
         ]);
     }
 
@@ -68,10 +87,10 @@ class SecurityController extends AbstractController
         return $this->render('utilisateur/signUp.html.twig');
     }
 
-    #[Route('/logout', name: 'app_logout')]
+    #[Route(path: '/logout', name: 'app_logout')]
     public function logout(): void
     {
-        // Symfony handles the logout automatically
+        throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
 
     #[Route('/face-login', name: 'app_face_login', methods: ['GET', 'POST'])]

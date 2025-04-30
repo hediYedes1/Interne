@@ -45,6 +45,11 @@ services:
             $params: '@parameter_bag'
             $logger: '@logger'
 
+
+    # CAPTCHA service
+    App\Service\CaptchaService:
+        public: true
+
     # Face authenticator - SIMPLIFIED version
     App\Security\FaceAuthenticator:
         tags: [security.authenticator.custom]
