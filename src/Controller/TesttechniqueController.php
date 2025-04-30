@@ -16,6 +16,7 @@ use App\Enum\StatutTestTechnique;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Utils\EmailService;
 use App\Utils\GrammarCheckerService;
+use App\Utils\TestTechniqueStatisticsService;
 
 #[Route('/testtechnique')]
 final class TesttechniqueController extends AbstractController
@@ -218,6 +219,8 @@ public function newForInterview(
     Interview $idinterview,
     GrammarCheckerService $grammarCheckerService
 ): Response {
+    header('Content-Type: text/html; charset=UTF-8');
+    $request->setDefaultLocale('fr');
     // Gestion des requêtes AJAX pour la vérification grammaticale
     if ($request->isXmlHttpRequest()) {
         $text = $request->request->get('text', '');
@@ -385,6 +388,15 @@ public function showResult(Testtechnique $test , QuizQuestion $quiz): Response
         'test' => $test,
         'score' => $quiz->$test->getScore(), 
         'statut' => $test->getStatuttesttechnique()
+    ]);
+}
+#[Route('/test-technique/statistics', name: 'app_test_technique_stats', methods: ['GET'])]
+public function testTechniqueStatistics(TestTechniqueStatisticsService $statisticsService): Response
+{
+    $stats = $statisticsService->getTestTechniqueStatistics();
+    
+    return $this->render('testtechnique/stat.html.twig', [
+        'statistics' => $stats
     ]);
 }
 }

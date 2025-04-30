@@ -1,4 +1,4 @@
-{% extends 'base1.html.twig' %}
+{% extends 'base2.html.twig' %}
 
 {% block title %}New Testtechnique{% endblock %}
 
@@ -128,45 +128,61 @@ document.addEventListener('DOMContentLoaded', function() {
         return response.json();
     }
 
-   function processGrammarResponse(data, originalText) {
+function processGrammarResponse(data, originalText) {
     if (data.error) {
         showAlert('danger', data.error);
         return;
     }
 
-    if (!data.errors?.details?.length) {
-        showAlert('success', 'Aucune erreur détectée');
-        return;
+    currentCorrection = data.errors.correction || originalText;
+    
+    // Construction du HTML pour les erreurs
+    let errorsHtml = '';
+    if (data.errors.details && data.errors.details.length) {
+        errorsHtml = data.errors.details.map(error => `
+            <li class="mb-2">
+                <div class="fw-bold">${error.message}</div>
+                ${error.context ? `<div class="text-muted small">Contexte: ${error.context}</div>` : ''}
+                ${error.replacements?.length ? `
+                    <div class="mt-1">
+                        <span class="small">Suggestions:</span>
+                        ${error.replacements.map(r => `<span class="badge bg-success ms-1">${r}</span>`).join('')}
+                    </div>
+                ` : ''}
+            </li>
+        `).join('');
+    } else if (data.errors.error) {
+        // Fallback si pas de détails mais message d'erreur
+        errorsHtml = `
+            <li>
+                <div class="fw-bold">Suggestions de correction :</div>
+                <div class="mt-2">${data.errors.error.replace(/\n/g, '<br>')}</div>
+            </li>
+        `;
     }
 
-    currentCorrection = data.errors.correction || originalText; // Correction ici pour le typo
-    const errorsHtml = data.errors.details.map(error => `
-        <li>
-            <strong>${error.message}</strong><br>
-            <small class="text-muted">${error.context || getErrorContext(originalText, error.offset, error.length)}</small>
-            ${error.replacements?.length ? `
-                <div class="mt-1">Suggestions: ${error.replacements.join(', ')}</div>
-            ` : ''}
-        </li>
-    `).join('');
-
-    correctionContainer.innerHTML = `
-        <div class="alert alert-warning">
-            <strong><i class="fas fa-exclamation-triangle me-2"></i>
-            ${data.errors.details.length} erreur(s) trouvée(s):</strong>
-            <ul class="mt-2 mb-0">${errorsHtml}</ul>
-            <div class="d-flex gap-2 mt-3">
-                <button type="button" class="btn btn-sm btn-success" onclick="applyCorrection()">
-                    <i class="fas fa-check me-1"></i> Appliquer
-                </button>
-                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="dismissCorrection()">
-                    <i class="fas fa-times me-1"></i> Ignorer
-                </button>
+    if (errorsHtml) {
+        correctionContainer.innerHTML = `
+            <div class="alert alert-warning">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <h5 class="mb-0">${data.errors.details?.length || 1} suggestion(s) de correction</h5>
+                </div>
+                <ul class="mt-3 mb-1 ps-3">${errorsHtml}</ul>
+                <div class="d-flex gap-2 mt-3">
+                    <button type="button" class="btn btn-sm btn-success" onclick="applyCorrection()">
+                        <i class="fas fa-check me-1"></i> Appliquer les corrections
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="dismissCorrection()">
+                        <i class="fas fa-times me-1"></i> Ignorer
+                    </button>
+                </div>
             </div>
-        </div>
-    `;
+        `;
+    } else {
+        showAlert('success', 'Aucune erreur détectée dans le texte');
+    }
 }
-
     function handleError(error) {
         console.error('Erreur:', error);
         showAlert('danger', `Erreur: ${error.message}`);

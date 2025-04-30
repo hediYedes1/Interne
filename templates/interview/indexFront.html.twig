@@ -19,7 +19,15 @@
     }
 
     /* Icône dynamique après sélection */
+    #typeinterview[value="ENLIGNE"] {
+      background-color: var(--primary-light);
+      color: var(--primary);
+    }
 
+    #typeinterview[value="ENPERSONNE"] {
+      background-color: rgba(28, 200, 138, 0.1);
+      color: var(--success);
+    }
 
     /* Layout */
     .interview-container {
@@ -240,16 +248,6 @@
       margin-bottom: 1.5rem;
     }
 
-    #typeinterview[value="ENLIGNE"] {
-  background-color: var(--primary-light);
-  color: var(--primary);
-}
-
-#typeinterview[value="ENPERSONNE"] {
-  background-color: rgba(28, 200, 138, 0.1);
-  color: var(--success);
-}
-
     .empty-state h4 {
       color: var(--dark);
       margin-bottom: 1rem;
@@ -298,6 +296,60 @@
       margin-right: 0.5rem;
     }
 
+    /* Pagination Styles */
+    .pagination-container {
+      margin-top: 2rem;
+      padding: 1rem 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    .pagination {
+      --bs-pagination-color: #4e73df;
+      --bs-pagination-hover-color: #2a56c6;
+      --bs-pagination-active-bg: #4e73df;
+      --bs-pagination-active-border-color: #4e73df;
+      --bs-pagination-focus-box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+    }
+
+    .page-item.active .page-link {
+      font-weight: 600;
+      box-shadow: 0 2px 5px rgba(78, 115, 223, 0.3);
+    }
+
+    .page-link {
+      font-size: 0.9rem;
+      min-width: 40px;
+      text-align: center;
+      margin: 0 3px;
+      border-radius: 4px !important;
+      border: 1px solid #e3e6f0;
+      transition: all 0.2s ease;
+      color: #5a5c69;
+    }
+
+    .page-link:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 8px rgba(58, 59, 69, 0.1);
+      color: #4e73df;
+    }
+
+    .page-item.disabled .page-link {
+      color: #d1d3e2;
+    }
+
+    /* Responsive Pagination */
+    @media (max-width: 576px) {
+      .pagination {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      
+      .page-item {
+        margin-bottom: 0.5rem;
+      }
+    }
+
     /* Ensure Font Awesome icons are visible */
     .fas, .far {
       display: inline-block;
@@ -320,23 +372,23 @@
     <div class="search-form">
       <form method="get" action="{{ path('app_interview_index_front') }}" class="form-inline">
         <div class="form-group">
-             <input type="text" name="titreoffre" class="form-control" placeholder="🔍 Rechercher par titre"
+          <input type="text" name="titreoffre" class="form-control" placeholder="🔍 Rechercher par titre"
                  value="{{ app.request.get('titreoffre') }}">
-             </div>
+        </div>
         
-            <div class="form-group">
-            <select name="typeinterview" class="form-control">
+        <div class="form-group">
+          <select name="typeinterview" class="form-control">
             <option value="">🌐 Tous les types</option>
             <option value="ENLIGNE" {{ app.request.get('typeinterview') == 'ENLIGNE' ? 'selected' : '' }}>💻 En ligne</option>
             <option value="ENPERSONNE" {{ app.request.get('typeinterview') == 'ENPERSONNE' ? 'selected' : '' }}>🏢 En personne</option>
-             </select>
+          </select>
         </div>
         
         <button type="submit" class="search-btn btn-primary">
           <i class="fas fa-search"></i> Rechercher
         </button>
         
-        <a href="{{ path('app_interview_index_front') }}" class="search-btn btn-secondary" style="background-color: #6c757d; color: white;">
+        <a href="{{ path('app_interview_index_front') }}" class="search-btn btn-secondary">
           <i class="fas fa-undo"></i> Réinitialiser
         </a>
       </form>
@@ -353,14 +405,14 @@
           {% if app.request.get('titreoffre') %} | {% endif %}
           Type: <strong>{{ app.request.get('typeinterview') == 'ENLIGNE' ? 'En ligne' : 'En personne' }}</strong>
         {% endif %}
-        ({{ interviews|length }} résultat(s) trouvé(s))
+        ({{ pagination.getTotalItemCount }} résultat(s) trouvé(s))
       </div>
     {% endif %}
 
     <!-- Interview Cards -->
     <div class="row">
-      {% if interviews|length > 0 %}
-        {% for interview in interviews %}
+      {% if pagination|length > 0 %}
+        {% for interview in pagination %}
           <div class="col-lg-6 col-xl-4 mb-4">
             <div class="interview-card">
               <div class="card-header">
@@ -462,6 +514,45 @@
         </div>
       {% endif %}
     </div>
+
+    <!-- Pagination -->
+    {% if pagination.pageCount > 1 %}
+      <div class="pagination-container">
+        <nav aria-label="Page navigation">
+          <ul class="pagination">
+            {% if pagination.currentPageNumber > 1 %}
+              <li class="page-item">
+                <a class="page-link" href="{{ path('app_interview_index_front', app.request.query.all|merge({'page': pagination.currentPageNumber-1})) }}">
+                  <i class="fas fa-chevron-left"></i>
+                </a>
+              </li>
+            {% endif %}
+
+            {% for page in 1..pagination.pageCount %}
+              {% if page == 1 or page == pagination.pageCount or (page >= pagination.currentPageNumber-2 and page <= pagination.currentPageNumber+2) %}
+                <li class="page-item {{ page == pagination.currentPageNumber ? 'active' : '' }}">
+                  <a class="page-link" href="{{ path('app_interview_index_front', app.request.query.all|merge({'page': page})) }}">
+                    {{ page }}
+                  </a>
+                </li>
+              {% elseif (page == pagination.currentPageNumber-3 or page == pagination.currentPageNumber+3) %}
+                <li class="page-item disabled">
+                  <span class="page-link">...</span>
+                </li>
+              {% endif %}
+            {% endfor %}
+
+            {% if pagination.currentPageNumber < pagination.pageCount %}
+              <li class="page-item">
+                <a class="page-link" href="{{ path('app_interview_index_front', app.request.query.all|merge({'page': pagination.currentPageNumber+1})) }}">
+                  <i class="fas fa-chevron-right"></i>
+                </a>
+              </li>
+            {% endif %}
+          </ul>
+        </nav>
+      </div>
+    {% endif %}
   </div>
 {% endblock %}
 
@@ -483,7 +574,13 @@
         placement: 'top',
         trigger: 'hover'
       });
+
+      // Animation de la pagination
+      $('.page-link').on('click', function(e) {
+        if (!$(this).parent().hasClass('active') && !$(this).parent().hasClass('disabled')) {
+          $('.interview-container').fadeTo(200, 0.5);
+        }
+      });
     });
   </script>
-  
 {% endblock %}

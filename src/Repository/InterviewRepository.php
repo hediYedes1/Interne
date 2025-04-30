@@ -21,7 +21,7 @@ class InterviewRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
-    public function findByFilters(?string $titre = null, ?string $type = null): array
+   /* public function findByFilters(?string $titre = null, ?string $type = null): array
     {
         $qb = $this->createQueryBuilder('i');
         
@@ -36,8 +36,24 @@ class InterviewRepository extends ServiceEntityRepository
         }
         
         return $qb->getQuery()->getResult();
-    }
+    }*/
+    public function findByFilters(?string $titre = null, ?string $type = null): \Doctrine\ORM\Query
+{
+    $qb = $this->createQueryBuilder('i');
     
+    if ($titre) {
+        $qb->andWhere('i.titreoffre LIKE :titre')
+           ->setParameter('titre', '%' . $titre . '%');
+    }
+
+    if ($type) {
+        $qb->andWhere('i.typeinterview = :type')
+           ->setParameter('type', $type);
+    }
+
+    return $qb->orderBy('i.dateinterview', 'DESC')->getQuery();
+}
+
     // src/Repository/InterviewRepository.php
     public function findInterviewsInNext24Hours(): array
     {
@@ -52,6 +68,7 @@ class InterviewRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
 
     public function getStatisticsByType(): array
     {

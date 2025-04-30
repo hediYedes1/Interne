@@ -1,66 +1,199 @@
-{% extends 'base1.html.twig' %}
+{% extends 'base2.html.twig' %}
 
 {% block title %}Tests Techniques{% endblock %}
 
 {% block css %}
   {{ parent() }}
   <style>
+    :root {
+      --primary-color: #007bff;
+      --success-color: #28a745;
+      --warning-color: #ffc107;
+      --danger-color: #dc3545;
+      --secondary-color: #6c757d;
+      --light-gray: #f8f9fa;
+      --dark-gray: #343a40;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+    }
+
+    /* General container styling */
+    .container-fluid {
+      padding: 1.5rem;
+    }
+
+    /* Badge styling */
     .badge {
-      font-size: 0.9em;
-      padding: 5px 10px;
-      border-radius: 4px;
+      font-size: 0.85em;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 12px;
+      text-transform: uppercase;
+      transition: var(--transition);
     }
     .badge-success {
-      background-color: #1cc88a;
+      background-color: var(--success-color);
       color: white;
     }
     .badge-warning {
-      background-color: #f6c23e;
-      color: white;
+      background-color: var(--warning-color);
+      color: var(--dark-gray);
     }
     .badge-danger {
-      background-color: #e74a3b;
+      background-color: var(--danger-color);
       color: white;
     }
-    .form-inline .form-control {
-      margin-right: 10px;
-      margin-bottom: 10px;
+
+    /* Form styling */
+    .form-inline {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
     }
+    .form-inline .form-control {
+      border-radius: 8px;
+      border: 1px solid #ced4da;
+      padding: 0.5rem 1rem;
+      transition: var(--transition);
+    }
+    .form-inline .form-control:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+    .form-inline .btn {
+      border-radius: 8px;
+      padding: 0.5rem 1.5rem;
+      font-weight: 500;
+    }
+
+    /* Responsive form adjustments */
     @media (max-width: 768px) {
-      .form-inline .form-control {
+      .form-inline {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .form-inline .form-control,
+      .form-inline .btn {
         width: 100%;
-        margin-right: 0;
       }
     }
-    .action-buttons .btn {
-      padding: 0.25rem 0.5rem;
-      font-size: 0.875rem;
+
+    /* Card container */
+    .card-container {
+      position: relative;
+      transition: var(--transition);
     }
+    .card-container:hover {
+      transform: translateY(-5px);
+    }
+
+    /* Card styling */
+    .card {
+      border: none;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      background-color: white;
+      transition: var(--transition);
+    }
+    .card-header {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 1rem;
+      border-bottom: none;
+    }
+    .card-body {
+      padding: 1.5rem;
+      color: var(--dark-gray);
+    }
+    .card-footer {
+      background-color: var(--light-gray);
+      padding: 1rem;
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .card-body p {
+      margin-bottom: 0.75rem;
+      font-size: 0.95em;
+    }
+    .questions-count {
+      font-size: 0.85em;
+      color: var(--secondary-color);
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    /* Quiz launch button */
     .quiz-launch-btn {
       position: absolute;
-      top: -10px;
-      right: -10px;
-      width: 40px;
-      height: 40px;
+      top: -15px;
+      right: -15px;
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 1;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      background-color: var(--success-color);
+      color: white;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      z-index: 10;
     }
-    .card-container {
-      position: relative;
+    .quiz-launch-btn:hover {
+      background-color: darken(var(--success-color), 10%);
+      transform: scale(1.1);
     }
-    .questions-count {
-      font-size: 0.8rem;
-      color: #6c757d;
+    .quiz-launch-btn:disabled {
+      background-color: var(--secondary-color);
+      cursor: not-allowed;
+    }
+
+    /* Action buttons */
+    .action-buttons .btn {
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      font-size: 0.9em;
+      transition: var(--transition);
+    }
+    .action-buttons .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    }
+    .btn-sm {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.85em;
+    }
+
+    /* Alert styling */
+    .alert-info {
+      border-radius: 8px;
+      background-color: #e7f1ff;
+      color: var(--dark-gray);
+      padding: 1rem;
+      font-size: 0.95em;
+    }
+
+    /* Typography */
+    h1.h3 {
+      font-weight: 700;
+      color: var(--dark-gray);
+    }
+    h2.text-primary {
+      font-weight: 600;
+      color: var(--primary-color);
+      margin-bottom: 1.5rem;
     }
   </style>
 {% endblock %}
 
 {% block sideBar %}
-  {{ parent() }}
+   
+ {{ parent() }}
 {% endblock %}
 
 {% block headside %}

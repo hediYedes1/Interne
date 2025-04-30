@@ -17,6 +17,9 @@ use App\Utils\GoogleOAuthService;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Psr\Log\LoggerInterface;
 use App\Utils\InterviewStatisticsService;
+use Doctrine\ORM\Tools\Pagination\Paginator;
+use Knp\Component\Pager\PaginatorInterface;
+
 
 
 
@@ -28,40 +31,59 @@ final class InterviewController extends AbstractController
 // src/Controller/InterviewController.php
 
 #[Route('/list', name: 'app_interview_index', methods: ['GET'])]
-public function index(Request $request, InterviewRepository $interviewRepository): Response
+public function index(Request $request, InterviewRepository $interviewRepository, PaginatorInterface $paginator): Response
 {
     $titre = $request->query->get('titreoffre');
     $type = $request->query->get('typeinterview');
-    
-    $interviews = $interviewRepository->findByFilters($titre, $type);
-    
+
+    $query = $interviewRepository->findByFilters($titre, $type);
+
+    $pagination = $paginator->paginate(
+        $query,
+        $request->query->getInt('page', 1),
+        5
+    );
+
     return $this->render('interview/index.html.twig', [
-        'interviews' => $interviews,
+        'pagination' => $pagination,
     ]);
 }
+
 #[Route('/listBack', name: 'app_interview_index_back', methods: ['GET'])]
-public function indexBack(Request $request, InterviewRepository $interviewRepository): Response
+public function indexBack(Request $request, InterviewRepository $interviewRepository, PaginatorInterface $paginator): Response
 {
     $titre = $request->query->get('titreoffre');
     $type = $request->query->get('typeinterview');
-    
-    $interviews = $interviewRepository->findByFilters($titre, $type);
-    
+
+    $query = $interviewRepository->findByFilters($titre, $type);
+
+    $pagination = $paginator->paginate(
+        $query,
+        $request->query->getInt('page', 1),
+        5
+    );
+
     return $this->render('interview/indexBack.html.twig', [
-        'interviews' => $interviews,
+        'pagination' => $pagination,
     ]);
 }
 
 #[Route('/listFront', name: 'app_interview_index_front', methods: ['GET'])]
-public function indexFront(Request $request, InterviewRepository $interviewRepository): Response
+public function indexFront(Request $request, InterviewRepository $interviewRepository,PaginatorInterface $paginator): Response
 {
     $titre = $request->query->get('titreoffre');
     $type = $request->query->get('typeinterview');
-    
-    $interviews = $interviewRepository->findByFilters($titre, $type);
-    
+
+    $query = $interviewRepository->findByFilters($titre, $type);
+
+    $pagination = $paginator->paginate(
+        $query,
+        $request->query->getInt('page', 1),
+        12
+    );
+
     return $this->render('interview/indexFront.html.twig', [
-        'interviews' => $interviews,
+        'pagination' => $pagination,
     ]);
 }
     

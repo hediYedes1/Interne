@@ -149,7 +149,7 @@ class GrammarCheckerService
             ]
         ];
     }
-
+/*
     private function processApiResponse($response, string $originalText): array
 {
     $content = $response->getContent(false);
@@ -192,7 +192,63 @@ class GrammarCheckerService
         ]
     ];
 }
+    */
+    private function processApiResponse($response, string $originalText): array
+    {
+        $content = $response->getContent(false);
+        $data = json_decode($content, true);
     
+        if (!isset($data['errors'])) {
+            return $this->postCheckGrammar($originalText);
+        }
+    
+        $correction = $data['errors']['correction'] ?? $originalText;
+        $rawError = $data['errors']['error'] ?? '';
+    
+        // Nouveau traitement pour extraire les erreurs du texte
+        $details = [];
+        if (!empty($rawError)) {
+            // Extraction des erreurs et suggestions
+            if (preg_match_all('/\\d+\\.\\s+"([^"]+)" (?:is|are) (?:a )?(?:misspelling|error)[^"]+"([^"]+)"/i', $rawError, $matches, PREG_SET_ORDER)) {
+                foreach ($matches as $match) {
+                    $errorWord = $match[1];
+                    $suggestion = $match[2];
+                    $offset = mb_strpos($originalText, $errorWord);
+                    
+                    if ($offset !== false) {
+                        $details[] = [
+                            'message' => "Faute d'orthographe: '$errorWord' → '$suggestion'",
+                            'context' => $this->getErrorContext($originalText, $offset, mb_strlen($errorWord)),
+                            'offset' => $offset,
+                            'length' => mb_strlen($errorWord),
+                            'rule' => 'Orthographe',
+                            'replacements' => [$suggestion]
+                        ];
+                    }
+                }
+            }
+            
+            // Si aucune erreur structurée trouvée, on utilise le message brut
+            if (empty($details) && !empty($rawError)) {
+                $details[] = [
+                    'message' => "Correction suggérée",
+                    'context' => $originalText,
+                    'offset' => 0,
+                    'length' => mb_strlen($originalText),
+                    'rule' => 'Grammaire',
+                    'replacements' => [$correction]
+                ];
+            }
+        }
+    
+        return [
+            'errors' => [
+                'error' => $rawError,
+                'correction' => $correction,
+                'details' => $details
+            ]
+        ];
+    }
 
     private function postCheckGrammar(string $text): array
     {
