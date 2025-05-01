@@ -3,90 +3,136 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
-use App\Entity\Offre;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 class Projet
 {
-
     #[ORM\Id]
+    #[ORM\GeneratedValue]
     #[ORM\Column(type: "integer")]
-    private int $idprojet;
+    private ?int $idprojet = null;
 
-        #[ORM\ManyToOne(targetEntity: Offre::class, inversedBy: "projets")]
-    #[ORM\JoinColumn(name: 'idoffre', referencedColumnName: 'idoffre', onDelete: 'CASCADE')]
-    private Offre $idoffre;
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Le titre du projet est requis.")]
+    #[Assert\Length(
+        min: 5,
+        max: 255,
+        minMessage: "Le titre doit contenir au moins {{ limit }} caractères.",
+        maxMessage: "Le titre ne peut pas dépasser {{ limit }} caractères."
+    )]
+    private ?string $titreprojet = null;
 
     #[ORM\Column(type: "text")]
-    private string $titreprojet;
-
-    #[ORM\Column(type: "text")]
-    private string $descriptionprojet;
+    #[Assert\NotBlank(message: "La description est requise.")]
+    #[Assert\Length(
+        min: 10,
+        minMessage: "La description doit contenir au moins {{ limit }} caractères."
+    )]
+    private ?string $descriptionprojet = null;
 
     #[ORM\Column(type: "date")]
-    private \DateTimeInterface $datedebut;
+    #[Assert\NotBlank(message: "La date de début est requise.")]
+    #[Assert\Type(\DateTimeInterface::class, message: "La date de début est invalide.")]
+    private ?\DateTimeInterface $datedebut = null;
 
     #[ORM\Column(type: "date")]
-    private \DateTimeInterface $datefin;
+    #[Assert\NotBlank(message: "La date de fin est requise.")]
+    #[Assert\Type(\DateTimeInterface::class, message: "La date de fin est invalide.")]
+    #[Assert\Expression(
+        "this.getDatefin() >= this.getDatedebut()",
+        message: "La date de fin doit être postérieure ou égale à la date de début."
+    )]
+    private ?\DateTimeInterface $datefin = null;
 
-    public function getIdprojet()
+    #[ORM\OneToMany(targetEntity: Offre::class, mappedBy: "projet", orphanRemoval: true)]
+    private Collection $offres;
+
+    public function __construct()
+    {
+        $this->offres = new ArrayCollection();
+    }
+
+    public function getIdprojet(): ?int
     {
         return $this->idprojet;
     }
 
-    public function setIdprojet($value)
-    {
-        $this->idprojet = $value;
-    }
-
-    public function getIdoffre()
-    {
-        return $this->idoffre;
-    }
-
-    public function setIdoffre($value)
-    {
-        $this->idoffre = $value;
-    }
-
-    public function getTitreprojet()
+    public function getTitreprojet(): ?string
     {
         return $this->titreprojet;
     }
 
-    public function setTitreprojet($value)
+    public function setTitreprojet(string $titreprojet): self
     {
-        $this->titreprojet = $value;
+        $this->titreprojet = $titreprojet;
+        return $this;
     }
 
-    public function getDescriptionprojet()
+    public function getDescriptionprojet(): ?string
     {
         return $this->descriptionprojet;
     }
 
-    public function setDescriptionprojet($value)
+    public function setDescriptionprojet(string $descriptionprojet): self
     {
-        $this->descriptionprojet = $value;
+        $this->descriptionprojet = $descriptionprojet;
+        return $this;
     }
 
-    public function getDatedebut()
+    public function getDatedebut(): ?\DateTimeInterface
     {
         return $this->datedebut;
     }
 
-    public function setDatedebut($value)
+    public function setDatedebut(\DateTimeInterface $datedebut): self
     {
-        $this->datedebut = $value;
+        $this->datedebut = $datedebut;
+        return $this;
     }
 
-    public function getDatefin()
+    public function getDatefin(): ?\DateTimeInterface
     {
         return $this->datefin;
     }
 
-    public function setDatefin($value)
+    public function setDatefin(\DateTimeInterface $datefin): self
     {
-        $this->datefin = $value;
+        $this->datefin = $datefin;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Offre>
+     */
+    public function getOffres(): Collection
+    {
+        return $this->offres;
+    }
+
+    public function addOffre(Offre $offre): self
+    {
+        if (!$this->offres->contains($offre)) {
+            $this->offres->add($offre);
+            $offre->setProjet($this);
+        }
+        return $this;
+    }
+
+    public function removeOffre(Offre $offre): self
+    {
+        if ($this->offres->removeElement($offre)) {
+            if ($offre->getProjet() === $this) {
+                $offre->setProjet(null);
+            }
+        }
+        return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->titreprojet ?? '';
     }
 }

@@ -1,0 +1,158 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails de l'offre{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+
+    {# Affichage de l'alerte flash si présente #}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    <h1 class="text-center mb-4">Détails de l'offre</h1>
+
+    <div class="card shadow p-4">
+        <table class="table table-bordered">
+            <tbody>
+                <tr><th>Id</th><td>{{ offre.idoffre }}</td></tr>
+                <tr><th>Titre</th><td>{{ offre.titreoffre }}</td></tr>
+                <tr><th>Description</th><td>{{ offre.descriptionoffre }}</td></tr>
+                <tr><th>Salaire</th><td>{{ offre.salaireoffre }}</td></tr>
+                <tr><th>Localisation</th><td>{{ offre.localisationoffre }}</td></tr>
+                <tr><th>Email RH</th><td>{{ offre.emailrh }}</td></tr>
+                <tr><th>Type de contrat</th><td>{{ offre.typecontrat.value }}</td></tr>
+                <tr>
+                    <th>Date limite</th>
+                    <td>
+                        {{ datelimiteFormatted }}
+                        {% if not isExpired %}
+                            <div class="mt-2">
+                                <strong>Temps restant :</strong>
+                                <span id="countdown-timer" class="badge bg-primary">
+                                    <span id="countdown-days">0</span>j 
+                                    <span id="countdown-hours">00</span>:<span id="countdown-minutes">00</span>:<span id="countdown-seconds">00</span>
+                                </span>
+                            </div>
+                        {% else %}
+                            <span class="badge bg-danger">Expirée</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Projet associé</th>
+                    <td>
+                        {% if offre.projet %}
+                            <strong>Titre :</strong> {{ offre.projet.titreprojet }}<br>
+                            <strong>Description :</strong> {{ offre.projet.descriptionprojet }}<br>
+                            <strong>Début :</strong> {{ offre.projet.datedebut|date('Y-m-d') }}<br>
+                            <strong>Fin :</strong> {{ offre.projet.datefin|date('Y-m-d') }}
+                        {% else %}
+                            <em class="text-muted">Pas de projet associé</em>
+                        {% endif %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="d-flex justify-content-between mt-4">
+            <a href="{{ path('front_offre_index') }}" class="btn btn-outline-primary">
+                <i class="fas fa-arrow-left"></i> Retour
+            </a>
+
+            <div class="d-flex gap-2">
+                <a href="{{ path('front_offre_edit', {'idoffre': offre.idoffre}) }}" class="btn btn-warning text-white">
+                    <i class="fas fa-edit"></i> Modifier
+                </a>
+
+                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ offre.idoffre }}">
+                    <i class="fas fa-trash-alt"></i> Supprimer
+                </button>
+            </div>
+        </div>
+
+        <!-- Modal Bootstrap 5 -->
+        <div class="modal fade" id="deleteModal{{ offre.idoffre }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ offre.idoffre }}" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel{{ offre.idoffre }}">Confirmation de suppression</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Êtes-vous sûr de vouloir supprimer cette offre ?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <form action="{{ path('front_offre_delete', {'idoffre': offre.idoffre}) }}" method="POST" style="display:inline;">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ offre.idoffre) }}">
+                            <button type="submit" class="btn btn-danger">Supprimer</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Boutons supplémentaires -->
+        <div class="d-flex justify-content-end mt-4 gap-2">
+            <a href="{{ path('front_offre_new') }}" class="btn btn-success text-white">
+                <i class="fas fa-plus-circle"></i> Nouvelle offre
+            </a>
+            <a href="{{ path('app_postuler', {'id': offre.idoffre}) }}" class="btn btn-primary text-white" id="apply-btn" {{ isExpired ? 'disabled' : '' }}>
+                Postuler à cette offre
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% if not isExpired %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let totalSeconds = {{ remainingTime }};
+            const applyBtn = document.getElementById('apply-btn');
+
+            function formatTime(seconds) {
+                const days = Math.floor(seconds / (3600 * 24));
+                const hours = Math.floor((seconds % (3600 * 24)) / 3600);
+                const minutes = Math.floor((seconds % 3600) / 60);
+                const secs = seconds % 60;
+
+                return {
+                    days: days,
+                    hours: hours.toString().padStart(2, '0'),
+                    minutes: minutes.toString().padStart(2, '0'),
+                    seconds: secs.toString().padStart(2, '0')
+                };
+            }
+
+            function updateCountdown() {
+                if (totalSeconds <= 0) {
+                    document.getElementById('countdown-timer').innerHTML =
+                        '<span class="badge bg-danger">Expirée</span>';
+                    if (applyBtn) applyBtn.disabled = true;
+                    return;
+                }
+
+                const time = formatTime(totalSeconds);
+                document.getElementById('countdown-days').textContent = time.days;
+                document.getElementById('countdown-hours').textContent = time.hours;
+                document.getElementById('countdown-minutes').textContent = time.minutes;
+                document.getElementById('countdown-seconds').textContent = time.seconds;
+
+                totalSeconds--;
+                setTimeout(updateCountdown, 1000);
+            }
+
+            updateCountdown();
+        });
+    </script>
+    {% endif %}
+{% endblock %}

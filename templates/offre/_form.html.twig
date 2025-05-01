@@ -1,0 +1,79 @@
+{{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+
+<div class="mb-3">
+    {{ form_label(form.titreoffre, "Titre de l'offre", {'label_attr': {'class': 'form-label'}}) }}
+    {{ form_widget(form.titreoffre, {'attr': {'class': 'form-control'}}) }}
+    <div class="text-danger">
+        {{ form_errors(form.titreoffre) }}
+    </div>
+</div>
+
+<div class="mb-3">
+    {{ form_label(form.descriptionoffre, "Description", {'label_attr': {'class': 'form-label'}}) }}
+    {{ form_widget(form.descriptionoffre, {'attr': {'class': 'form-control'}}) }}
+    <div class="text-danger">
+        {{ form_errors(form.descriptionoffre) }}
+    </div>
+</div>
+
+<div class="mb-3">
+    {{ form_label(form.salaireoffre, "Salaire", {'label_attr': {'class': 'form-label'}}) }}
+    {{ form_widget(form.salaireoffre, {'attr': {'class': 'form-control'}}) }}
+    <div class="text-danger">
+        {{ form_errors(form.salaireoffre) }}
+    </div>
+</div>
+
+<div class="mb-3">
+    {{ form_label(form.localisationoffre, "Localisation", {'label_attr': {'class': 'form-label'}}) }}
+    {{ form_widget(form.localisationoffre, {'attr': {'class': 'form-control'}}) }}
+    <div class="text-danger">
+        {{ form_errors(form.localisationoffre) }}
+    </div>
+</div>
+
+<div class="mb-3">
+    {{ form_label(form.emailrh, "Email RH", {'label_attr': {'class': 'form-label'}}) }}
+    {{ form_widget(form.emailrh, {'attr': {'class': 'form-control'}}) }}
+    <div class="text-danger">
+        {{ form_errors(form.emailrh) }}
+    </div>
+</div>
+
+<div class="mb-3">
+    {{ form_label(form.typecontrat, "Type de contrat", {'label_attr': {'class': 'form-label'}}) }}
+    {{ form_widget(form.typecontrat, {'attr': {'class': 'form-select'}}) }}
+    <div class="text-danger">
+        {{ form_errors(form.typecontrat) }}
+    </div>
+</div>
+
+
+<div class="mb-3">
+    {{ form_label(form.datelimite, "Date limite", {'label_attr': {'class': 'form-label'}}) }}
+    {{ form_widget(form.datelimite, {'attr': {'class': 'form-control'}}) }}
+    <div class="text-danger">
+        {{ form_errors(form.datelimite) }}
+    </div>
+</div>
+<div class="mb-3">
+    {{ form_label(form.projet, "Projet associé", {'label_attr': {'class': 'form-label'}}) }}
+    {{ form_widget(form.projet, {
+        'attr': {
+            'class': 'form-select',
+            'data-placeholder': 'Sélectionnez un projet'
+        }
+    }) }}
+    <small class="text-muted">Optionnel - sélectionnez le projet lié à cette offre</small>
+    <div class="text-danger">
+        {{ form_errors(form.projet) }}
+    </div>
+</div>
+
+<div class="text-center mt-4">
+    <button class="btn btn-primary">
+        {{ button_label|default('Enregistrer') }}
+    </button>
+</div>
+
+{{ form_end(form) }}

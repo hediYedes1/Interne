@@ -1,0 +1,58 @@
+{% extends 'base1.html.twig' %}
+
+{% block title %}Modifier le Projet{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        {# Flash messages added here #}
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }} alert-dismissible fade show mb-4">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        <div class="card shadow-lg p-4 rounded col-md-8 mx-auto">
+            <div class="card-body">
+                <h2 class="text-center mb-4">Modifier le projet</h2>
+
+                {{ include('projet/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
+
+                <div class="text-center mt-3">
+                    <a href="{{ path('back_projet_index') }}" class="btn btn-link">← Retour à la liste</a>
+                </div>
+
+                <!-- Bouton pour ouvrir la modale -->
+                <div class="text-center mt-4">
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ projet.idprojet }}">
+                        <i class="fas fa-trash-alt"></i> Supprimer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale de confirmation Bootstrap 5 -->
+    <div class="modal fade" id="deleteModal{{ projet.idprojet }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ projet.idprojet }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel{{ projet.idprojet }}">Confirmation de suppression</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    Êtes-vous sûr de vouloir supprimer ce projet ?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <form action="{{ path('back_projet_delete', {'idprojet': projet.idprojet}) }}" method="POST" style="display:inline;">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ projet.idprojet) }}">
+                        <button type="submit" class="btn btn-danger">Supprimer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

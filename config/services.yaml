@@ -1,9 +1,9 @@
-# This file is the entry point to configure your own services.
-# Files in the packages/ subdirectory configure your dependencies.
-
-# Put parameters here that don't need to change on each machine where the app is deployed
-# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+# config/services.yaml
 parameters:
+    # Environment variables will be used instead
+    env(CLOUDINARY_CLOUD_NAME): 'dkjyekxne'
+    env(CLOUDINARY_API_KEY): '635948861942666'
+    env(CLOUDINARY_API_SECRET): 'hoMRHm2K9a7LPaSEIg7AfkSqNU4'
     google.redirect_uri: 'http://localhost:8000/auth/google/callback'
     logo_directory: '%kernel.project_dir%/public/uploads/logos'
 
@@ -17,6 +17,10 @@ services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        bind:              # Global parameter binding
+            $logger: '@logger'
+            $httpClient: '@http_client'
+            $params: '@parameter_bag'
 
     App\Utils\GoogleOAuthService:
         arguments:
@@ -45,28 +49,26 @@ services:
             - '../src/Kernel.php'
             - '../src/Tests/'
 
-    # add more service definitions when explicit configuration is needed
+    # Explicit service definitions
+    Cloudinary\Cloudinary:
+        arguments:
+            - cloud_name: '%env(CLOUDINARY_CLOUD_NAME)%'
+              api_key: '%env(CLOUDINARY_API_KEY)%'
+              api_secret: '%env(CLOUDINARY_API_SECRET)%'
 
-    # Explicitly register the LoginSuccessHandler service
-    App\Security\LoginSuccessHandler:
+    Smalot\PdfParser\Parser: ~
+
+    # Service definitions with explicit configuration (lowercase to match your directory)
+    App\services\UploadService:
         arguments:
-            $router: '@router'
-    # please note that last definitions always *replace* previous ones
-    # Face recognition service
-    App\Service\FaceRecognitionService:
-        public: true
-        arguments:
-            $httpClient: '@Symfony\Contracts\HttpClient\HttpClientInterface'
-            $params: '@parameter_bag'
             $logger: '@logger'
-
-
-    # CAPTCHA service
-    App\Service\CaptchaService:
-        public: true
-
-    # Face authenticator - SIMPLIFIED version
-    App\Security\FaceAuthenticator:
-        tags: [security.authenticator.custom]
-
-
+    
+    App\services\CVParserService:
+        arguments:
+            $logger: '@logger'
+            $params: '@parameter_bag'
+    
+    App\services\SimilarityService:
+        arguments:
+            $httpClient: '@http_client'
+            $logger: '@logger'

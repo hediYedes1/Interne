@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+{% block title %}Liste des projets{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1 class="mb-4 text-center">Liste des projets</h1>
+
+    <form id="searchForm" class="row mb-4">
+        <div class="col-md-6">
+            <input type="text" name="search" id="searchInput" class="form-control" placeholder="Rechercher un projet..." value="{{ searchQuery }}">
+        </div>
+        
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="fas fa-search"></i> Rechercher
+            </button>
+        </div>
+        {% if searchQuery %}
+        <div class="col-md-2">
+            <a href="{{ path('front_projet_index') }}" class="btn btn-secondary w-100">
+                <i class="fas fa-times"></i> Réinitialiser
+            </a>
+        </div>
+        {% endif %}
+    </form>
+
+    <div class="d-flex justify-content-end mb-3">
+        <a href="{{ path('front_projet_new') }}" class="btn btn-success">
+            <i class="fas fa-plus"></i> Créer un nouveau projet
+        </a>
+    </div>
+
+    <div id="projetsContainer" class="row">
+        {% include 'projet/_projets_list.html.twig' %}
+    </div>
+</div>
+
+{% block javascripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const projetsContainer = document.getElementById('projetsContainer');
+    let timer;
+
+    // Recherche dynamique
+    searchInput.addEventListener('input', function() {
+        clearTimeout(timer);
+        timer = setTimeout(function() {
+            performSearch(searchInput.value);
+        }, 300); // Délai de 300ms après la dernière frappe
+    });
+
+    // Soumission du formulaire
+    document.getElementById('searchForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        performSearch(searchInput.value);
+    });
+
+    function performSearch(query) {
+        const route = "{{ path('front_projet_index') }}";
+        
+        fetch(route + '?search=' + encodeURIComponent(query), {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.text())
+        .then(html => {
+            projetsContainer.innerHTML = html;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+});
+</script>
+{% endblock %}
+{% endblock %}

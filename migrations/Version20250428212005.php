@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250401104045 extends AbstractMigration
+final class Version20250428212005 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -21,10 +21,13 @@ final class Version20250401104045 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql(<<<'SQL'
-            ALTER TABLE interview CHANGE typeinterview typeinterview VARCHAR(20) NOT NULL
+            ALTER TABLE interview DROP FOREIGN KEY FK_INTERVIEW_OFFRE
         SQL);
         $this->addSql(<<<'SQL'
-            ALTER TABLE testtechnique CHANGE statuttesttechnique statuttesttechnique VARCHAR(20) NOT NULL
+            ALTER TABLE interview CHANGE typeinterview typeinterview ENUM('ENLIGNE', 'ENPERSONNE') NOT NULL
+        SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE testtechnique CHANGE statuttesttechnique statuttesttechnique ENUM('REFUSE', 'ACCEPTE', 'ENATTENTE') NOT NULL
         SQL);
     }
 
@@ -32,10 +35,10 @@ final class Version20250401104045 extends AbstractMigration
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql(<<<'SQL'
-            ALTER TABLE interview CHANGE typeinterview typeinterview ENUM('ENLIGNE', 'ENPERSONNE') NOT NULL
+            ALTER TABLE interview CHANGE typeinterview typeinterview VARCHAR(255) NOT NULL
         SQL);
         $this->addSql(<<<'SQL'
-            ALTER TABLE testtechnique CHANGE statuttesttechnique statuttesttechnique ENUM('REFUSE', 'ACCEPTE', 'ENATTENTE') NOT NULL
+            ALTER TABLE testtechnique CHANGE statuttesttechnique statuttesttechnique VARCHAR(255) NOT NULL
         SQL);
     }
 }

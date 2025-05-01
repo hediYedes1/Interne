@@ -15,6 +15,7 @@
 
 		<!-- Title -->
         <title>{% block title %}Welcome!{% endblock %}</title>
+        <title>Interne.</title>
 		
 		<!-- Favicon -->
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚕️</text></svg>">
@@ -145,6 +146,47 @@
     </div>
 </div>
 {% endblock %}
+			<div class="header-inner">
+				<div class="container">
+					<div class="inner">
+						<div class="row">
+							<div class="col-lg-3 col-md-3 col-12">
+								<!-- Start Logo -->
+								<div class="logo">
+									<a href="index.html"><img src="img/logoIn.png" alt="#"></a>
+								</div>
+								<!-- End Logo -->
+								<!-- Mobile Nav -->
+								<div class="mobile-nav"></div>
+								<!-- End Mobile Nav -->
+							</div>
+							<div class="col-lg-7 col-md-9 col-12">
+								<!-- Main Menu -->
+								<div class="main-menu">
+									<nav class="navigation">
+										<ul class="nav menu">
+											<li class="active"><a href="#">Home</a>
+											
+											<li><a href="#">Interview </a></li>
+											<li><a href="#">Partenariat </a></li>
+											<li><a href="#">Publication</a>
+											<li><a href="{{ path('front_projet_index') }}">Projet</a></li>
+											<li><a href="{{ path('front_offre_index') }}">Offre</a></li>
+											<li><a href="#">Entreprise</a></li>
+							                <li><a href="#">Partenariat</a></li>
+							
+											<li><a href="contact.html">Contact Us</a></li>
+										</ul>
+									</nav>
+								</div>
+								<!--/ End Main Menu -->
+							</div>
+							
+						</div>
+					</div>
+				</div>
+			</div>
+            {% endblock %}
 			<!--/ End Header Inner -->
 		</header>
 		<!-- End Header Area -->
@@ -635,7 +677,16 @@
 									</div>
 									<div class="col-lg-6 col-md-6 col-12">
 										<ul>
-											<li><a href="#"><i class="fa fa-caret-right" aria-hidden="true"></i>Projet</a></li>
+											<li>
+												<a href="{{ path('front_projet_index') }}">
+													<i class="fa fa-caret-right" aria-hidden="true"></i> Projet
+												</a>
+											</li>
+											<li>
+												<a href="{{ path('front_offre_index') }}">
+													<i class="fa fa-caret-right" aria-hidden="true"></i> Offre
+												</a>
+											</li>		
 											<li><a href="#"><i class="fa fa-caret-right" aria-hidden="true"></i>Publications</a></li>
 											<li><a href="#"><i class="fa fa-caret-right" aria-hidden="true"></i>Entreprises</a></li>
 											<li><a href="#"><i class="fa fa-caret-right" aria-hidden="true"></i>Partenariat</a></li>
@@ -687,7 +738,7 @@
 		</footer>
         {% endblock %}
 		<!--/ End Footer Area -->
-		
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
 		<!-- jquery Min JS -->
         {% block js %}
         <script src="{{ asset('js/jquery.min.js') }}"></script>
@@ -724,59 +775,13 @@
 <!-- Magnific Popup JS -->
 <script src="{{ asset('js/jquery.magnific-popup.min.js') }}"></script>
 <!-- Counter Up CDN JS (Lien externe, pas besoin de asset) -->
-<script src="http://cdnjs.cloudflare.com/ajax/libs/waypoints/2.0.3/waypoints.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/2.0.3/waypoints.min.js"></script>
 <!-- Bootstrap JS -->
 <script src="{{ asset('js/bootstrap.min.js') }}"></script>
 <!-- Main JS -->
 <script src="{{ asset('js/main.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gmaps.js/0.4.24/gmaps.min.js"></script>
 
-        <script>
-            const ws = new WebSocket('ws://localhost:8080');
-            
-            ws.onmessage = function(event) {
-                const data = JSON.parse(event.data);
-                
-                // Créer la notification
-                if (Notification.permission === "granted") {
-                    new Notification(data.message, {
-                        body: `Date: ${data.data.date} à ${data.data.time}`,
-                        icon: '/images/notification-icon.png'
-                    });
-                }
-
-                // Mettre à jour le compteur de notifications
-                const badge = document.querySelector('.pc-h-badge');
-                if (badge) {
-                    const currentCount = parseInt(badge.textContent) || 0;
-                    badge.textContent = currentCount + 1;
-                }
-
-                // Ajouter la notification à la liste
-                const notificationList = document.querySelector('.list-group');
-                if (notificationList) {
-                    const notificationItem = document.createElement('a');
-                    notificationItem.className = 'list-group-item list-group-item-action';
-                    notificationItem.innerHTML = `
-                        <div class="d-flex">
-                            <div class="flex-shrink-0">
-                                <i class="ti ti-calendar-event text-primary"></i>
-                            </div>
-                            <div class="flex-grow-1 ms-1">
-                                <span class="float-end text-muted">${data.timestamp}</span>
-                                <p class="text-body mb-1">${data.message}</p>
-                                <span class="text-muted">Interview #${data.data.interview_id}</span>
-                            </div>
-                        </div>
-                    `;
-                    notificationList.insertBefore(notificationItem, notificationList.firstChild);
-                }
-            };
-
-            // Demander la permission pour les notifications
-            if (Notification.permission !== "granted" && Notification.permission !== "denied") {
-                Notification.requestPermission();
-            }
-        </script>
         {% endblock %}
     </body>
 </html>
