@@ -12,8 +12,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/brancheentreprise')]
-final class BrancheentrepriseController extends AbstractController{
-    #[Route('/list',name: 'app_brancheentreprise_index', methods: ['GET'])]
+final class BrancheentrepriseController extends AbstractController
+{
+    #[Route('/list', name: 'app_brancheentreprise_index', methods: ['GET'])]
     public function index(EntityManagerInterface $entityManager): Response
     {
         $brancheentreprises = $entityManager
@@ -24,35 +25,43 @@ final class BrancheentrepriseController extends AbstractController{
             'brancheentreprises' => $brancheentreprises,
         ]);
     }
+
     #[Route('/new/{id}', name: 'app_brancheentreprise_new', methods: ['GET', 'POST'])]
-public function new(Request $request, EntityManagerInterface $entityManager, $id): Response
-{
-    $brancheentreprise = new Brancheentreprise();
-    $form = $this->createForm(BrancheentrepriseType::class, $brancheentreprise);
-    $form->handleRequest($request);
+    public function new(Request $request, EntityManagerInterface $entityManager, $id): Response
+    {
+        $brancheentreprise = new Brancheentreprise();
+        $form = $this->createForm(BrancheentrepriseType::class, $brancheentreprise);
+        $form->handleRequest($request);
 
-    // Récupération de l'entreprise
-    $entreprise = $entityManager->getRepository(Entreprise::class)->find($id);
+        // Récupération de l'entreprise
+        $entreprise = $entityManager->getRepository(Entreprise::class)->find($id);
 
-    if (!$entreprise) {
-        throw $this->createNotFoundException('Entreprise non trouvée avec l\'ID : ' . $id);
-    }
+        if (!$entreprise) {
+            throw $this->createNotFoundException('Entreprise non trouvée avec l\'ID : ' . $id);
+        }
 
-    if ($form->isSubmitted() && $form->isValid()) {
-        $brancheentreprise->setIdentreprise($entreprise);
-        $entityManager->persist($brancheentreprise);
-        $entityManager->flush();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $brancheentreprise->setIdentreprise($entreprise);
+            
+            // Récupérer les coordonnées du champ caché
+            $coords = $request->request->get('location_coords');
+            if ($coords) {
+                $brancheentreprise->setLocalisationbranche($coords);
+            }
+            
+            $entityManager->persist($brancheentreprise);
+            $entityManager->flush();
 
-        return $this->redirectToRoute('app_entreprise_show_back', [
-            'identreprise' => $entreprise->getIdentreprise(), // le paramètre attendu
+            return $this->redirectToRoute('app_entreprise_show_back', [
+                'identreprise' => $entreprise->getIdentreprise(),
+            ]);
+        }
+
+        return $this->render('brancheentreprise/new.html.twig', [
+            'brancheentreprise' => $brancheentreprise,
+            'form' => $form,
         ]);
     }
-
-    return $this->render('brancheentreprise/new.html.twig', [
-        'brancheentreprise' => $brancheentreprise,
-        'form' => $form,
-    ]);
-}
 
     #[Route('/{idbranche}', name: 'app_brancheentreprise_show', methods: ['GET'])]
     public function show(Brancheentreprise $brancheentreprise): Response
@@ -67,24 +76,26 @@ public function new(Request $request, EntityManagerInterface $entityManager, $id
     {
         $form = $this->createForm(BrancheentrepriseType::class, $brancheentreprise);
         $form->handleRequest($request);
-    
+
         if ($form->isSubmitted() && $form->isValid()) {
+            // Récupérer les coordonnées du champ caché
+            $coords = $request->request->get('location_coords');
+            if ($coords) {
+                $brancheentreprise->setLocalisationbranche($coords);
+            }
+            
             $entityManager->flush();
-    
-            // Récupération de l'id de l'entreprise liée à la branche
-            $entrepriseId = $brancheentreprise->getIdentreprise()->getIdentreprise();
-    
+
             return $this->redirectToRoute('app_entreprise_show_back', [
-                'identreprise' => $entrepriseId
+                'identreprise' => $brancheentreprise->getIdentreprise()->getIdentreprise(),
             ], Response::HTTP_SEE_OTHER);
         }
-    
+
         return $this->render('brancheentreprise/edit.html.twig', [
-            'form' => $form->createView(),
-            'brancheentreprise' => $brancheentreprise
+            'brancheentreprise' => $brancheentreprise,
+            'form' => $form,
         ]);
     }
-    
 
     #[Route('/{idbranche}', name: 'app_brancheentreprise_delete', methods: ['POST'])]
     public function delete(Request $request, Brancheentreprise $brancheentreprise, EntityManagerInterface $entityManager): Response
@@ -94,11 +105,8 @@ public function new(Request $request, EntityManagerInterface $entityManager, $id
             $entityManager->flush();
         }
 
-        $entrepriseId = $brancheentreprise->getIdentreprise()->getIdentreprise();
-
         return $this->redirectToRoute('app_entreprise_show_back', [
-            'identreprise' => $entrepriseId
+            'identreprise' => $brancheentreprise->getIdentreprise()->getIdentreprise(),
         ], Response::HTTP_SEE_OTHER);
     }
-
 }

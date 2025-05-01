@@ -1,3 +1,14 @@
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+    </style>
+{% endblock %}
+
 {{ form_start(form, {'attr': {'class': 'form-horizontal', 'novalidate': 'novalidate'}}) }}
 
 <div class="card shadow-sm">
@@ -8,16 +19,18 @@
 
         <!-- Localisation -->
         <div class="form-group row">
-            <div class="col-md-6 mb-3">
+            <div class="col-md-12 mb-3">
                 {{ form_label(form.localisationbranche, 'Localisation', {'label_attr': {'class': 'form-label'}}) }}
+                <div id="map"></div>
                 {{ form_widget(form.localisationbranche, {
                     'attr': {
                         'class': 'form-control' ~ (app.request.isMethod('POST') and form.localisationbranche.vars.valid is same as(true) ? ' is-valid' : (form.localisationbranche.vars.valid is same as(false) ? ' is-invalid' : '')),
                         'maxlength': '255',
                         'required': 'required',
-                        'title': 'Veuillez entrer la localisation de la branche.'
+                        'title': 'Cliquez sur la carte pour sélectionner une localisation'
                     }
                 }) }}
+                <input type="hidden" id="location_coords" name="location_coords" value="{{ form.localisationbranche.vars.value|default('') }}" />
                 {{ form_errors(form.localisationbranche) }}
             </div>
 
@@ -77,8 +90,6 @@
                 }) }}
                 {{ form_errors(form.responsablebranche) }}
             </div>
-
-            
         </div>
 
         <!-- Utilisateur (si nécessaire) -->
@@ -101,11 +112,27 @@
             <button type="submit" class="btn btn-success">
                 <i class="bi bi-check-circle"></i> {{ button_label|default('Enregistrer') }}
             </button>
-            <a href="{{ path('app_brancheentreprise_index') }}" class="btn btn-secondary ms-2">
-                Annuler
-            </a>
+            {% if form.vars.data.identreprise is defined and form.vars.data.identreprise %}
+                <a href="{{ path('app_entreprise_show_back', {'identreprise': form.vars.data.identreprise.identreprise}) }}" class="btn btn-secondary ms-2">
+                    Annuler
+                </a>
+            {% else %}
+                <a href="{{ path('app_entreprise_show_back', {'identreprise': app.request.attributes.get('id')}) }}" class="btn btn-secondary ms-2">
+                    Annuler
+                </a>
+            {% endif %}
         </div>
     </div>
 </div>
 
 {{ form_end(form) }}
+
+{% block javascripts %}
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="{{ asset('js/map.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeMap(document.getElementById('location_coords').value);
+        });
+    </script>
+{% endblock %}

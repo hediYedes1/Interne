@@ -19,7 +19,7 @@ class Brancheentreprise
 
     #[ORM\ManyToOne(targetEntity: Entreprise::class, inversedBy: "brancheentreprises")]
     #[ORM\JoinColumn(name: 'identreprise', referencedColumnName: 'identreprise', onDelete: 'CASCADE')]
-    private Entreprise $identreprise;
+    private ?Entreprise $identreprise = null;
 
     #[ORM\ManyToOne(targetEntity: Utilisateur::class, inversedBy: "brancheentreprises")]
     #[ORM\JoinColumn(name: 'idutilisateur', referencedColumnName: 'idutilisateur', onDelete: 'CASCADE')]
@@ -80,12 +80,12 @@ private string $emailbranche;
         return $this->idbranche;
     }
 
-    public function getIdentreprise(): Entreprise
+    public function getIdentreprise(): ?Entreprise
     {
         return $this->identreprise;
     }
 
-    public function setIdentreprise(Entreprise $identreprise): self
+    public function setIdentreprise(?Entreprise $identreprise): self
     {
         $this->identreprise = $identreprise;
 

@@ -1,0 +1,43 @@
+{% for entreprise in entreprises %}
+    <tr>
+        <td>{{ entreprise.identreprise }}</td>
+        <td>{{ entreprise.nomentreprise }}</td>
+        <td>{{ entreprise.descriptionentreprise }}</td>
+        <td>
+            {% if entreprise.logoentreprise %}
+                <img src="{{ asset('uploads/logos/' ~ entreprise.logoentreprise) }}" alt="Logo" width="60" height="60" class="rounded-circle">
+            {% else %}
+                <span class="text-muted">N/A</span>
+            {% endif %}
+        </td>
+        <td>
+            {% if entreprise.urlentreprise %}
+                <a href="{{ entreprise.urlentreprise }}" target="_blank">{{ entreprise.urlentreprise }}</a>
+            {% else %}
+                <span class="text-muted">N/A</span>
+            {% endif %}
+        </td>
+        <td>{{ entreprise.secteurentreprise }}</td>
+        <td class="text-center">
+            <a href="{{ path('app_entreprise_show_back', {'identreprise': entreprise.identreprise}) }}" class="btn btn-sm btn-primary" title="Voir">
+                <i class="fas fa-eye"></i>
+            </a>
+            <a href="{{ path('app_entreprise_edit', {'identreprise': entreprise.identreprise}) }}" class="btn btn-sm btn-warning" title="Modifier">
+                <i class="fas fa-edit"></i>
+            </a>
+            <a href="{{ path('app_brancheentreprise_new', {'id': entreprise.identreprise}) }}" class="btn btn-sm btn-success" title="Associer une branche">
+                <i class="fas fa-plus"></i>
+            </a>
+            <a href="{{ path('app_departmententreprise_new', {'id': entreprise.identreprise}) }}" class="btn btn-sm btn-info" title="associer un departement">
+                <i class="fas fa-plus"></i>
+            </a>
+        </td>
+    </tr>
+{% else %}
+    <tr>
+        <td colspan="7" class="text-center text-muted py-4">
+            <i class="fas fa-info-circle fa-2x mb-2"></i><br>
+            Aucune entreprise trouvée.
+        </td>
+    </tr>
+{% endfor %} 
