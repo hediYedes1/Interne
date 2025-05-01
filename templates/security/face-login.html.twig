@@ -1,0 +1,127 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="text-center">Face Login</h3>
+                </div>
+                <div class="card-body">
+                    <div class="face-preview mb-3">
+                        <video id="loginVideo" width="100%" autoplay></video>
+                        <canvas id="loginCanvas" style="display:none;"></canvas>
+                    </div>
+                    
+                    <button id="captureFace" class="btn btn-primary btn-block">Capture & Login</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+{{ parent() }}
+<script>
+    $(document).ready(function() {
+        let video;
+        let canvas;
+        let isCapturing = false;
+
+        // Initialize video stream
+        async function initVideo() {
+            try {
+                video = document.getElementById('loginVideo');
+                canvas = document.getElementById('loginCanvas');
+                
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        width: 640, 
+                        height: 480,
+                        facingMode: 'user' // Front camera
+                    } 
+                });
+                video.srcObject = stream;
+                
+                video.onloadedmetadata = () => {
+                    video.play();
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                };
+            } catch (error) {
+                console.error('Error accessing camera:', error);
+                alert('Could not access camera. Please check permissions.');
+            }
+        }
+
+        // Capture and send face image
+        async function captureFace() {
+            if (isCapturing) return;
+            
+            isCapturing = true;
+            try {
+                // Draw current frame to canvas
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                // Convert to blob
+                canvas.toBlob(async (blob) => {
+                    const formData = new FormData();
+                    formData.append('face_image', blob, 'face.jpg');
+                    
+                    try {
+                        const response = await fetch('{{ path('app_face_login') }}', {
+                            method: 'POST',
+                            body: formData,
+                            credentials: 'same-origin'
+                        });
+                        
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            window.location.href = data.redirect;
+                        } else {
+                            alert(data.error || 'Face not recognized');
+                        }
+                    } catch (error) {
+                        console.error('Network error:', error);
+                        //redirect to page login
+                        window.location.href = '{{ path('app_login') }}';
+
+                    } finally {
+                        isCapturing = false;
+                    }
+                }, 'image/jpeg', 0.9);
+                
+            } catch (error) {
+                console.error('Error capturing face:', error);
+                alert('Error capturing face');
+                isCapturing = false;
+            }
+        }
+
+        // Initialize video when page loads
+        initVideo();
+
+        // Clean up when page is unloaded
+        $(window).on('unload', function() {
+            if (video && video.srcObject) {
+                video.srcObject.getTracks().forEach(track => track.stop());
+            }
+        });
+
+        // Capture button click handler
+        $('#captureFace').click(function() {
+            if (!isCapturing) {
+                captureFace();
+            }
+        });
+    });
+</script>
+{% endblock %} 

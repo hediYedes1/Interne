@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <!-- [Head] start -->
-<!-- Admin interface -->
-
-
+<!-- RH interface -->
 <head>
   <title>{% block title %}Dashboard {% endblock %}</title>
   <!-- [Meta] -->
@@ -16,7 +14,6 @@
 
   <!-- [Favicon] icon -->
   <link rel="icon" href="{{ asset('images/favicon.svg') }}" type="image/x-icon">
-  
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" id="main-font-link">
 {% block css %}
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
@@ -63,15 +60,9 @@
           <i class="ti ti-dashboard"></i>
         </li>
         <li class="pc-item">
-          <a href="{{ path('app_interview_index') }}" class="pc-link">
+          <a href="../elements/bc_typography.html" class="pc-link">
             <span class="pc-micon"><i class="ti ti-typography"></i></span>
             <span class="pc-mtext">Interview</span>
-          </a>
-        </li>
-        <li class="pc-item">
-          <a href="{{ path('app_utilisateur_index') }}" class="pc-link">
-            <span class="pc-micon"><i class="ti ti-color-swatch"></i></span>
-            <span class="pc-mtext">Utilisateurs</span>
           </a>
         </li>
         <li class="pc-item">
@@ -98,7 +89,7 @@
           </a>
         </li>
          <li class="pc-item">
-          <a href="{{ path('app_interview_index') }}" class="pc-link">
+          <a href="../pages/login.html" class="pc-link">
             <span class="pc-micon"><i class="ti ti-lock"></i></span>
             <span class="pc-mtext">Interview</span>
           </a>
@@ -116,7 +107,7 @@
           </a>
         </li>
         <li class="pc-item">
-          <a href="{{path('app_entreprise_index')}}" class="pc-link">
+          <a href="../pages/register.html" class="pc-link">
             <span class="pc-micon"><i class="ti ti-user-plus"></i></span>
             <span class="pc-mtext">Entreprise</span>
           </a>
@@ -133,11 +124,16 @@
             <span class="pc-mtext">Hebergement</span>
           </a>
         </li>
-        
          <li class="pc-item">
-          <a href="{{ path('app_user_ban_index') }}" class="pc-link">
+          <a href="../pages/login.html" class="pc-link">
             <span class="pc-micon"><i class="ti ti-lock"></i></span>
-            <span class="pc-mtext">interdiction d'utilisateur</span>
+            <span class="pc-mtext">Branche</span>
+          </a>
+        </li>
+        <li class="pc-item">
+          <a href="../pages/register.html" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-user-plus"></i></span>
+            <span class="pc-mtext">Departement</span>
           </a>
         </li>
         <li class="pc-item">
@@ -205,6 +201,7 @@
         </li>
         
       </ul>
+      </div>
     </div>
   </div>
 </nav>
@@ -216,7 +213,6 @@
 
 
 {% block headside %}
-<!-- [ Sidebar Menu ] end --> <!-- [ Header Topbar ] start -->
 <!-- [ Sidebar Menu ] end --> <!-- [ Header Topbar ] start -->
 <header class="pc-header">
   <div class="header-wrapper"> <!-- [Mobile Media Block] start -->
@@ -441,7 +437,6 @@
 
 {% endblock %}
 <!-- [ Header ] end -->
-
 
 
 

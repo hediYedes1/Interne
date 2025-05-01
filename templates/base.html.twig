@@ -1,3 +1,5 @@
+<!doctype html>
+<!-- Candidat interface -->
 
 <html class="no-js" lang="zxx">
     <head>
@@ -8,7 +10,9 @@
 		<meta name="description" content="">
 		<meta name='copyright' content=''>
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-		
+		<meta name="csrf-token" content="{{ csrf_token('app_utilisateur_register_face') }}">
+		<meta name="csrf-token" content="{{ csrf_token('face-registration') }}">
+
 		<!-- Title -->
         <title>Mediplus - Free Medical and Doctor Directory HTML Template.</title>
 		
@@ -88,7 +92,7 @@
 								{%if app.user %}
 								<ul class="top-contact">
 									<li><i class="fa fa-user"></i>{{ app.user.username }}</li>
-									<li><a href="{{ path('app_base3') }}">Se Déconnecter</a></li>
+									<li><a href="{{ path('app_logout') }}">Se Déconnecter</a></li>
 									<li><a href="{{ path('app_userProfile') }}">Profile</a></li> 
 								</ul>
 								{% else %}
@@ -155,7 +159,7 @@
 						<div class="row">
 							<div class="col-lg-7">
 								<div class="text">
-									<h1>Nous offrons des <span>services</span> pour faciliter la recherche de stages et d’hébergements en toute <span>confiance !</span></h1>
+									<h1>Nous offrons des <span>services</span> pour faciliter la recherche de stages et d'hébergements en toute <span>confiance !</span></h1>
 									 <p>Notre plateforme permet aux candidats de trouver facilement un stage et un hébergement adapté à leurs besoins.</p>
 									<div class="button">
 										<a href="#" class="btn">Get Appointment</a>
@@ -173,7 +177,7 @@
 						<div class="row">
 							<div class="col-lg-7">
 								<div class="text">
-									<h1>Nous offrons des <span>services</span> pour faciliter la recherche de stages et d’hébergements en toute <span>confiance !</span></h1> 
+									<h1>Nous offrons des <span>services</span> pour faciliter la recherche de stages et d'hébergements en toute <span>confiance !</span></h1> 
 									<p>Notre plateforme permet aux candidats de trouver facilement un stage et un hébergement adapté à leurs besoins.</p>
 									<div class="button">
 										<a href="#" class="btn">Get Appointment</a>
@@ -191,7 +195,7 @@
 						<div class="row">
 							<div class="col-lg-7">
 								<div class="text">
-									<h1>Nous offrons des <span>services</span> pour faciliter la recherche de stages et d’hébergements en toute <span>confiance !</span></h1> 
+									<h1>Nous offrons des <span>services</span> pour faciliter la recherche de stages et d'hébergements en toute <span>confiance !</span></h1> 
 									<p>Notre plateforme permet aux candidats de trouver facilement un stage et un hébergement adapté à leurs besoins.</p>
 									<div class="button">
 										<a href="#" class="btn">Get Appointment</a>
@@ -276,7 +280,7 @@
 				<div class="row">
 					<div class="col-lg-12">
 						<div class="section-title">
-							<h2>Nous sommes toujours prêts à vous aider dans votre recherche de stage et d’hébergement</h2>
+							<h2>Nous sommes toujours prêts à vous aider dans votre recherche de stage et d'hébergement</h2>
 							<img src="img/section-img.png" alt="#">
 							<p>Notre mission est de vous accompagner à chaque étape pour trouver l'opportunité qui vous correspond.</p>
 						</div>
@@ -382,7 +386,7 @@
 				<div class="row">
 					<div class="col-lg-12 col-md-12 col-12">
 						<div class="content">
-							<h2>Avez-vous besoin d’une aide urgente pour votre stage ou hébergement ? Appelez-nous au @ 1234 56789</h2>
+							<h2>Avez-vous besoin d'une aide urgente pour votre stage ou hébergement ? Appelez-nous au @ 1234 56789</h2>
 							<p>Nous sommes là pour vous accompagner et vous aider à trouver la meilleure opportunité.</p>
 							<div class="button">
 								<a href="#" class="btn">Contacter maintenant</a>
@@ -512,7 +516,7 @@
 						<!-- Start Single Service -->
 						<div class="single-service">
         <i class="icofont icofont-home"></i>
-        <h4><a href="service-details.html">Service d’Hébergement</a></h4>
+        <h4><a href="service-details.html">Service d'Hébergement</a></h4>
         <p>Nous aidons les candidats à trouver un hébergement adapté pendant leur stage.</p>	
     </div>
 						<!-- End Single Service -->
@@ -645,7 +649,7 @@
 						<div class="col-lg-3 col-md-6 col-12">
 							<div class="single-footer">
 								<h2>Horaires d'Ouverture</h2>
-								<p>Nous sommes disponibles pour vous accompagner dans votre recherche de stage et d’hébergement.</p>
+								<p>Nous sommes disponibles pour vous accompagner dans votre recherche de stage et d'hébergement.</p>
 								<ul class="time-sidual">
 									<li class="day">Lundi - Vendredi <span>8.00-20.00</span></li>
 									<li class="day">Samedi <span>9.00-18.30</span></li>
