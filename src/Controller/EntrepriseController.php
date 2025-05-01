@@ -2,25 +2,48 @@
 
 namespace App\Controller;
 
+
 use App\Entity\Entreprise;
 use App\Entity\Brancheentreprise;
 use App\Form\EntrepriseType;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
+
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+
+
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Endroid\QrCode\Builder\Builder;
-use Endroid\QrCode\Writer\PngWriter;
+
+
 use Endroid\QrCode\Encoding\Encoding;
-use Endroid\QrCode\ErrorCorrectionLevel;
-use Endroid\QrCode\RoundBlockSizeMode;
+
+use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
+use Endroid\QrCode\Label\Alignment\LabelAlignmentCenter;
 use Endroid\QrCode\Label\Font\NotoSans;
-use Endroid\QrCode\Label\LabelAlignment;
 use Endroid\QrCode\Label\Font\OpenSans;
 use Dompdf\Dompdf;
 use Dompdf\Options;
+
+
+use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
+
+use App\Repository\EntrepriseRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Writer\PngWriter;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\Routing\Annotation\Route;
+use Endroid\QrCode\Color\Color;
+use Endroid\QrCode\Logo\Logo;
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\ErrorCorrectionLevel;
+use Endroid\QrCode\Label\Label;
+use Endroid\QrCode\RoundBlockSizeMode;
+use Endroid\QrCode\Label\Alignment;
+use Endroid\QrCode\Label\LabelAlignment;
+
+
 
 #[Route('/entreprise')]
 final class EntrepriseController extends AbstractController
@@ -224,21 +247,24 @@ final class EntrepriseController extends AbstractController
             'logo' => $entreprise->getLogoentreprise()
         ];
 
-        $qrCode = Builder::create()
-            ->writer(new PngWriter())
-            ->writerOptions([])
-            ->data(json_encode($qrData))
-            ->encoding(new Encoding('UTF-8'))
-            ->errorCorrectionLevel(ErrorCorrectionLevel::High)
-            ->size(300)
-            ->margin(10)
-            ->roundBlockSizeMode(RoundBlockSizeMode::Margin)
-            ->labelText($entreprise->getNomentreprise())
-            ->labelFont(new NotoSans(20))
-            ->labelAlignment(LabelAlignment::Center)
-            ->build();
+        $qrCode = QrCode::create(json_encode($qrData))
+            ->setEncoding(new Encoding('UTF-8'))
+            ->setErrorCorrectionLevel(ErrorCorrectionLevel::High)
+            ->setSize(300)
+            ->setMargin(10)
+            ->setRoundBlockSizeMode(RoundBlockSizeMode::Margin)
+            ->setForegroundColor(new Color(0, 0, 0))
+            ->setBackgroundColor(new Color(255, 255, 255));
 
-        return new Response($qrCode->getString(), 200, ['Content-Type' => 'image/png']);
+        $label = Label::create($entreprise->getNomentreprise())
+            ->setTextColor(new Color(0, 0, 0))
+            ->setFont(new NotoSans(20))
+            ->setAlignment(LabelAlignment::CENTER);
+
+        $writer = new PngWriter();
+        $result = $writer->write($qrCode, null, $label);
+
+        return new Response($result->getString(), 200, ['Content-Type' => 'image/png']);
     }
 
     #[Route('/front/{identreprise}/qr-code-page', name: 'app_entreprise_qr_code_page', methods: ['GET'])]
@@ -252,24 +278,26 @@ final class EntrepriseController extends AbstractController
             'logo' => $entreprise->getLogoentreprise()
         ];
 
-        $qrCode = Builder::create()
-            ->writer(new PngWriter())
-            ->writerOptions([])
-            ->data(json_encode($qrData))
-            ->encoding(new Encoding('UTF-8'))
-            ->errorCorrectionLevel(ErrorCorrectionLevel::High)
-            ->size(300)
-            ->margin(10)
-            ->roundBlockSizeMode(RoundBlockSizeMode::Margin)
-            ->labelText($entreprise->getNomentreprise())
-            ->labelFont(new OpenSans(20))
-            ->labelAlignment(LabelAlignment::Center)
-            ->build();
+        $qrCode = QrCode::create(json_encode($qrData))
+            ->setEncoding(new Encoding('UTF-8'))
+            ->setErrorCorrectionLevel(ErrorCorrectionLevel::High)
+            ->setSize(300)
+            ->setMargin(10)
+            ->setRoundBlockSizeMode(RoundBlockSizeMode::Margin)
+            ->setForegroundColor(new Color(0, 0, 0))
+            ->setBackgroundColor(new Color(255, 255, 255));
+
+        $label = Label::create($entreprise->getNomentreprise())
+            ->setTextColor(new Color(0, 0, 0))
+            ->setFont(new OpenSans(20))
+            ->setAlignment(LabelAlignment::CENTER);
+
+        $writer = new PngWriter();
+        $result = $writer->write($qrCode, null, $label);
 
         return $this->render('entreprise/qrCodePage.html.twig', [
             'entreprise' => $entreprise,
-            'qrCode' => $qrCode->getDataUri(),
-            'qrData' => $qrData
+            'qrCode' => $result->getDataUri(),
         ]);
     }
 

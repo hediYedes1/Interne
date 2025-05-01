@@ -1,172 +1,7 @@
-{% block stylesheets %}
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <style>
-        #map {
-            height: 400px;
-            width: 100%;
-            margin-bottom: 15px;
-        }
-    </style>
-{% endblock %}
-
-{{ form_start(form, {'attr': {'class': 'form-horizontal', 'novalidate': 'novalidate'}}) }}
-
-<div class="card shadow-sm">
-    <div class="card-header bg-primary text-white">
-        <h5 class="mb-0">Informations de la Branche</h5>    
-    </div>
-    <div class="card-body">
-
-        <!-- Localisation -->
-        <div class="form-group row">
-            <div class="col-md-12 mb-3">
-                {{ form_label(form.localisationbranche, 'Localisation', {'label_attr': {'class': 'form-label'}}) }}
-                <div id="map"></div>
-                {{ form_widget(form.localisationbranche, {
-                    'attr': {
-                        'class': 'form-control' ~ (app.request.isMethod('POST') and form.localisationbranche.vars.valid is same as(true) ? ' is-valid' : (form.localisationbranche.vars.valid is same as(false) ? ' is-invalid' : '')),
-                        'maxlength': '255',
-                        'required': 'required',
-                        'title': 'Cliquez sur la carte pour sélectionner une localisation'
-                    }
-                }) }}
-                <input type="hidden" id="location_coords" name="location_coords" value="{{ form.localisationbranche.vars.value|default('') }}" />
-                {{ form_errors(form.localisationbranche) }}
-            </div>
-
-            <!-- Email -->
-            <div class="col-md-6 mb-3">
-                {{ form_label(form.emailbranche, 'Email', {'label_attr': {'class': 'form-label'}}) }}
-                {{ form_widget(form.emailbranche, {
-                    'attr': {
-                        'class': 'form-control' ~ (app.request.isMethod('POST') and form.emailbranche.vars.valid is same as(true) ? ' is-valid' : (form.emailbranche.vars.valid is same as(false) ? ' is-invalid' : '')),
-                        'pattern': '^[a-zA-Z0-9._%+-]+@esprit\.tn$',
-                        'title': 'Format requis : nom.prenom@esprit.tn'
-                    }
-                }) }}
-                {{ form_errors(form.emailbranche) }}
-            </div>
-        </div>
-
-        <!-- Contact -->
-        <div class="form-group row">
-            <div class="col-md-6 mb-3">
-                {{ form_label(form.contactbranche, 'Contact', {'label_attr': {'class': 'form-label'}}) }}
-                {{ form_widget(form.contactbranche, {
-                    'attr': {
-                        'class': 'form-control' ~ (app.request.isMethod('POST') and form.contactbranche.vars.valid is same as(true) ? ' is-valid' : (form.contactbranche.vars.valid is same as(false) ? ' is-invalid' : '')),
-                        'maxlength': '15',
-                        'pattern': '^[0-9\-\+]+$',
-                        'title': 'Uniquement des chiffres, tirets ou +'
-                    }
-                }) }}
-                {{ form_errors(form.contactbranche) }}
-            </div>
-
-            <!-- Nombre d'employés -->
-            <div class="col-md-6 mb-3">
-                {{ form_label(form.nombreemploye, 'Nombre d\'Employés', {'label_attr': {'class': 'form-label'}}) }}
-                {{ form_widget(form.nombreemploye, {
-                    'attr': {
-                        'class': 'form-control' ~ (app.request.isMethod('POST') and form.nombreemploye.vars.valid is same as(true) ? ' is-valid' : (form.nombreemploye.vars.valid is same as(false) ? ' is-invalid' : '')),
-                        'min': '1',
-                        'title': 'Veuillez entrer un nombre positif'
-                    }
-                }) }}
-                {{ form_errors(form.nombreemploye) }}
-            </div>
-        </div>
-
-        <!-- Responsable -->
-        <div class="form-group row">
-            <div class="col-md-6 mb-3">
-                {{ form_label(form.responsablebranche, 'Responsable', {'label_attr': {'class': 'form-label'}}) }}
-                {{ form_widget(form.responsablebranche, {
-                    'attr': {
-                        'class': 'form-control' ~ (app.request.isMethod('POST') and form.responsablebranche.vars.valid is same as(true) ? ' is-valid' : (form.responsablebranche.vars.valid is same as(false) ? ' is-invalid' : '')),
-                        'maxlength': '100',
-                        'title': 'Nom du responsable de la branche'
-                    }
-                }) }}
-                {{ form_errors(form.responsablebranche) }}
-            </div>
-        </div>
-
-        <!-- Utilisateur (si nécessaire) -->
-        {% if form.idutilisateur is defined %}
-        <div class="form-group row">
-            <div class="col-md-6 mb-3">
-                {{ form_label(form.idutilisateur, 'Utilisateur', {'label_attr': {'class': 'form-label'}}) }}
-                {{ form_widget(form.idutilisateur, {
-                    'attr': {
-                        'class': 'form-control'
-                    }
-                }) }}
-                {{ form_errors(form.idutilisateur) }}
-            </div>
-        </div>
-        {% endif %}
-
-        <!-- Boutons -->
-        <div class="form-group text-end mt-4">
-            <button type="submit" class="btn btn-success">
-                <i class="bi bi-check-circle"></i> {{ button_label|default('Enregistrer') }}
-            </button>
-            {% if form.vars.data.identreprise is defined and form.vars.data.identreprise %}
-                <a href="{{ path('app_entreprise_show_back', {'identreprise': form.vars.data.identreprise.identreprise}) }}" class="btn btn-secondary ms-2">
-                    Annuler
-                </a>
-            {% else %}
-                <a href="{{ path('app_entreprise_show_back', {'identreprise': app.request.attributes.get('id')}) }}" class="btn btn-secondary ms-2">
-                    Annuler
-                </a>
-            {% endif %}
-        </div>
-    </div>
-</div>
-
-{{ form_end(form) }}
-
-{% block javascripts %}
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="{{ asset('js/map.js') }}"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeMap(document.getElementById('location_coords').value);
-        });
-    </script>
-{% endblock %} 
-unpkg.com
-Nagham
 {% extends 'base1.html.twig' %}
 
 {% block title %}Modifier la Branche d'entreprise{% endblock %}
 
-{% block stylesheets %}
-    {{ parent() }}
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <style>
-        #map {
-            height: 400px;
-            width: 100%;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .card {
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .card-header {
-            background-color: #007bff;
-            color: white;
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
-        }
-        .btn-group {
-            gap: 10px;
-        }
-    </style>
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -197,18 +32,11 @@ Nagham
 {% block body %}
     <div class="container mt-4">
         <h1 class="text-center mb-4">Modifier la Branche d'entreprise</h1>
-    <div class="container mt-4">
-        <h1 class="text-center mb-4">Modifier la Branche d'entreprise</h1>
 
         {{ include('brancheentreprise/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
     </div>
-    </div>
 {% endblock %}
 
-{% block javascripts %}
-    {{ parent() }}
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="{{ asset('js/map.js') }}"></script>
 {% block javascripts %}
     {{ parent() }}
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

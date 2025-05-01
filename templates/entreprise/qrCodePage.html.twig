@@ -6,128 +6,79 @@
   {{ parent() }}
   <style>
     .qr-code-container {
-      max-width: 1000px;
-      margin: 3rem auto;
-      padding: 2.5rem;
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 2rem;
       background: white;
-      border-radius: 1rem;
-      box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.1);
+      border-radius: 0.5rem;
+      box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
     }
 
     .qr-code-header {
       text-align: center;
-      margin-bottom: 3rem;
-      padding-bottom: 1.5rem;
-      border-bottom: 2px solid #f0f0f0;
-    }
-
-    .qr-code-header h1 {
-      color: #2c3e50;
-      font-size: 2.5rem;
-      font-weight: 600;
-      margin-bottom: 1rem;
+      margin-bottom: 2rem;
     }
 
     .qr-code-content {
-      display: grid;
-      grid-template-columns: 1fr 1.5fr;
-      gap: 3rem;
-      align-items: start;
-    }
-
-    .qr-code-section {
-      text-align: center;
-      padding: 2rem;
-      background: #f8f9fc;
-      border-radius: 1rem;
-      box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
     }
 
     .qr-code-image {
-      max-width: 300px;
+      max-width: 400px;
       width: 100%;
-      margin-bottom: 1.5rem;
+      border: 1px solid #e3e6f0;
+      border-radius: 0.5rem;
       padding: 1rem;
       background: white;
-      border-radius: 0.5rem;
-      box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.05);
     }
 
     .entreprise-info {
-      display: grid;
-      gap: 1.5rem;
+      width: 100%;
+      max-width: 600px;
     }
 
     .info-item {
-      padding: 1.5rem;
+      margin-bottom: 1rem;
+      padding: 1rem;
       background: #f8f9fc;
-      border-radius: 0.75rem;
-      transition: transform 0.2s ease;
-    }
-
-    .info-item:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+      border-radius: 0.25rem;
+      border-left: 4px solid #4e73df;
     }
 
     .info-item h3 {
       color: #4e73df;
+      margin-bottom: 0.5rem;
       font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 0.75rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .info-item h3 i {
-      color: #4e73df;
     }
 
     .info-item p {
-      color: #5a5c69;
-      line-height: 1.6;
       margin: 0;
-    }
-
-    .info-item a {
-      color: #4e73df;
-      text-decoration: none;
-      transition: color 0.2s ease;
-    }
-
-    .info-item a:hover {
-      color: #2e59d9;
-      text-decoration: underline;
+      color: #5a5c69;
     }
 
     .back-button {
-      margin-top: 3rem;
+      margin-top: 2rem;
       text-align: center;
-      grid-column: 1 / -1;
     }
 
-    .back-button .btn {
-      padding: 0.75rem 2rem;
-      font-size: 1.1rem;
-      border-radius: 0.5rem;
-      transition: all 0.2s ease;
+    .download-button {
+      margin-top: 1rem;
+      text-align: center;
     }
 
-    .back-button .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0.5rem 1rem rgba(78, 115, 223, 0.2);
+    .btn-download {
+      background-color: #1cc88a;
+      border-color: #1cc88a;
+      color: white;
     }
 
-    @media (max-width: 768px) {
-      .qr-code-content {
-        grid-template-columns: 1fr;
-      }
-      
-      .qr-code-container {
-        margin: 1rem;
-        padding: 1.5rem;
-      }
+    .btn-download:hover {
+      background-color: #17a673;
+      border-color: #17a673;
+      color: white;
     }
   </style>
 {% endblock %}
@@ -136,34 +87,43 @@
   <div class="qr-code-container">
     <div class="qr-code-header">
       <h1>QR Code - {{ entreprise.nomentreprise }}</h1>
+      <p class="text-muted">Scannez ce QR code pour accéder aux informations de l'entreprise</p>
     </div>
 
     <div class="qr-code-content">
-      <div class="qr-code-section">
-        <img src="{{ qrCode }}" alt="QR Code" class="qr-code-image">
-        <p class="text-muted">Scannez ce QR code pour accéder aux informations de l'entreprise</p>
-      </div>
+      <img src="{{ qrCode }}" alt="QR Code de {{ entreprise.nomentreprise }}" class="qr-code-image">
 
       <div class="entreprise-info">
         <div class="info-item">
-          <h3><i class="fas fa-building"></i> Nom de l'entreprise</h3>
+          <h3>Nom de l'entreprise</h3>
           <p>{{ entreprise.nomentreprise }}</p>
         </div>
 
         <div class="info-item">
-          <h3><i class="fas fa-info-circle"></i> Description</h3>
+          <h3>Description</h3>
           <p>{{ entreprise.descriptionentreprise }}</p>
         </div>
 
         <div class="info-item">
-          <h3><i class="fas fa-globe"></i> Site Web</h3>
-          <p><a href="http://{{ entreprise.urlentreprise }}" target="_blank">{{ entreprise.urlentreprise }}</a></p>
+          <h3>Site Web</h3>
+          <p><a href="{{ entreprise.urlentreprise }}" target="_blank">{{ entreprise.urlentreprise }}</a></p>
         </div>
 
         <div class="info-item">
-          <h3><i class="fas fa-industry"></i> Secteur d'activité</h3>
+          <h3>Secteur d'activité</h3>
           <p>{{ entreprise.secteurentreprise }}</p>
         </div>
+
+        <div class="info-item">
+          <h3>Logo</h3>
+          <p>{{ entreprise.logoentreprise }}</p>
+        </div>
+      </div>
+
+      <div class="download-button">
+        <a href="{{ path('app_entreprise_qr_code', {'identreprise': entreprise.identreprise}) }}" class="btn btn-download" download="qr-code-{{ entreprise.nomentreprise }}.png">
+          <i class="fas fa-download"></i> Télécharger le QR Code
+        </a>
       </div>
 
       <div class="back-button">

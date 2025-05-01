@@ -9,17 +9,6 @@
     </style>
 {% endblock %}
 
-{% block stylesheets %}
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <style>
-        #map {
-            height: 400px;
-            width: 100%;
-            margin-bottom: 15px;
-        }
-    </style>
-{% endblock %}
-
 {{ form_start(form, {'attr': {'class': 'form-horizontal', 'novalidate': 'novalidate'}}) }}
 
 <div class="card shadow-sm">
@@ -31,9 +20,7 @@
         <!-- Localisation -->
         <div class="form-group row">
             <div class="col-md-12 mb-3">
-            <div class="col-md-12 mb-3">
                 {{ form_label(form.localisationbranche, 'Localisation', {'label_attr': {'class': 'form-label'}}) }}
-                <div id="map"></div>
                 <div id="map"></div>
                 {{ form_widget(form.localisationbranche, {
                     'attr': {
@@ -41,10 +28,8 @@
                         'maxlength': '255',
                         'required': 'required',
                         'title': 'Cliquez sur la carte pour sélectionner une localisation'
-                        'title': 'Cliquez sur la carte pour sélectionner une localisation'
                     }
                 }) }}
-                <input type="hidden" id="location_coords" name="location_coords" value="{{ form.localisationbranche.vars.value|default('') }}" />
                 <input type="hidden" id="location_coords" name="location_coords" value="{{ form.localisationbranche.vars.value|default('') }}" />
                 {{ form_errors(form.localisationbranche) }}
             </div>
@@ -136,15 +121,6 @@
                     Annuler
                 </a>
             {% endif %}
-            {% if form.vars.data.identreprise is defined and form.vars.data.identreprise %}
-                <a href="{{ path('app_entreprise_show_back', {'identreprise': form.vars.data.identreprise.identreprise}) }}" class="btn btn-secondary ms-2">
-                    Annuler
-                </a>
-            {% else %}
-                <a href="{{ path('app_entreprise_show_back', {'identreprise': app.request.attributes.get('id')}) }}" class="btn btn-secondary ms-2">
-                    Annuler
-                </a>
-            {% endif %}
         </div>
     </div>
 </div>
@@ -159,4 +135,4 @@
             initializeMap(document.getElementById('location_coords').value);
         });
     </script>
-{% endblock %} 
+{% endblock %}

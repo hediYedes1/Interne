@@ -13,7 +13,7 @@
         "doctrine/doctrine-migrations-bundle": "^3.4",
         "doctrine/orm": "^3.3",
         "dompdf/dompdf": "^3.1",
-        "endroid/qr-code": "^5.0",
+        "endroid/qr-code": "4.0.0",
         "google/apiclient": "^2.18",
         "knplabs/knp-paginator-bundle": "^6.8",
         "league/oauth2-google": "^4.0",

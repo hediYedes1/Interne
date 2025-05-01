@@ -108,4 +108,5 @@ final class BrancheentrepriseController extends AbstractController
         return $this->redirectToRoute('app_entreprise_show_back', [
             'identreprise' => $brancheentreprise->getIdentreprise()->getIdentreprise(),
         ], Response::HTTP_SEE_OTHER);
-    }}
+    }
+}

@@ -7,37 +7,43 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TelType;
 
 class BrancheentrepriseType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('nombranche', TextType::class, [
-                'label' => 'Nom de la branche',
+            ->add('localisationbranche', TextType::class, [
+                'label' => 'Localisation',
                 'attr' => [
-                    'placeholder' => 'Entrez le nom de la branche'
+                    'placeholder' => 'Entrez la localisation de la branche'
                 ]
             ])
-            ->add('adressebranche', TextType::class, [
-                'label' => 'Adresse',
+            ->add('emailbranche', EmailType::class, [
+                'label' => 'Email',
                 'attr' => [
-                    'placeholder' => 'Entrez l\'adresse de la branche'
+                    'placeholder' => 'exemple@esprit.tn'
                 ]
             ])
-            ->add('latitude', NumberType::class, [
-                'label' => 'Latitude',
-                'scale' => 6,
+            ->add('contactbranche', TelType::class, [
+                'label' => 'Contact',
                 'attr' => [
-                    'readonly' => true
+                    'placeholder' => 'Entrez le numéro de contact'
                 ]
             ])
-            ->add('longitude', NumberType::class, [
-                'label' => 'Longitude',
-                'scale' => 6,
+            ->add('nombreemploye', IntegerType::class, [
+                'label' => 'Nombre d\'employés',
                 'attr' => [
-                    'readonly' => true
+                    'placeholder' => 'Entrez le nombre d\'employés'
+                ]
+            ])
+            ->add('responsablebranche', TextType::class, [
+                'label' => 'Responsable',
+                'attr' => [
+                    'placeholder' => 'Entrez le nom du responsable'
                 ]
             ])
         ;

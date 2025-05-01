@@ -3,7 +3,7 @@
     method="post" 
     action="{{ path('app_brancheentreprise_delete', {'idbranche': branche.idbranche}) }}" 
     class="d-inline"
-
+>
     <input 
         type="hidden" 
         name="_token" 
@@ -28,7 +28,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        Êtes-vous sûr de vouloir supprimer la branche <strong>{{ branche.localisationbranche }}</strong> ?
+        Êtes-vous sûr de vouloir supprimer la branche <strong>{{ branche.localisationbranche }}</strong> ?
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>

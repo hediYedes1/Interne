@@ -8,27 +8,14 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use App\Entity\Partenariat;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Repository\BrancheentrepriseRepository;
 
-#[ORM\Entity(repositoryClass: BrancheentrepriseRepository::class)]
+#[ORM\Entity]
 class Brancheentreprise
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $nombranche = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $adressebranche = null;
-
-    #[ORM\Column(type: 'float', nullable: true)]
-    private ?float $latitude = null;
-
-    #[ORM\Column(type: 'float', nullable: true)]
-    private ?float $longitude = null;
+    #[ORM\Column(type: "integer")]
+    private int $idbranche;
 
     #[ORM\ManyToOne(targetEntity: Entreprise::class, inversedBy: "brancheentreprises")]
     #[ORM\JoinColumn(name: 'identreprise', referencedColumnName: 'identreprise', onDelete: 'CASCADE')]
@@ -88,53 +75,9 @@ class Brancheentreprise
         $this->partenariats = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    public function getIdbranche(): int
     {
-        return $this->id;
-    }
-
-    public function getNombranche(): ?string
-    {
-        return $this->nombranche;
-    }
-
-    public function setNombranche(string $nombranche): static
-    {
-        $this->nombranche = $nombranche;
-        return $this;
-    }
-
-    public function getAdressebranche(): ?string
-    {
-        return $this->adressebranche;
-    }
-
-    public function setAdressebranche(string $adressebranche): static
-    {
-        $this->adressebranche = $adressebranche;
-        return $this;
-    }
-
-    public function getLatitude(): ?float
-    {
-        return $this->latitude;
-    }
-
-    public function setLatitude(?float $latitude): static
-    {
-        $this->latitude = $latitude;
-        return $this;
-    }
-
-    public function getLongitude(): ?float
-    {
-        return $this->longitude;
-    }
-
-    public function setLongitude(?float $longitude): static
-    {
-        $this->longitude = $longitude;
-        return $this;
+        return $this->idbranche;
     }
 
     public function getIdentreprise(): ?Entreprise
@@ -145,6 +88,7 @@ class Brancheentreprise
     public function setIdentreprise(?Entreprise $identreprise): self
     {
         $this->identreprise = $identreprise;
+
         return $this;
     }
 
@@ -245,4 +189,4 @@ class Brancheentreprise
 
         return $this;
     }
-} 
+}
