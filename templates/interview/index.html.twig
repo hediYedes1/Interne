@@ -196,19 +196,19 @@
           </table>
           <!-- Pagination -->
           <div class="pagination-container">
-            <nav aria-label="Page navigation">
+               <nav aria-label="Page navigation">
               <ul class="pagination">
                {% if pagination.previousPageNumber is defined %}
-  <li class="page-item">
-    <a class="page-link" href="{{ path('app_interview_index', app.request.query.all | merge({'page': pagination.previousPageNumber})) }}">Précédent</a>
-  </li>
-{% endif %}
+                <li class="page-item">
+                <a class="page-link" href="{{ path('app_interview_index', app.request.query.all | merge({'page': pagination.previousPageNumber})) }}">Précédent</a>
+                </li>
+                      {% endif %}
 
-{% for page in 1..pagination.pageCount %}
-  <li class="page-item {{ page == pagination.currentPageNumber ? 'active' : '' }}">
-    <a class="page-link" href="{{ path('app_interview_index', app.request.query.all | merge({'page': page})) }}">{{ page }}</a>
-  </li>
-{% endfor %}
+                      {% for page in 1..pagination.pageCount %}
+                    <li class="page-item {{ page == pagination.currentPageNumber ? 'active' : '' }}">
+                      <a class="page-link" href="{{ path('app_interview_index', app.request.query.all | merge({'page': page})) }}">{{ page }}</a>
+                        </li>
+                       {% endfor %}
 
 {% if pagination.nextPageNumber is defined %}
   <li class="page-item">
@@ -251,6 +251,49 @@
           $('select[name="typeinterview"]').val("{{ app.request.get('typeinterview') }}");
         }
       });
+    });
+  </script>
+   <script>
+    // Connexion WebSocket
+    const ws = new WebSocket('ws://localhost:8080');
+    
+    // Gestion des messages WebSocket
+    ws.onmessage = function(event) {
+        const notification = JSON.parse(event.data);
+        
+        // Mettre à jour le compteur
+        const counter = document.getElementById('notification-counter');
+        counter.textContent = parseInt(counter.textContent) + 1;
+        
+        // Ajouter la nouvelle notification
+        const notificationItems = document.getElementById('notification-items');
+        const newNotification = document.createElement('div');
+        
+        newNotification.innerHTML = `
+            <a class="dropdown-item d-flex align-items-center" href="#">
+                <div class="mr-3">
+                    <div class="icon-circle bg-primary">
+                        <i class="fas fa-calendar-alt text-white"></i>
+                    </div>
+                </div>
+                <div>
+                    <div class="small text-gray-500">${new Date().toLocaleString()}</div>
+                    <span class="font-weight-bold">${notification.message}</span>
+                </div>
+            </a>
+        `;
+        
+        notificationItems.insertBefore(newNotification, notificationItems.firstChild);
+    };
+    
+    // Gestion des erreurs
+    ws.onerror = function(error) {
+        console.error('WebSocket Error:', error);
+    };
+    
+    // Rafraîchir les notifications lorsqu'on clique sur l'icône
+    document.getElementById('alertsDropdown').addEventListener('click', function() {
+        document.getElementById('notification-counter').textContent = '0';
     });
   </script>
 {% endblock %}

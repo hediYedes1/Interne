@@ -190,15 +190,38 @@ public function new(
     #[Route('/{idinterview}/edit', name: 'app_interview_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Interview $interview, EntityManagerInterface $entityManager): Response
     {
+        // Sauvegarder l'ancien type d'interview avant la modification
+        $oldType = $interview->getTypeinterview();
+        
         $form = $this->createForm(InterviewType::class, $interview);
         $form->handleRequest($request);
-
+    
         if ($form->isSubmitted() && $form->isValid()) {
+            // Vérifier si le type a changé
+            $newType = $interview->getTypeinterview();
+            
+            if ($oldType !== $newType) {
+                if ($newType === TypeInterview::ENLIGNE) {
+                    // Si nouveau type est ENLIGNE, on nullify la localisation
+                    $interview->setLocalisation(null);
+                } else {
+                    // Si nouveau type est ENPERSONNE, on nullify le lien Meet
+                    $interview->setLienmeet(null);
+                }
+            } else {
+                // Même si le type n'a pas changé, on s'assure que les champs sont cohérents
+                if ($newType === TypeInterview::ENLIGNE) {
+                    $interview->setLocalisation(null);
+                } else {
+                    $interview->setLienmeet(null);
+                }
+            }
+            
             $entityManager->flush();
-
+    
             return $this->redirectToRoute('app_interview_index', [], Response::HTTP_SEE_OTHER);
         }
-
+    
         return $this->render('interview/edit.html.twig', [
             'interview' => $interview,
             'form' => $form,
