@@ -4,6 +4,16 @@
 
 {% block body %}
     <div class="container mt-5">
+        {# Flash messages added here #}
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }} alert-dismissible fade show mb-4">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+
         <div class="card shadow-lg p-4 rounded col-md-8 mx-auto">
             <div class="card-body">
                 <h2 class="text-center mb-4">Modifier le projet</h2>

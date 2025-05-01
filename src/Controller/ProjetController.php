@@ -24,23 +24,23 @@ final class ProjetController extends AbstractController
         $this->projetRepository = $projetRepository;
     }
 
-#[Route('/front/list', name: 'front_projet_index', methods: ['GET'])]
-public function indexFront(Request $request): Response
-{
-    $searchQuery = $request->query->get('search', '');
-    $projets = $this->projetRepository->search($searchQuery);
+    #[Route('/front/list', name: 'front_projet_index', methods: ['GET'])]
+    public function indexFront(Request $request): Response
+    {
+        $searchQuery = $request->query->get('search', '');
+        $projets = $this->projetRepository->search($searchQuery);
 
-    if ($request->isXmlHttpRequest()) {
-        return $this->render('projet/_projets_list.html.twig', [
-            'projets' => $projets
+        if ($request->isXmlHttpRequest()) {
+            return $this->render('projet/_projets_list.html.twig', [
+                'projets' => $projets
+            ]);
+        }
+
+        return $this->render('projet/indexfront.html.twig', [
+            'projets' => $projets,
+            'searchQuery' => $searchQuery
         ]);
     }
-
-    return $this->render('projet/indexfront.html.twig', [
-        'projets' => $projets,
-        'searchQuery' => $searchQuery
-    ]);
-}
 
     #[Route('/front/new', name: 'front_projet_new', methods: ['GET', 'POST'])]
     public function newFront(Request $request, Security $security): Response
@@ -58,6 +58,7 @@ public function indexFront(Request $request): Response
             $this->entityManager->persist($projet);
             $this->entityManager->flush();
 
+            $this->addFlash('success', 'Projet créé avec succès');
             return $this->redirectToRoute('front_projet_index');
         }
 
@@ -75,6 +76,7 @@ public function indexFront(Request $request): Response
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
 
+            $this->addFlash('success', 'Projet modifié avec succès');
             return $this->redirectToRoute('front_projet_index');
         }
 
@@ -99,28 +101,31 @@ public function indexFront(Request $request): Response
         if ($this->isCsrfTokenValid('delete'.$projet->getIdprojet(), $request->request->get('_token'))) {
             $this->entityManager->remove($projet);
             $this->entityManager->flush();
+            $this->addFlash('success', 'Projet supprimé avec succès');
+        } else {
+            $this->addFlash('error', 'Erreur lors de la suppression du projet');
         }
 
         return $this->redirectToRoute('front_projet_index');
     }
 
     #[Route('/admin/projets', name: 'back_projet_index', methods: ['GET'])]
-public function indexBack(Request $request): Response
-{
-    $searchQuery = $request->query->get('search', '');
-    $projets = $this->projetRepository->search($searchQuery);
+    public function indexBack(Request $request): Response
+    {
+        $searchQuery = $request->query->get('search', '');
+        $projets = $this->projetRepository->search($searchQuery);
 
-    if ($request->isXmlHttpRequest()) {
-        return $this->render('projet/_projets_list.html.twig', [
-            'projets' => $projets
+        if ($request->isXmlHttpRequest()) {
+            return $this->render('projet/_projets_list.html.twig', [
+                'projets' => $projets
+            ]);
+        }
+
+        return $this->render('projet/index.html.twig', [
+            'projets' => $projets,
+            'searchQuery' => $searchQuery
         ]);
     }
-
-    return $this->render('projet/index.html.twig', [
-        'projets' => $projets,
-        'searchQuery' => $searchQuery
-    ]);
-}
 
     #[Route('/admin/new', name: 'back_projet_new', methods: ['GET', 'POST'])]
     public function newBack(Request $request, Security $security): Response
@@ -138,6 +143,7 @@ public function indexBack(Request $request): Response
             $this->entityManager->persist($projet);
             $this->entityManager->flush();
 
+            $this->addFlash('success', 'Projet créé avec succès');
             return $this->redirectToRoute('back_projet_index');
         }
 
@@ -156,6 +162,7 @@ public function indexBack(Request $request): Response
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
 
+            $this->addFlash('success', 'Projet modifié avec succès');
             return $this->redirectToRoute('back_projet_index');
         }
 
@@ -180,6 +187,9 @@ public function indexBack(Request $request): Response
         if ($this->isCsrfTokenValid('delete'.$projet->getIdprojet(), $request->request->get('_token'))) {
             $this->entityManager->remove($projet);
             $this->entityManager->flush();
+            $this->addFlash('success', 'Projet supprimé avec succès');
+        } else {
+            $this->addFlash('error', 'Erreur lors de la suppression du projet');
         }
 
         return $this->redirectToRoute('back_projet_index');
