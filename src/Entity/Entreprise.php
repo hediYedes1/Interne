@@ -36,7 +36,6 @@ class Entreprise
     private string $descriptionentreprise;
 
     #[ORM\Column(type: "string", length: 255)]
-    
     private string $logoentreprise;
 
     #[ORM\Column(type: "text")]
@@ -117,7 +116,6 @@ class Entreprise
     public function setLogoentreprise(string $value): self
     {
         $this->logoentreprise = $value;
-
         return $this;
     }
 

@@ -27,8 +27,12 @@
     }
 
     .qr-code-image {
-      max-width: 300px;
+      max-width: 400px;
       width: 100%;
+      border: 1px solid #e3e6f0;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      background: white;
     }
 
     .entreprise-info {
@@ -41,16 +45,40 @@
       padding: 1rem;
       background: #f8f9fc;
       border-radius: 0.25rem;
+      border-left: 4px solid #4e73df;
     }
 
     .info-item h3 {
       color: #4e73df;
       margin-bottom: 0.5rem;
+      font-size: 1.1rem;
+    }
+
+    .info-item p {
+      margin: 0;
+      color: #5a5c69;
     }
 
     .back-button {
       margin-top: 2rem;
       text-align: center;
+    }
+
+    .download-button {
+      margin-top: 1rem;
+      text-align: center;
+    }
+
+    .btn-download {
+      background-color: #1cc88a;
+      border-color: #1cc88a;
+      color: white;
+    }
+
+    .btn-download:hover {
+      background-color: #17a673;
+      border-color: #17a673;
+      color: white;
     }
   </style>
 {% endblock %}
@@ -59,10 +87,11 @@
   <div class="qr-code-container">
     <div class="qr-code-header">
       <h1>QR Code - {{ entreprise.nomentreprise }}</h1>
+      <p class="text-muted">Scannez ce QR code pour accéder aux informations de l'entreprise</p>
     </div>
 
     <div class="qr-code-content">
-      <img src="{{ qrCode }}" alt="QR Code" class="qr-code-image">
+      <img src="{{ qrCode }}" alt="QR Code de {{ entreprise.nomentreprise }}" class="qr-code-image">
 
       <div class="entreprise-info">
         <div class="info-item">
@@ -77,13 +106,24 @@
 
         <div class="info-item">
           <h3>Site Web</h3>
-          <p><a href="http://{{ entreprise.urlentreprise }}" target="_blank">{{ entreprise.urlentreprise }}</a></p>
+          <p><a href="{{ entreprise.urlentreprise }}" target="_blank">{{ entreprise.urlentreprise }}</a></p>
         </div>
 
         <div class="info-item">
           <h3>Secteur d'activité</h3>
           <p>{{ entreprise.secteurentreprise }}</p>
         </div>
+
+        <div class="info-item">
+          <h3>Logo</h3>
+          <p>{{ entreprise.logoentreprise }}</p>
+        </div>
+      </div>
+
+      <div class="download-button">
+        <a href="{{ path('app_entreprise_qr_code', {'identreprise': entreprise.identreprise}) }}" class="btn btn-download" download="qr-code-{{ entreprise.nomentreprise }}.png">
+          <i class="fas fa-download"></i> Télécharger le QR Code
+        </a>
       </div>
 
       <div class="back-button">

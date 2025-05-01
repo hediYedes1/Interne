@@ -366,7 +366,7 @@
         <div class="dropdown-header">
           <div class="d-flex mb-1">
             <div class="flex-shrink-0">
-              <img src="images/user/avatar-2.jpg" alt="user-image" class="user-avtar wid-35">
+              <img src="{{ asset('images/default-avatar.png') }}" alt="user-image" class="user-avtar wid-35">
             </div>
             <div class="flex-grow-1 ms-3">
               <h6 class="mb-1">{{ app.user ? app.user.nomutilisateur ~ ' ' ~ app.user.prenomutilisateur : 'Guest' }}</h6>
@@ -413,6 +413,7 @@
               <i class="ti ti-user"></i>
               <span>View Profile</span>
             </a>
+            <a href="{{ path('app_logout') }}" class="dropdown-item">
             <a href="{{ path('app_logout') }}" class="dropdown-item">
               <i class="ti ti-power"></i>
               <span>Se Déconnecter</span>
@@ -783,33 +784,17 @@
       </div>
     </div>
   </footer>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-{% block javascript %}
- <!-- [Page Specific JS] start -->
-<script src="{{ asset('js/plugins/apexcharts.min.js') }}"></script>
-<script src="{{ asset('js/pages/dashboard-default.js') }}"></script>
-<!-- [Page Specific JS] end -->
+{% block javascripts %}
+    {# Scripts de base #}
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <script src="{{ asset('js/pcoded.js') }}"></script>
 
-<!-- Required JS -->
-<script src="{{ asset('js/plugins/popper.min.js') }}"></script>
-<script src="{{ asset('js/plugins/simplebar.min.js') }}"></script>
-<script src="{{ asset('js/plugins/bootstrap.min.js') }}"></script>
-<script src="{{ asset('js/fonts/custom-font.js') }}"></script>
-<script src="{{ asset('js/pcoded.js') }}"></script>
-<script src="{{ asset('js/plugins/feather.min.js') }}"></script>
-
-
-<!-- Scripts d'initialisation -->
-<script>
-    layout_change('light');
-    change_box_container('false');
-    layout_rtl_change('false');
-    preset_change("preset-1");
-    font_change("Public-Sans");
-</script>
-
-  
-    
+    {# Scripts pour les graphiques - chargés uniquement si nécessaire #}
+    {% if not disableApexCharts|default(false) %}
+        <script src="{{ asset('assets/js/plugins/apexcharts.min.js') }}"></script>
+        <script src="{{ asset('assets/js/dashboard-default.js') }}"></script>
+    {% endif %}
 {% endblock %}
 </body>
 
