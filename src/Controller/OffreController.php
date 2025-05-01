@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 
@@ -23,32 +24,32 @@ class OffreController extends AbstractController
     ) {}
 
     #[Route('/list', name: 'front_offre_index', methods: ['GET'])]
-public function indexFront(Request $request, PaginatorInterface $paginator): Response
-{
-    $searchQuery = $request->query->get('search', '');
-    $typeContrat = $request->query->get('typecontrat', '');
-    
-    $query = $this->offreRepository->getSearchQuery($searchQuery, $typeContrat);
-    $offres = $paginator->paginate(
-        $query,
-        $request->query->getInt('page', 1),
-        3 // Nombre d'offres par page
-    );
+    public function indexFront(Request $request, PaginatorInterface $paginator): Response
+    {
+        $searchQuery = $request->query->get('search', '');
+        $typeContrat = $request->query->get('typecontrat', '');
+        
+        $query = $this->offreRepository->getSearchQuery($searchQuery, $typeContrat);
+        $offres = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            3
+        );
 
-    if ($request->isXmlHttpRequest()) {
-        return $this->render('offre/_offres_list.html.twig', [
+        if ($request->isXmlHttpRequest()) {
+            return $this->render('offre/_offres_list.html.twig', [
+                'offres' => $offres,
+                'searchQuery' => $searchQuery,
+                'selectedType' => $typeContrat,
+            ]);
+        }
+
+        return $this->render('offre/indexfront.html.twig', [
             'offres' => $offres,
-            'searchQuery' => $searchQuery, // Ajouté
-            'selectedType' => $typeContrat, // Ajouté
+            'searchQuery' => $searchQuery,
+            'selectedType' => $typeContrat
         ]);
     }
-
-    return $this->render('offre/indexfront.html.twig', [
-        'offres' => $offres,
-        'searchQuery' => $searchQuery,
-        'selectedType' => $typeContrat
-    ]);
-}
 
     #[Route('/new', name: 'front_offre_new', methods: ['GET', 'POST'])]
     public function newFront(Request $request, Security $security): Response
@@ -72,8 +73,12 @@ public function indexFront(Request $request, PaginatorInterface $paginator): Res
             $this->entityManager->persist($offre);
             $this->entityManager->flush();
 
-            $this->addFlash('success', 'Offre créée avec succès');
+            $this->addFlash('success', 'Votre offre a été créée avec succès');
             return $this->redirectToRoute('front_offre_show', ['idoffre' => $offre->getIdoffre()]);
+        }
+
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $this->addFlash('error', 'Erreur lors de la création de l\'offre. Veuillez vérifier les informations.');
         }
 
         return $this->render('offre/newfront.html.twig', [
@@ -82,57 +87,59 @@ public function indexFront(Request $request, PaginatorInterface $paginator): Res
     }
 
     #[Route('/{idoffre}', name: 'front_offre_show', methods: ['GET'], requirements: ['idoffre' => '\d+'])]
-public function showFront(int $idoffre): Response
-{
-    $offre = $this->entityManager->getRepository(Offre::class)->find($idoffre);
+    public function showFront(int $idoffre): Response
+    {
+        $offre = $this->entityManager->getRepository(Offre::class)->find($idoffre);
 
-    if (!$offre) {
-        throw $this->createNotFoundException('Offre non trouvée');
+        if (!$offre) {
+            $this->addFlash('error', 'Offre non trouvée');
+            return $this->redirectToRoute('front_offre_index');
+        }
+
+        $now = new \DateTime();
+        $datelimite = $offre->getDatelimite();
+        $remainingSeconds = $datelimite->getTimestamp() - $now->getTimestamp();
+        $isExpired = $remainingSeconds <= 0;
+
+        if ($isExpired) {
+            $this->entityManager->remove($offre);
+            $this->entityManager->flush();
+            $this->addFlash('warning', 'Cette offre a expiré et a été automatiquement supprimée');
+            return $this->redirectToRoute('front_offre_index');
+        }
+
+        return $this->render('offre/showfront.html.twig', [
+            'offre' => $offre,
+            'projet' => $offre->getProjet(),
+            'isExpired' => $isExpired,
+            'remainingTime' => $remainingSeconds,
+            'datelimiteFormatted' => $datelimite->format('Y-m-d H:i:s'),
+        ]);
     }
 
-    $now = new \DateTime();
-    $datelimite = $offre->getDatelimite();
-    
-    // Calcul du temps restant en secondes
-    $remainingSeconds = $datelimite->getTimestamp() - $now->getTimestamp();
-    $isExpired = $remainingSeconds <= 0;
+    #[Route('/{idoffre}/expire', name: 'front_offre_expire', methods: ['POST'])]
+    public function expireOffer(int $idoffre, Request $request): JsonResponse
+    {
+        $offre = $this->entityManager->getRepository(Offre::class)->find($idoffre);
 
-    // Suppression si expirée (optionnel)
-    if ($isExpired) {
+        if (!$offre) {
+            return new JsonResponse(['error' => 'Offre non trouvée'], 404);
+        }
+
         $this->entityManager->remove($offre);
         $this->entityManager->flush();
-        return $this->redirectToRoute('front_offre_index');
+
+        return new JsonResponse(['success' => true]);
     }
 
-    return $this->render('offre/showfront.html.twig', [
-        'offre' => $offre,
-        'projet' => $offre->getProjet(),
-        'isExpired' => $isExpired,
-        'remainingTime' => $remainingSeconds,
-        'datelimiteFormatted' => $datelimite->format('Y-m-d H:i:s'),
-    ]);
-}
-#[Route('/{idoffre}/expire', name: 'front_offre_expire', methods: ['POST'])]
-public function expireOffer(int $idoffre, Request $request): JsonResponse
-{
-    $offre = $this->entityManager->getRepository(Offre::class)->find($idoffre);
-
-    if (!$offre) {
-        return new JsonResponse(['error' => 'Offre non trouvée'], 404);
-    }
-
-    $this->entityManager->remove($offre);
-    $this->entityManager->flush();
-
-    return new JsonResponse(['success' => true]);
-}
     #[Route('/{idoffre}/edit', name: 'front_offre_edit', methods: ['GET', 'POST'], requirements: ['idoffre' => '\d+'])]
     public function editFront(Request $request, int $idoffre): Response
     {
         $offre = $this->entityManager->getRepository(Offre::class)->find($idoffre);
         
         if (!$offre) {
-            throw $this->createNotFoundException('Offre non trouvée');
+            $this->addFlash('error', 'Offre non trouvée');
+            return $this->redirectToRoute('front_offre_index');
         }
 
         $form = $this->createForm(OffreType::class, $offre, [
@@ -143,8 +150,12 @@ public function expireOffer(int $idoffre, Request $request): JsonResponse
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
-            $this->addFlash('success', 'Offre modifiée avec succès');
+            $this->addFlash('success', 'L\'offre a été modifiée avec succès');
             return $this->redirectToRoute('front_offre_show', ['idoffre' => $offre->getIdoffre()]);
+        }
+
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $this->addFlash('error', 'Erreur lors de la modification. Veuillez vérifier les informations.');
         }
 
         return $this->render('offre/editfront.html.twig', [
@@ -159,43 +170,47 @@ public function expireOffer(int $idoffre, Request $request): JsonResponse
         $offre = $this->entityManager->getRepository(Offre::class)->find($idoffre);
         
         if (!$offre) {
-            throw $this->createNotFoundException('Offre non trouvée');
+            $this->addFlash('error', 'Offre non trouvée');
+            return $this->redirectToRoute('front_offre_index');
         }
 
         if ($this->isCsrfTokenValid('delete'.$offre->getIdoffre(), $request->request->get('_token'))) {
             $this->entityManager->remove($offre);
             $this->entityManager->flush();
-            $this->addFlash('success', 'Offre supprimée avec succès');
+            $this->addFlash('success', 'L\'offre a été supprimée avec succès');
+        } else {
+            $this->addFlash('error', 'Token CSRF invalide. La suppression a échoué.');
         }
 
         return $this->redirectToRoute('front_offre_index');
     }
 
     #[Route('/admin/offres', name: 'back_offre_index', methods: ['GET'])]
-public function indexBack(Request $request, PaginatorInterface $paginator): Response
-{
-    $searchQuery = $request->query->get('search', '');
-    $typeContrat = $request->query->get('typecontrat', '');
-    
-    $query = $this->offreRepository->getSearchQuery($searchQuery, $typeContrat);
-    $offres = $paginator->paginate(
-        $query,
-        $request->query->getInt('page', 1),
-        2 // Nombre d'offres par page
-    );
+    public function indexBack(Request $request, PaginatorInterface $paginator): Response
+    {
+        $searchQuery = $request->query->get('search', '');
+        $typeContrat = $request->query->get('typecontrat', '');
+        
+        $query = $this->offreRepository->getSearchQuery($searchQuery, $typeContrat);
+        $offres = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            2
+        );
 
-    if ($request->isXmlHttpRequest()) {
-        return $this->render('offre/_offres_list.html.twig', [
-            'offres' => $offres
+        if ($request->isXmlHttpRequest()) {
+            return $this->render('offre/_offres_list.html.twig', [
+                'offres' => $offres
+            ]);
+        }
+
+        return $this->render('offre/index.html.twig', [
+            'offres' => $offres,
+            'searchQuery' => $searchQuery,
+            'selectedType' => $typeContrat
         ]);
     }
 
-    return $this->render('offre/index.html.twig', [
-        'offres' => $offres,
-        'searchQuery' => $searchQuery,
-        'selectedType' => $typeContrat
-    ]);
-}
     #[Route('/admin/new', name: 'back_offre_new', methods: ['GET', 'POST'])]
     public function newBack(Request $request, Security $security): Response
     {
@@ -218,8 +233,12 @@ public function indexBack(Request $request, PaginatorInterface $paginator): Resp
             $this->entityManager->persist($offre);
             $this->entityManager->flush();
 
-            $this->addFlash('success', 'Offre créée avec succès');
+            $this->addFlash('success', 'L\'offre a été créée avec succès');
             return $this->redirectToRoute('back_offre_show', ['idoffre' => $offre->getIdoffre()]);
+        }
+
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $this->addFlash('error', 'Erreur lors de la création de l\'offre. Veuillez vérifier les informations.');
         }
 
         return $this->render('offre/new.html.twig', [
@@ -233,7 +252,8 @@ public function indexBack(Request $request, PaginatorInterface $paginator): Resp
         $offre = $this->entityManager->getRepository(Offre::class)->find($idoffre);
         
         if (!$offre) {
-            throw $this->createNotFoundException('Offre non trouvée');
+            $this->addFlash('error', 'Offre non trouvée');
+            return $this->redirectToRoute('back_offre_index');
         }
 
         return $this->render('offre/show.html.twig', [
@@ -248,7 +268,8 @@ public function indexBack(Request $request, PaginatorInterface $paginator): Resp
         $offre = $this->entityManager->getRepository(Offre::class)->find($idoffre);
         
         if (!$offre) {
-            throw $this->createNotFoundException('Offre non trouvée');
+            $this->addFlash('error', 'Offre non trouvée');
+            return $this->redirectToRoute('back_offre_index');
         }
 
         $form = $this->createForm(OffreType::class, $offre, [
@@ -259,8 +280,12 @@ public function indexBack(Request $request, PaginatorInterface $paginator): Resp
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
-            $this->addFlash('success', 'Offre modifiée avec succès');
+            $this->addFlash('success', 'L\'offre a été modifiée avec succès');
             return $this->redirectToRoute('back_offre_show', ['idoffre' => $offre->getIdoffre()]);
+        }
+
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $this->addFlash('error', 'Erreur lors de la modification. Veuillez vérifier les informations.');
         }
 
         return $this->render('offre/edit.html.twig', [
@@ -275,13 +300,16 @@ public function indexBack(Request $request, PaginatorInterface $paginator): Resp
         $offre = $this->entityManager->getRepository(Offre::class)->find($idoffre);
         
         if (!$offre) {
-            throw $this->createNotFoundException('Offre non trouvée');
+            $this->addFlash('error', 'Offre non trouvée');
+            return $this->redirectToRoute('back_offre_index');
         }
 
         if ($this->isCsrfTokenValid('delete'.$offre->getIdoffre(), $request->request->get('_token'))) {
             $this->entityManager->remove($offre);
             $this->entityManager->flush();
-            $this->addFlash('success', 'Offre supprimée avec succès');
+            $this->addFlash('success', 'L\'offre a été supprimée avec succès');
+        } else {
+            $this->addFlash('error', 'Token CSRF invalide. La suppression a échoué.');
         }
 
         return $this->redirectToRoute('back_offre_index');

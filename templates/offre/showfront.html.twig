@@ -4,6 +4,17 @@
 
 {% block body %}
 <div class="container mt-5">
+
+    {# Affichage de l'alerte flash si présente #}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+
     <h1 class="text-center mb-4">Détails de l'offre</h1>
 
     <div class="card shadow p-4">
@@ -17,23 +28,23 @@
                 <tr><th>Email RH</th><td>{{ offre.emailrh }}</td></tr>
                 <tr><th>Type de contrat</th><td>{{ offre.typecontrat.value }}</td></tr>
                 <tr>
-                    <tr>
-    <th>Date limite</th>
-    <td>
-        {{ datelimiteFormatted }}
-        {% if not isExpired %}
-            <div class="mt-2">
-                <strong>Temps restant :</strong>
-                <span id="countdown-timer" class="badge bg-primary">
-                    <span id="countdown-days">0</span>j 
-                    <span id="countdown-hours">00</span>:<span id="countdown-minutes">00</span>:<span id="countdown-seconds">00</span>
-                </span>
-            </div>
-        {% else %}
-            <span class="badge bg-danger">Expirée</span>
-        {% endif %}
-    </td>
-</tr>
+                    <th>Date limite</th>
+                    <td>
+                        {{ datelimiteFormatted }}
+                        {% if not isExpired %}
+                            <div class="mt-2">
+                                <strong>Temps restant :</strong>
+                                <span id="countdown-timer" class="badge bg-primary">
+                                    <span id="countdown-days">0</span>j 
+                                    <span id="countdown-hours">00</span>:<span id="countdown-minutes">00</span>:<span id="countdown-seconds">00</span>
+                                </span>
+                            </div>
+                        {% else %}
+                            <span class="badge bg-danger">Expirée</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
                     <th>Projet associé</th>
                     <td>
                         {% if offre.projet %}
@@ -107,13 +118,13 @@
         document.addEventListener('DOMContentLoaded', function() {
             let totalSeconds = {{ remainingTime }};
             const applyBtn = document.getElementById('apply-btn');
-            
+
             function formatTime(seconds) {
                 const days = Math.floor(seconds / (3600 * 24));
                 const hours = Math.floor((seconds % (3600 * 24)) / 3600);
                 const minutes = Math.floor((seconds % 3600) / 60);
                 const secs = seconds % 60;
-                
+
                 return {
                     days: days,
                     hours: hours.toString().padStart(2, '0'),
@@ -121,25 +132,25 @@
                     seconds: secs.toString().padStart(2, '0')
                 };
             }
-            
+
             function updateCountdown() {
                 if (totalSeconds <= 0) {
-                    document.getElementById('countdown-timer').innerHTML = 
+                    document.getElementById('countdown-timer').innerHTML =
                         '<span class="badge bg-danger">Expirée</span>';
                     if (applyBtn) applyBtn.disabled = true;
                     return;
                 }
-                
+
                 const time = formatTime(totalSeconds);
                 document.getElementById('countdown-days').textContent = time.days;
                 document.getElementById('countdown-hours').textContent = time.hours;
                 document.getElementById('countdown-minutes').textContent = time.minutes;
                 document.getElementById('countdown-seconds').textContent = time.seconds;
-                
+
                 totalSeconds--;
                 setTimeout(updateCountdown, 1000);
             }
-            
+
             updateCountdown();
         });
     </script>
