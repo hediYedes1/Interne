@@ -7,7 +7,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\FileType; // Import FileType
-use Symfony\Bridge\Doctrine\Form\Type\EntityType; // Import EntityType
 use Symfony\Component\Validator\Constraints as Assert;
 
 class EntrepriseType extends AbstractType
@@ -15,7 +14,6 @@ class EntrepriseType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            
             ->add('nomentreprise', null, [
                 'label' => 'Nom de l\'entreprise',
                 'attr' => ['class' => 'form-control'],
@@ -43,15 +41,14 @@ class EntrepriseType extends AbstractType
                         ],
                         'mimeTypesMessage' => 'Veuillez uploader une image valide (JPEG, PNG, WebP ou SVG)',
                     ]),
-
                 ],
             ])
             ->add('urlentreprise', null, [
-                'label' => 'Site Web de l\'entreprise',
-                'attr' => ['class' => 'form-control', 'placeholder' => 'https://www.example.com'],
+                'label' => 'URL de l\'entreprise',
+                'attr' => ['class' => 'form-control'],
             ])
             ->add('secteurentreprise', null, [
-                'label' => 'Secteur de l\'entreprise',
+                'label' => 'Secteur d\'activité',
                 'attr' => ['class' => 'form-control'],
             ]);
     }

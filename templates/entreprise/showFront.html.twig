@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Détails de l'Entreprise #{{ entreprise.identreprise }}{% endblock %}
+{% block title %}{{ entreprise.nomentreprise }}{% endblock %}
 
 {% block css %}
   {{ parent() }}
@@ -21,57 +21,141 @@
 
     body {
       font-family: 'Roboto', sans-serif;
-      background-color: var(--light);
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+      min-height: 100vh;
+      padding: 2rem 1rem;
     }
 
     .company-container {
       max-width: 1200px;
-      margin: 2rem auto;
-      padding: 2rem;
+      margin: 0 auto;
       background-color: #fff;
-      border-radius: 0.75rem;
-      box-shadow: 0 4px 10px var(--shadow);
+      border-radius: 1.5rem;
+      box-shadow: 0 10px 30px var(--shadow);
       overflow: hidden;
       position: relative;
     }
 
     .company-header {
-      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      background: linear-gradient(135deg, var(--primary), #224abe);
       color: white;
-      padding: 2rem;
-      border-radius: 0.75rem;
-      margin-bottom: 2rem;
+      padding: 3rem 2rem;
       text-align: center;
-      box-shadow: 0 4px 10px var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .company-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+      opacity: 0.1;
     }
 
     .company-title {
       font-size: 2.5rem;
-      font-weight: bold;
-      margin-bottom: 0.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
     }
 
     .company-subtitle {
       font-size: 1.2rem;
       font-weight: 300;
+      opacity: 0.9;
     }
 
-    .detail-card {
-      background-color: #fff;
-      border-radius: 0.75rem;
-      box-shadow: 0 4px 10px var(--shadow);
-      margin-bottom: 2rem;
-      overflow: hidden;
+    .content-section {
+      padding: 3rem 2rem;
+    }
+
+    .logo-container {
+      text-align: center;
+      margin: -4rem auto 2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .logo-container img {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      border: 5px solid white;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      object-fit: cover;
+      background: white;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .info-card {
+      background: white;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    .detail-card:hover {
+    .info-card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
     }
 
-    .card-header {
-      background-color: var(--primary-light);
+    .info-card h3 {
+      color: var(--primary);
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .info-card h3 i {
+      font-size: 1.4rem;
+    }
+
+    .info-card p {
+      color: var(--dark);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .info-card a {
+      color: var(--primary);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .info-card a:hover {
+      color: #224abe;
+      text-decoration: underline;
+    }
+
+    .sections-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .section-card {
+      background: white;
+      border-radius: 1rem;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .section-header {
+      background: var(--primary-light);
       color: var(--primary);
       padding: 1rem 1.5rem;
       font-weight: 600;
@@ -79,104 +163,66 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      border-bottom: 1px solid var(--border);
     }
 
-    .card-body {
+    .section-body {
       padding: 1.5rem;
-      font-size: 1rem;
-      color: var(--dark);
-      line-height: 1.6;
     }
 
-    .card-body p {
-      margin-bottom: 1rem;
-    }
-
-    .logo-container {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-
-    .logo-container img {
-      max-width: 200px;
-      max-height: 200px;
-      width: auto;
-      height: auto;
-      border-radius: 50%;
-      box-shadow: 0 4px 10px var(--shadow);
-      border: 3px solid var(--primary);
-    }
-
-    .btn-back {
-      background-color: var(--primary);
-      color: white;
-      border: none;
-      padding: 0.75rem 1.5rem;
-      border-radius: 0.5rem;
-      font-weight: 500;
-      font-size: 1rem;
-      transition: all 0.3s ease;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-      box-shadow: 0 4px 10px var(--shadow);
-      position: absolute;
-      bottom: 2rem;
-      left: 50%;
-      transform: translateX(-50%);
-    }
-
-    .btn-back:hover {
-      background-color: var(--primary-light);
-      color: var(--primary);
-      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-    }
-
-    .btn-back i {
-      margin-right: 0.5rem;
-    }
-
-    .branches-list, .departments-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    .branches-list li, .departments-list li {
+    .list-item {
       padding: 1rem;
       border-bottom: 1px solid var(--border);
-      background-color: var(--light);
-      border-radius: 0.5rem;
-      margin-bottom: 0.5rem;
       transition: background-color 0.3s ease;
     }
 
-    .branches-list li:hover, .departments-list li:hover {
-      background-color: var(--primary-light);
-    }
-
-    .branches-list li:last-child, .departments-list li:last-child {
+    .list-item:last-child {
       border-bottom: none;
     }
 
-    @media (max-width: 768px) {
-      .company-header {
-        padding: 1.5rem;
-      }
+    .list-item:hover {
+      background-color: var(--primary-light);
+    }
 
-      .card-body {
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--primary);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      margin-top: 2rem;
+    }
+
+    .btn-back:hover {
+      background: #224abe;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(78, 115, 223, 0.3);
+    }
+
+    @media (max-width: 768px) {
+      body {
         padding: 1rem;
       }
 
-      .logo-container img {
-        max-width: 150px;
-        max-height: 150px;
+      .company-header {
+        padding: 2rem 1rem;
       }
 
-      .btn-back {
-        bottom: 1rem;
+      .content-section {
+        padding: 2rem 1rem;
+      }
+
+      .company-title {
+        font-size: 2rem;
+      }
+
+      .logo-container img {
+        width: 120px;
+        height: 120px;
       }
     }
   </style>
@@ -184,86 +230,78 @@
 
 {% block body %}
   <div class="company-container">
-    <!-- En-tête -->
     <div class="company-header">
       <h1 class="company-title">{{ entreprise.nomentreprise }}</h1>
       <p class="company-subtitle">Détails de l'entreprise</p>
     </div>
 
-    <!-- Logo de l'entreprise -->
-    <div class="logo-container">
-      <img src="{{ asset('uploads/logos/' ~ entreprise.logoentreprise) }}" alt="Logo de {{ entreprise.nomentreprise }}">
-    </div>
+    <div class="content-section">
+      <div class="logo-container">
+        <img src="{{ asset('uploads/logos/' ~ entreprise.logoentreprise) }}" alt="Logo de {{ entreprise.nomentreprise }}">
+      </div>
 
-    <div class="row">
-      <div class="col-lg-8">
-        <!-- Carte des détails -->
-        <div class="detail-card">
-          <div class="card-header">
-            <i class="fas fa-info-circle"></i>
-            <span>Informations détaillées</span>
-          </div>
-          <div class="card-body">
-            <p><strong>Description :</strong> {{ entreprise.descriptionentreprise }}</p>
-            <p><strong>Secteur d'activité :</strong> {{ entreprise.secteurentreprise }}</p>
-            <p><strong>URL :</strong> <a href="http://{{ entreprise.urlentreprise }}" target="_blank">{{ entreprise.urlentreprise }}</a></p>
-          </div>
+      <div class="info-grid">
+        <div class="info-card">
+          <h3><i class="fas fa-building"></i> Nom de l'entreprise</h3>
+          <p>{{ entreprise.nomentreprise }}</p>
         </div>
 
-        <!-- Carte des branches -->
-        <div class="detail-card">
-          <div class="card-header">
-            <i class="fas fa-code-branch"></i>
-            <span>Branches associées</span>
-          </div>
-          <div class="card-body">
-            {% if branches|length > 0 %}
-              <ul class="branches-list">
-                {% for branche in branches %}
-                  <li>
-                    <strong>Localisation :</strong> {{ branche.localisationbranche }}<br>
-                    <strong>Email :</strong> {{ branche.emailbranche }}<br>
-                    <strong>Contact :</strong> {{ branche.contactbranche }}<br>
-                    <strong>Nombre d'employés :</strong> {{ branche.nombreemploye }}<br>
-                    <strong>Responsable :</strong> {{ branche.responsablebranche }}
-                  </li>
-                {% endfor %}
-              </ul>
-            {% else %}
-              <p>Aucune branche associée à cette entreprise.</p>
-            {% endif %}
-          </div>
+        <div class="info-card">
+          <h3><i class="fas fa-info-circle"></i> Description</h3>
+          <p>{{ entreprise.descriptionentreprise }}</p>
         </div>
 
-        <!-- Carte des départements -->
-        <div class="detail-card">
-          <div class="card-header">
-            <i class="fas fa-building"></i>
-            <span>Départements associés</span>
-          </div>
-          <div class="card-body">
-            {% if departments|length > 0 %}
-              <ul class="departments-list">
-                {% for department in departments %}
-                  <li>
-                    <strong>Nom :</strong> {{ department.nomdepartement }}<br>
-                    <strong>Description :</strong> {{ department.descriptiondepartement }}<br>
-                    <strong>Responsable :</strong> {{ department.responsabledepartement }}<br>
-                    <strong>Nombre d'employés :</strong> {{ department.nbremployedepartement }}
-                  </li>
-                {% endfor %}
-              </ul>
-            {% else %}
-              <p>Aucun département associé à cette entreprise.</p>
-            {% endif %}
-          </div>
+        <div class="info-card">
+          <h3><i class="fas fa-globe"></i> Site Web</h3>
+          <p><a href="http://{{ entreprise.urlentreprise }}" target="_blank">{{ entreprise.urlentreprise }}</a></p>
+        </div>
+
+        <div class="info-card">
+          <h3><i class="fas fa-industry"></i> Secteur d'activité</h3>
+          <p>{{ entreprise.secteurentreprise }}</p>
         </div>
       </div>
-    </div>
 
-    <!-- Bouton Retour -->
-    <a href="{{ path('app_entreprise_index_front') }}" class="btn-back">
-      <i class="fas fa-arrow-left"></i> Retour à la liste
-    </a>
+      <div class="sections-grid">
+        {% if branches|length > 0 %}
+          <div class="section-card">
+            <div class="section-header">
+              <i class="fas fa-code-branch"></i>
+              Branches
+            </div>
+            <div class="section-body">
+              {% for branche in branches %}
+                <div class="list-item">
+                  {{ branche.nombranche }}
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+
+        {% if departments|length > 0 %}
+          <div class="section-card">
+            <div class="section-header">
+              <i class="fas fa-sitemap"></i>
+              Départements
+            </div>
+            <div class="section-body">
+              {% for department in departments %}
+                <div class="list-item">
+                  {{ department.nomdepartment }}
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+      </div>
+
+      <div style="text-align: center;">
+        <a href="{{ path('app_entreprise_index_front') }}" class="btn-back">
+          <i class="fas fa-arrow-left"></i>
+          Retour à la liste
+        </a>
+      </div>
+    </div>
   </div>
 {% endblock %}

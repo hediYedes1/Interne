@@ -6,51 +6,128 @@
   {{ parent() }}
   <style>
     .qr-code-container {
-      max-width: 800px;
-      margin: 2rem auto;
-      padding: 2rem;
+      max-width: 1000px;
+      margin: 3rem auto;
+      padding: 2.5rem;
       background: white;
-      border-radius: 0.5rem;
-      box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+      border-radius: 1rem;
+      box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.1);
     }
 
     .qr-code-header {
       text-align: center;
-      margin-bottom: 2rem;
+      margin-bottom: 3rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .qr-code-header h1 {
+      color: #2c3e50;
+      font-size: 2.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
     }
 
     .qr-code-content {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2rem;
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    .qr-code-section {
+      text-align: center;
+      padding: 2rem;
+      background: #f8f9fc;
+      border-radius: 1rem;
+      box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.05);
     }
 
     .qr-code-image {
       max-width: 300px;
       width: 100%;
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      background: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.05);
     }
 
     .entreprise-info {
-      width: 100%;
-      max-width: 600px;
+      display: grid;
+      gap: 1.5rem;
     }
 
     .info-item {
-      margin-bottom: 1rem;
-      padding: 1rem;
+      padding: 1.5rem;
       background: #f8f9fc;
-      border-radius: 0.25rem;
+      border-radius: 0.75rem;
+      transition: transform 0.2s ease;
+    }
+
+    .info-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
     }
 
     .info-item h3 {
       color: #4e73df;
-      margin-bottom: 0.5rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .info-item h3 i {
+      color: #4e73df;
+    }
+
+    .info-item p {
+      color: #5a5c69;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .info-item a {
+      color: #4e73df;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .info-item a:hover {
+      color: #2e59d9;
+      text-decoration: underline;
     }
 
     .back-button {
-      margin-top: 2rem;
+      margin-top: 3rem;
       text-align: center;
+      grid-column: 1 / -1;
+    }
+
+    .back-button .btn {
+      padding: 0.75rem 2rem;
+      font-size: 1.1rem;
+      border-radius: 0.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .back-button .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0.5rem 1rem rgba(78, 115, 223, 0.2);
+    }
+
+    @media (max-width: 768px) {
+      .qr-code-content {
+        grid-template-columns: 1fr;
+      }
+      
+      .qr-code-container {
+        margin: 1rem;
+        padding: 1.5rem;
+      }
     }
   </style>
 {% endblock %}
@@ -62,26 +139,29 @@
     </div>
 
     <div class="qr-code-content">
-      <img src="{{ qrCode }}" alt="QR Code" class="qr-code-image">
+      <div class="qr-code-section">
+        <img src="{{ qrCode }}" alt="QR Code" class="qr-code-image">
+        <p class="text-muted">Scannez ce QR code pour accéder aux informations de l'entreprise</p>
+      </div>
 
       <div class="entreprise-info">
         <div class="info-item">
-          <h3>Nom de l'entreprise</h3>
+          <h3><i class="fas fa-building"></i> Nom de l'entreprise</h3>
           <p>{{ entreprise.nomentreprise }}</p>
         </div>
 
         <div class="info-item">
-          <h3>Description</h3>
+          <h3><i class="fas fa-info-circle"></i> Description</h3>
           <p>{{ entreprise.descriptionentreprise }}</p>
         </div>
 
         <div class="info-item">
-          <h3>Site Web</h3>
+          <h3><i class="fas fa-globe"></i> Site Web</h3>
           <p><a href="http://{{ entreprise.urlentreprise }}" target="_blank">{{ entreprise.urlentreprise }}</a></p>
         </div>
 
         <div class="info-item">
-          <h3>Secteur d'activité</h3>
+          <h3><i class="fas fa-industry"></i> Secteur d'activité</h3>
           <p>{{ entreprise.secteurentreprise }}</p>
         </div>
       </div>

@@ -14,11 +14,14 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Writer\PngWriter;
 use Endroid\QrCode\Encoding\Encoding;
-use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
-use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
+use Endroid\QrCode\ErrorCorrectionLevel;
+use Endroid\QrCode\RoundBlockSizeMode;
 use Endroid\QrCode\Label\Font\NotoSans;
-use Endroid\QrCode\Label\Alignment\LabelAlignmentCenter;
+use Endroid\QrCode\Label\LabelAlignment;
 use Endroid\QrCode\Label\Font\OpenSans;
+use Dompdf\Dompdf;
+use Dompdf\Options;
+
 
 #[Route('/entreprise')]
 final class EntrepriseController extends AbstractController
@@ -72,18 +75,72 @@ final class EntrepriseController extends AbstractController
         $sortBy = $request->query->get('sort', 'nomentreprise');
         $sortOrder = $request->query->get('order', 'asc');
 
-        $queryBuilder = $entityManager->getRepository(Entreprise::class)->createQueryBuilder('e');
+        $queryBuilder = $entityManager->getRepository(Entreprise::class)
+            ->createQueryBuilder('e');
 
-        if ($search) {
-            $queryBuilder->where('e.nomentreprise LIKE :search OR e.secteurentreprise LIKE :search')
-                         ->setParameter('search', '%' . $search . '%');
+        // Appliquer le filtre de recherche
+        if (!empty($search)) {
+            $queryBuilder
+                ->where($queryBuilder->expr()->orX(
+                    $queryBuilder->expr()->like('e.nomentreprise', ':search'),
+                    $queryBuilder->expr()->like('e.secteurentreprise', ':search')
+                ))
+                ->setParameter('search', '%' . $search . '%');
         }
 
+        // Appliquer le tri
         $queryBuilder->orderBy('e.' . $sortBy, $sortOrder);
 
         $entreprises = $queryBuilder->getQuery()->getResult();
 
-        return $this->render('entreprise/index.html.twig', compact('entreprises', 'search', 'sortBy', 'sortOrder'));
+        // Calculer les statistiques
+        $stats = $this->calculateStatistics($entityManager);
+
+        // Si c'est une requête AJAX
+        if ($request->isXmlHttpRequest()) {
+            return $this->render('entreprise/_table_body.html.twig', [
+                'entreprises' => $entreprises
+            ]);
+        }
+
+        // Pour le rendu initial de la page
+        return $this->render('entreprise/index.html.twig', [
+            'entreprises' => $entreprises,
+            'search' => $search,
+            'sortBy' => $sortBy,
+            'sortOrder' => $sortOrder,
+            'stats' => $stats
+        ]);
+    }
+
+    private function calculateStatistics(EntityManagerInterface $entityManager): array
+    {
+        $repository = $entityManager->getRepository(Entreprise::class);
+        
+        // Total des entreprises
+        $totalEntreprises = $repository->createQueryBuilder('e')
+            ->select('COUNT(e.identreprise)')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        // Statistiques par secteur
+        $secteurStats = $repository->createQueryBuilder('e')
+            ->select('e.secteurentreprise, COUNT(e.identreprise) as count')
+            ->groupBy('e.secteurentreprise')
+            ->getQuery()
+            ->getResult();
+
+        // Entreprises créées par mois
+        $entreprisesParMois = $repository->createQueryBuilder('e')
+            ->select('COUNT(e.identreprise) as count')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return [
+            'totalEntreprises' => $totalEntreprises,
+            'secteurStats' => $secteurStats,
+            'entreprisesParMois' => $entreprisesParMois
+        ];
     }
 
     #[Route('/new', name: 'app_entreprise_new', methods: ['GET', 'POST'])]
@@ -167,13 +224,13 @@ final class EntrepriseController extends AbstractController
             ->writerOptions([])
             ->data($this->generateUrl('app_entreprise_show_front', ['identreprise' => $entreprise->getIdentreprise()], UrlGeneratorInterface::ABSOLUTE_URL))
             ->encoding(new Encoding('UTF-8'))
-            ->errorCorrectionLevel(new ErrorCorrectionLevelHigh())
+            ->errorCorrectionLevel(ErrorCorrectionLevel::High)
             ->size(300)
             ->margin(10)
-            ->roundBlockSizeMode(new RoundBlockSizeModeMargin())
+            ->roundBlockSizeMode(RoundBlockSizeMode::Margin)
             ->labelText($entreprise->getNomentreprise())
             ->labelFont(new NotoSans(20))
-            ->labelAlignment(new LabelAlignmentCenter())
+            ->labelAlignment(LabelAlignment::Center)
             ->build();
 
         return new Response($qrCode->getString(), 200, ['Content-Type' => 'image/png']);
@@ -186,7 +243,8 @@ final class EntrepriseController extends AbstractController
             'nom' => $entreprise->getNomentreprise(),
             'description' => $entreprise->getDescriptionentreprise(),
             'url' => $entreprise->getUrlentreprise(),
-            'secteur' => $entreprise->getSecteurentreprise()
+            'secteur' => $entreprise->getSecteurentreprise(),
+            'logo' => $this->getParameter('logo_directory') . '/' . $entreprise->getLogoentreprise()
         ];
 
         $qrCode = Builder::create()
@@ -194,18 +252,73 @@ final class EntrepriseController extends AbstractController
             ->writerOptions([])
             ->data(json_encode($qrData))
             ->encoding(new Encoding('UTF-8'))
-            ->errorCorrectionLevel(new ErrorCorrectionLevelHigh())
+            ->errorCorrectionLevel(ErrorCorrectionLevel::High)
             ->size(300)
             ->margin(10)
-            ->roundBlockSizeMode(new RoundBlockSizeModeMargin())
+            ->roundBlockSizeMode(RoundBlockSizeMode::Margin)
             ->labelText($entreprise->getNomentreprise())
             ->labelFont(new OpenSans(20))
-            ->labelAlignment(new LabelAlignmentCenter())
+            ->labelAlignment(LabelAlignment::Center)
             ->build();
 
         return $this->render('entreprise/qrCodePage.html.twig', [
             'entreprise' => $entreprise,
             'qrCode' => $qrCode->getDataUri(),
+            'qrData' => $qrData
         ]);
     }
+
+    #[Route('/mobile/{identreprise}', name: 'app_entreprise_mobile_view', methods: ['GET'])]
+    public function mobileView(Entreprise $entreprise): Response
+    {
+        return $this->render('entreprise/mobileView.html.twig', [
+            'entreprise' => $entreprise
+        ]);
+    }
+
+ 
+    #[Route('/list/pdf', name: 'app_entreprise_pdf', methods: ['GET'])]
+    public function generatePdf(EntityManagerInterface $entityManager): Response
+    {
+        // Récupérer les données nécessaires
+        $entreprises = $entityManager->getRepository(Entreprise::class)->findAll();
+        $stats = $this->calculateStatistics($entityManager);
+
+        // Configurer DOMPDF
+        $options = new Options();
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('isPhpEnabled', true);
+
+        $dompdf = new Dompdf($options);
+        
+        // Générer le HTML
+        $html = $this->renderView('entreprise/pdf_template.html.twig', [
+            'entreprises' => $entreprises,
+            'stats' => $stats
+        ]);
+
+        // Charger le HTML dans DOMPDF
+        $dompdf->loadHtml($html);
+        
+        // Configurer le format du papier
+        $dompdf->setPaper('A4', 'portrait');
+
+        // Rendre le PDF
+        $dompdf->render();
+
+        // Générer un nom de fichier avec la date
+        $filename = 'rapport-entreprises-' . date('Y-m-d') . '.pdf';
+
+        // Retourner le PDF comme réponse
+        return new Response(
+            $dompdf->output(),
+            Response::HTTP_OK,
+            [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"'
+            ]
+        );
+
+}
+    
 }

@@ -1,15 +1,77 @@
 {% extends 'base1.html.twig' %}
 
+{# Désactiver le chargement des scripts ApexCharts #}
+{% set disableApexCharts = true %}
+
 {% block title %}Liste des Entreprises{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .loading {
+        opacity: 0.5;
+        pointer-events: none;
+    }
+    .stats-card {
+        transition: all 0.3s ease;
+    }
+    .stats-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .btn-group-actions {
+        display: flex;
+        gap: 10px;
+    }
+</style>
+{% endblock %}
 
 {% block body %}
 <div class="container-fluid">
-    <!-- Titre de la page et bouton "Créer" -->
+    <!-- Titre de la page et boutons -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Gestion des Entreprises</h1>
-        <a href="{{ path('app_entreprise_new') }}" class="btn btn-sm btn-primary shadow-sm">
-            <i class="fas fa-plus fa-sm text-white-50 mr-2"></i>Créer une nouvelle entreprise
-        </a>
+        <div class="btn-group-actions">
+            <a href="{{ path('app_entreprise_pdf') }}" class="btn btn-info shadow-sm">
+                <i class="fas fa-file-pdf fa-sm text-white-50 mr-2"></i>
+                Télécharger PDF
+            </a>
+            <a href="{{ path('app_entreprise_new') }}" class="btn btn-primary shadow-sm">
+                <i class="fas fa-plus fa-sm text-white-50 mr-2"></i>
+                Créer une nouvelle entreprise
+            </a>
+        </div>
+    </div>
+
+    <!-- Section Statistiques -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card stats-card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Entreprises</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.totalEntreprises }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-building fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Graphiques -->
+        <div class="col-xl-8 col-lg-7">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Répartition par Secteur</h6>
+                </div>
+                <div class="card-body">
+                    <div id="sectorChart" style="height: 300px;"></div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Formulaire de recherche et tri -->
@@ -18,7 +80,7 @@
             <h6 class="m-0 font-weight-bold text-primary">Recherche et tri</h6>
         </div>
         <div class="card-body">
-            <form method="get" class="row g-3 align-items-end">
+            <form id="searchForm" class="row">
                 <div class="col-md-4">
                     <label for="search" class="form-label">Recherche</label>
                     <div class="input-group">
@@ -45,11 +107,6 @@
                         <option value="desc" {{ sortOrder == 'desc' ? 'selected' : '' }}>Décroissant</option>
                     </select>
                 </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-primary w-100">
-                        <i class="fas fa-filter"></i> Appliquer
-                    </button>
-                </div>
             </form>
         </div>
     </div>
@@ -62,8 +119,8 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered">
-                    <thead class="thead-light">
+                <table class="table table-bordered" id="entreprisesTable">
+                    <thead>
                         <tr>
                             <th>ID</th>
                             <th>Nom</th>
@@ -75,53 +132,99 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for entreprise in entreprises %}
-                            <tr>
-                                <td>{{ entreprise.identreprise }}</td>
-                                <td>{{ entreprise.nomentreprise }}</td>
-                                <td>{{ entreprise.descriptionentreprise }}</td>
-                                <td>
-                                    {% if entreprise.logoentreprise %}
-                                        <img src="{{ asset('uploads/logos/' ~ entreprise.logoentreprise) }}" alt="Logo" width="60" height="60" class="rounded-circle">
-                                    {% else %}
-                                        <span class="text-muted">N/A</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if entreprise.urlentreprise %}
-                                        <a href="{{ entreprise.urlentreprise }}" target="_blank">{{ entreprise.urlentreprise }}</a>
-                                    {% else %}
-                                        <span class="text-muted">N/A</span>
-                                    {% endif %}
-                                </td>
-                                <td>{{ entreprise.secteurentreprise }}</td>
-                                <td class="text-center">
-                                    <a href="{{ path('app_entreprise_show_back', {'identreprise': entreprise.identreprise}) }}" class="btn btn-sm btn-primary" title="Voir">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="{{ path('app_entreprise_edit', {'identreprise': entreprise.identreprise}) }}" class="btn btn-sm btn-warning" title="Modifier">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a href="{{ path('app_brancheentreprise_new', {'id': entreprise.identreprise}) }}" class="btn btn-sm btn-success" title="Associer une branche">
-                                        <i class="fas fa-plus"></i>
-                                    </a>
-                                    <a href="{{ path('app_departmententreprise_new', {'id': entreprise.identreprise}) }}" class="btn btn-sm btn-info" title="associer un departement">
-                                        <i class="fas fa-plus"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        {% else %}
-                            <tr>
-                                <td colspan="7" class="text-center text-muted py-4">
-                                    <i class="fas fa-info-circle fa-2x mb-2"></i><br>
-                                    Aucune entreprise trouvée.
-                                </td>
-                            </tr>
-                        {% endfor %}
+                        {% include 'entreprise/_table_body.html.twig' with {'entreprises': entreprises} %}
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+// Désactiver l'initialisation des graphiques ApexCharts sur cette page
+window.disableApexCharts = true;
+
+$(document).ready(function() {
+    // Configuration du graphique secteur
+    var sectorData = {{ stats.secteurStats|json_encode|raw }};
+    var labels = sectorData.map(item => item.secteurentreprise);
+    var values = sectorData.map(item => item.count);
+
+    var options = {
+        series: values,
+        chart: {
+            type: 'pie',
+            height: 300
+        },
+        labels: labels,
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: 200
+                },
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }]
+    };
+
+    var chart = new ApexCharts(document.querySelector("#sectorChart"), options);
+    chart.render();
+
+    // Code pour la recherche et le tri dynamique
+    var timer;
+    var $table = $('#entreprisesTable');
+    var $tbody = $table.find('tbody');
+    var $form = $('#searchForm');
+    var $badge = $('.badge.badge-primary');
+
+    function updateResults() {
+        var data = {
+            search: $('#search').val(),
+            sort: $('#sort').val(),
+            order: $('#order').val()
+        };
+
+        $table.addClass('loading');
+
+        $.ajax({
+            url: '{{ path('app_entreprise_index') }}',
+            data: data,
+            headers: {'X-Requested-With': 'XMLHttpRequest'},
+            success: function(response) {
+                $tbody.html(response);
+                var count = $tbody.find('tr').length;
+                $badge.text(count + ' total');
+                $table.removeClass('loading');
+            },
+            error: function() {
+                $table.removeClass('loading');
+                console.error('Erreur lors de la mise à jour');
+            }
+        });
+    }
+
+    // Gestionnaire pour la recherche avec debounce
+    $('#search').on('input', function() {
+        clearTimeout(timer);
+        timer = setTimeout(updateResults, 300);
+    });
+
+    // Gestionnaires pour le tri
+    $('#sort, #order').on('change', function() {
+        updateResults();
+    });
+});
+</script>
+{% endblock %}
+
+{% block dashboard_charts %}
+{# Désactiver les graphiques du dashboard sur cette page #}
 {% endblock %}

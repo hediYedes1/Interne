@@ -6,6 +6,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Entity\Departmententreprise;
+use App\Entity\Brancheentreprise;
 
 #[ORM\Entity]
 class Entreprise
@@ -36,7 +38,6 @@ class Entreprise
     private string $descriptionentreprise;
 
     #[ORM\Column(type: "string", length: 255)]
-    
     private string $logoentreprise;
 
     #[ORM\Column(type: "text")]
@@ -117,7 +118,6 @@ class Entreprise
     public function setLogoentreprise(string $value): self
     {
         $this->logoentreprise = $value;
-
         return $this;
     }
 
@@ -165,6 +165,7 @@ class Entreprise
         if ($this->departmententreprises->removeElement($departmententreprise)) {
             if ($departmententreprise->getIdentreprise() === $this) {
                 $departmententreprise->setIdentreprise(null);
+                
             }
         }
 
@@ -222,4 +223,4 @@ class Entreprise
 
         return $this;
     }
-}
+} 

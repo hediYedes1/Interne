@@ -1,21 +1,141 @@
-{% extends 'base1.html.twig' %}
+{% extends 'base.html.twig' %}
 
-{% block title %}Nouvelle Branche d'entreprise{% endblock %}
+{% block title %}Nouvelle Branche{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        .form-control {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+{% endblock %}
 
 {% block body %}
-<div class="container mt-5">
-    <div class="card shadow-lg border-0 rounded-4">
-        <div class="card-header bg-gradient bg-primary text-white rounded-top-4">
-            <h2 class="mb-0"><i class="bi bi-building-add"></i> Créer une nouvelle branche d’entreprise</h2>
-        </div>
-        <div class="card-body">
-            {{ include('brancheentreprise/_form.html.twig') }}
-        </div>
-        <div class="card-footer bg-light text-end">
-            <a href="{{ path('app_brancheentreprise_index') }}" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left-circle"></i> Retour à la liste
-            </a>
-        </div>
+    <div class="container mt-4">
+        <h1>Créer une nouvelle branche</h1>
+
+        {{ form_start(form) }}
+            <div class="form-group">
+                {{ form_label(form.nombranche) }}
+                {{ form_widget(form.nombranche, {'attr': {'class': 'form-control'}}) }}
+            </div>
+
+            <div class="form-group">
+                {{ form_label(form.adressebranche) }}
+                {{ form_widget(form.adressebranche, {'attr': {'class': 'form-control'}}) }}
+            </div>
+
+            <div class="form-group">
+                <label for="search">Rechercher une adresse</label>
+                <input type="text" id="search" class="form-control" placeholder="Entrez une adresse...">
+            </div>
+
+            <div id="map"></div>
+
+            <div class="form-group">
+                {{ form_label(form.latitude) }}
+                {{ form_widget(form.latitude, {'attr': {'class': 'form-control', 'readonly': 'readonly'}}) }}
+            </div>
+
+            <div class="form-group">
+                {{ form_label(form.longitude) }}
+                {{ form_widget(form.longitude, {'attr': {'class': 'form-control', 'readonly': 'readonly'}}) }}
+            </div>
+
+            <button type="submit" class="btn btn-primary">Créer</button>
+        {{ form_end(form) }}
+
+        <a href="{{ path('app_brancheentreprise_index') }}" class="btn btn-secondary mt-3">Retour à la liste</a>
     </div>
-</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
+    <script>
+        let map;
+        let marker;
+        let searchBox;
+        let latitudeInput = document.getElementById('{{ form.latitude.vars.id }}');
+        let longitudeInput = document.getElementById('{{ form.longitude.vars.id }}');
+        let searchInput = document.getElementById('search');
+
+        function initMap() {
+            // Position par défaut (Tunis)
+            const defaultPosition = { lat: 36.8065, lng: 10.1815 };
+
+            // Initialiser la carte
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: defaultPosition,
+                zoom: 13
+            });
+
+            // Initialiser le marqueur
+            marker = new google.maps.Marker({
+                position: defaultPosition,
+                map: map,
+                draggable: true
+            });
+
+            // Initialiser la barre de recherche
+            searchBox = new google.maps.places.SearchBox(searchInput);
+
+            // Écouter les changements de la barre de recherche
+            searchBox.addListener('places_changed', function() {
+                const places = searchBox.getPlaces();
+                if (places.length === 0) return;
+
+                const place = places[0];
+                if (!place.geometry || !place.geometry.location) return;
+
+                // Mettre à jour la carte
+                map.setCenter(place.geometry.location);
+                map.setZoom(17);
+
+                // Mettre à jour le marqueur
+                marker.setPosition(place.geometry.location);
+
+                // Mettre à jour les champs de latitude et longitude
+                updateCoordinates(place.geometry.location);
+            });
+
+            // Écouter le déplacement du marqueur
+            marker.addListener('dragend', function() {
+                updateCoordinates(marker.getPosition());
+            });
+
+            // Écouter les clics sur la carte
+            map.addListener('click', function(event) {
+                marker.setPosition(event.latLng);
+                updateCoordinates(event.latLng);
+            });
+        }
+
+        function updateCoordinates(position) {
+            latitudeInput.value = position.lat();
+            longitudeInput.value = position.lng();
+        }
+
+        // Initialiser la carte au chargement de la page
+        window.onload = initMap;
+    </script>
 {% endblock %}

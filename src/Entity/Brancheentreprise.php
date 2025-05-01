@@ -8,18 +8,31 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use App\Entity\Partenariat;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Repository\BrancheentrepriseRepository;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: BrancheentrepriseRepository::class)]
 class Brancheentreprise
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: "integer")]
-    private int $idbranche;
+    #[ORM\Column]
+    private ?int $id = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $nombranche = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $adressebranche = null;
+
+    #[ORM\Column(type: 'float', nullable: true)]
+    private ?float $latitude = null;
+
+    #[ORM\Column(type: 'float', nullable: true)]
+    private ?float $longitude = null;
 
     #[ORM\ManyToOne(targetEntity: Entreprise::class, inversedBy: "brancheentreprises")]
     #[ORM\JoinColumn(name: 'identreprise', referencedColumnName: 'identreprise', onDelete: 'CASCADE')]
-    private Entreprise $identreprise;
+    private ?Entreprise $identreprise = null;
 
     #[ORM\ManyToOne(targetEntity: Utilisateur::class, inversedBy: "brancheentreprises")]
     #[ORM\JoinColumn(name: 'idutilisateur', referencedColumnName: 'idutilisateur', onDelete: 'CASCADE')]
@@ -33,14 +46,14 @@ class Brancheentreprise
     )]
     private string $localisationbranche;
 
-#[ORM\Column(type: "text")]
-#[Assert\NotBlank(message: "L'email de la branche est obligatoire.")]
-#[Assert\Email(message: "L'email '{{ value }}' n'est pas valide.")]
-#[Assert\Regex(
-    pattern: "/^[a-zA-Z0-9._%+-]+@esprit\.tn$/",
-    message: "L'email doit être au format 'nom.prenom@esprit.tn'."
-)]
-private string $emailbranche;
+    #[ORM\Column(type: "text")]
+    #[Assert\NotBlank(message: "L'email de la branche est obligatoire.")]
+    #[Assert\Email(message: "L'email '{{ value }}' n'est pas valide.")]
+    #[Assert\Regex(
+        pattern: "/^[a-zA-Z0-9._%+-]+@esprit\.tn$/",
+        message: "L'email doit être au format 'nom.prenom@esprit.tn'."
+    )]
+    private string $emailbranche;
 
     #[ORM\Column(type: "string", length: 15)]
     #[Assert\NotBlank(message: "Le contact de la branche est obligatoire.")]
@@ -75,20 +88,63 @@ private string $emailbranche;
         $this->partenariats = new ArrayCollection();
     }
 
-    public function getIdbranche(): int
+    public function getId(): ?int
     {
-        return $this->idbranche;
+        return $this->id;
     }
 
-    public function getIdentreprise(): Entreprise
+    public function getNombranche(): ?string
+    {
+        return $this->nombranche;
+    }
+
+    public function setNombranche(string $nombranche): static
+    {
+        $this->nombranche = $nombranche;
+        return $this;
+    }
+
+    public function getAdressebranche(): ?string
+    {
+        return $this->adressebranche;
+    }
+
+    public function setAdressebranche(string $adressebranche): static
+    {
+        $this->adressebranche = $adressebranche;
+        return $this;
+    }
+
+    public function getLatitude(): ?float
+    {
+        return $this->latitude;
+    }
+
+    public function setLatitude(?float $latitude): static
+    {
+        $this->latitude = $latitude;
+        return $this;
+    }
+
+    public function getLongitude(): ?float
+    {
+        return $this->longitude;
+    }
+
+    public function setLongitude(?float $longitude): static
+    {
+        $this->longitude = $longitude;
+        return $this;
+    }
+
+    public function getIdentreprise(): ?Entreprise
     {
         return $this->identreprise;
     }
 
-    public function setIdentreprise(Entreprise $identreprise): self
+    public function setIdentreprise(?Entreprise $identreprise): static
     {
         $this->identreprise = $identreprise;
-
         return $this;
     }
 
@@ -189,4 +245,4 @@ private string $emailbranche;
 
         return $this;
     }
-}
+} 
