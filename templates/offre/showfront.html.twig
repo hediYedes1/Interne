@@ -16,8 +16,24 @@
                 <tr><th>Localisation</th><td>{{ offre.localisationoffre }}</td></tr>
                 <tr><th>Email RH</th><td>{{ offre.emailrh }}</td></tr>
                 <tr><th>Type de contrat</th><td>{{ offre.typecontrat.value }}</td></tr>
-                <tr><th>Date limite</th><td>{{ offre.datelimite ? offre.datelimite|date('Y-m-d') : 'Non définie' }}</td></tr>
                 <tr>
+                    <tr>
+    <th>Date limite</th>
+    <td>
+        {{ datelimiteFormatted }}
+        {% if not isExpired %}
+            <div class="mt-2">
+                <strong>Temps restant :</strong>
+                <span id="countdown-timer" class="badge bg-primary">
+                    <span id="countdown-days">0</span>j 
+                    <span id="countdown-hours">00</span>:<span id="countdown-minutes">00</span>:<span id="countdown-seconds">00</span>
+                </span>
+            </div>
+        {% else %}
+            <span class="badge bg-danger">Expirée</span>
+        {% endif %}
+    </td>
+</tr>
                     <th>Projet associé</th>
                     <td>
                         {% if offre.projet %}
@@ -76,7 +92,7 @@
             <a href="{{ path('front_offre_new') }}" class="btn btn-success text-white">
                 <i class="fas fa-plus-circle"></i> Nouvelle offre
             </a>
-            <a href="{{ path('app_postuler', {'id': offre.idoffre}) }}" class="btn btn-primary text-white">
+            <a href="{{ path('app_postuler', {'id': offre.idoffre}) }}" class="btn btn-primary text-white" id="apply-btn" {{ isExpired ? 'disabled' : '' }}>
                 Postuler à cette offre
             </a>
         </div>
@@ -86,5 +102,46 @@
 
 {% block javascripts %}
     {{ parent() }}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+    {% if not isExpired %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let totalSeconds = {{ remainingTime }};
+            const applyBtn = document.getElementById('apply-btn');
+            
+            function formatTime(seconds) {
+                const days = Math.floor(seconds / (3600 * 24));
+                const hours = Math.floor((seconds % (3600 * 24)) / 3600);
+                const minutes = Math.floor((seconds % 3600) / 60);
+                const secs = seconds % 60;
+                
+                return {
+                    days: days,
+                    hours: hours.toString().padStart(2, '0'),
+                    minutes: minutes.toString().padStart(2, '0'),
+                    seconds: secs.toString().padStart(2, '0')
+                };
+            }
+            
+            function updateCountdown() {
+                if (totalSeconds <= 0) {
+                    document.getElementById('countdown-timer').innerHTML = 
+                        '<span class="badge bg-danger">Expirée</span>';
+                    if (applyBtn) applyBtn.disabled = true;
+                    return;
+                }
+                
+                const time = formatTime(totalSeconds);
+                document.getElementById('countdown-days').textContent = time.days;
+                document.getElementById('countdown-hours').textContent = time.hours;
+                document.getElementById('countdown-minutes').textContent = time.minutes;
+                document.getElementById('countdown-seconds').textContent = time.seconds;
+                
+                totalSeconds--;
+                setTimeout(updateCountdown, 1000);
+            }
+            
+            updateCountdown();
+        });
+    </script>
+    {% endif %}
 {% endblock %}

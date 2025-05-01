@@ -53,7 +53,7 @@ class Offre
     #[ORM\Column(type: "string", enumType: TypeContrat::class)]
     private TypeContrat $typecontrat;
 
-    #[ORM\Column(type: "date")]
+    #[ORM\Column(type: "datetime")]  // Changez de "date" à "datetime"
     #[Assert\NotBlank(message: "La date limite est requise.")]
     #[Assert\GreaterThan("today", message: "La date limite doit être dans le futur.")]
     private \DateTimeInterface $datelimite;
@@ -67,7 +67,7 @@ class Offre
 
     public function __construct()
     {
-        $this->datelimite = new \DateTime('+1 day');
+        $this->datelimite = new \DateTime('+1 day 23:59:59');
         $this->interviews = new ArrayCollection();
     }
 
@@ -173,6 +173,9 @@ class Offre
 
     public function setDatelimite(\DateTimeInterface $datelimite): self
     {
+        if (!$datelimite instanceof \DateTimeInterface) {
+            throw new \InvalidArgumentException('datelimite must be a DateTimeInterface');
+        }
         $this->datelimite = $datelimite;
         return $this;
     }

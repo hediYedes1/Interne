@@ -9,6 +9,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
@@ -22,7 +23,6 @@ class OffreType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('idoffre', HiddenType::class)
             ->add('titreoffre', TextType::class, [
                 'label' => 'Titre de l\'offre*',
                 'attr' => ['placeholder' => 'Ex: Développeur Symfony Senior'],
@@ -55,10 +55,24 @@ class OffreType extends AbstractType
                 'choice_value' => fn(?TypeContrat $enum) => $enum?->value,
                 'placeholder' => 'Choisir un type de contrat',
             ])
-            ->add('datelimite', DateType::class, [
-                'widget' => 'single_text',
+            ->add('datelimite', DateTimeType::class, [
                 'label' => 'Date limite*',
-                'attr' => ['min' => (new \DateTime())->format('Y-m-d')],
+                'widget' => 'single_text',
+                'html5' => true,
+                'attr' => [
+                    'min' => (new \DateTime())->format('Y-m-d\TH:i'),
+                    'class' => 'datetimepicker' // Add this if using JS datetime picker
+                ],
+                'constraints' => [
+                    new \Symfony\Component\Validator\Constraints\GreaterThan([
+                        'value' => 'now',
+                        'message' => 'La date limite doit être dans le futur'
+                    ]),
+                ],
+                // Add these for better time handling
+                'input' => 'datetime',
+                'with_seconds' => false,
+                'minutes' => range(0, 55, 5), // Optional: limit minute selection
             ])
             ->add('projet', EntityType::class, [
                 'class' => Projet::class,

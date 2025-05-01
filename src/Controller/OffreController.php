@@ -82,20 +82,50 @@ public function indexFront(Request $request, PaginatorInterface $paginator): Res
     }
 
     #[Route('/{idoffre}', name: 'front_offre_show', methods: ['GET'], requirements: ['idoffre' => '\d+'])]
-    public function showFront(int $idoffre): Response
-    {
-        $offre = $this->entityManager->getRepository(Offre::class)->find($idoffre);
-        
-        if (!$offre) {
-            throw $this->createNotFoundException('Offre non trouvée');
-        }
+public function showFront(int $idoffre): Response
+{
+    $offre = $this->entityManager->getRepository(Offre::class)->find($idoffre);
 
-        return $this->render('offre/showfront.html.twig', [
-            'offre' => $offre,
-            'projet' => $offre->getProjet()
-        ]);
+    if (!$offre) {
+        throw $this->createNotFoundException('Offre non trouvée');
     }
 
+    $now = new \DateTime();
+    $datelimite = $offre->getDatelimite();
+    
+    // Calcul du temps restant en secondes
+    $remainingSeconds = $datelimite->getTimestamp() - $now->getTimestamp();
+    $isExpired = $remainingSeconds <= 0;
+
+    // Suppression si expirée (optionnel)
+    if ($isExpired) {
+        $this->entityManager->remove($offre);
+        $this->entityManager->flush();
+        return $this->redirectToRoute('front_offre_index');
+    }
+
+    return $this->render('offre/showfront.html.twig', [
+        'offre' => $offre,
+        'projet' => $offre->getProjet(),
+        'isExpired' => $isExpired,
+        'remainingTime' => $remainingSeconds,
+        'datelimiteFormatted' => $datelimite->format('Y-m-d H:i:s'),
+    ]);
+}
+#[Route('/{idoffre}/expire', name: 'front_offre_expire', methods: ['POST'])]
+public function expireOffer(int $idoffre, Request $request): JsonResponse
+{
+    $offre = $this->entityManager->getRepository(Offre::class)->find($idoffre);
+
+    if (!$offre) {
+        return new JsonResponse(['error' => 'Offre non trouvée'], 404);
+    }
+
+    $this->entityManager->remove($offre);
+    $this->entityManager->flush();
+
+    return new JsonResponse(['success' => true]);
+}
     #[Route('/{idoffre}/edit', name: 'front_offre_edit', methods: ['GET', 'POST'], requirements: ['idoffre' => '\d+'])]
     public function editFront(Request $request, int $idoffre): Response
     {
