@@ -1,0 +1,141 @@
+{% extends 'base2.html.twig' %}
+
+{% block title %}Statistiques des Tests Techniques{% endblock %}
+
+{% block body %}
+<div class="pc-container">
+    <div class="pc-content">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Statistiques des Tests Techniques par Statut</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if not statistics.has_data %}
+                            <div class="alert alert-info">
+                                Aucune donnée de test technique disponible pour le moment.
+                            </div>
+                        {% else %}
+                            <div class="row">
+                                <!-- Diagramme en barres -->
+                                <div class="col-md-6">
+                                    <div id="statusChart"></div>
+                                </div>
+                                
+                                <!-- Tableau des statistiques -->
+                                <div class="col-md-6">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                            <thead class="thead-light">
+                                                <tr>
+                                                    <th>Statut</th>
+                                                    <th>Nombre</th>
+                                                    <th>Pourcentage</th>
+                                                    <th>Première date</th>
+                                                    <th>Dernière date</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for status, data in statistics.statuses %}
+                                                    {% if data.count > 0 %}
+                                                        <tr>
+                                                            <td>{{ data.label }}</td>
+                                                            <td>{{ data.count }}</td>
+                                                            <td>{{ data.percentage }}%</td>
+                                                            <td>{{ data.earliest_date ? data.earliest_date|date('d/m/Y') : 'N/A' }}</td>
+                                                            <td>{{ data.latest_date ? data.latest_date|date('d/m/Y') : 'N/A' }}</td>
+                                                        </tr>
+                                                    {% endif %}
+                                                {% endfor %}
+                                                <tr class="table-primary">
+                                                    <td><strong>Total</strong></td>
+                                                    <td colspan="4"><strong>{{ statistics.total }}</strong></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const stats = {{ statistics|json_encode|raw }};
+    
+    // Préparer les données pour le graphique
+    const categories = [];
+    const seriesData = [];
+    const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'];
+    
+    {% for status, data in statistics.statuses %}
+        {% if data.count > 0 %}
+            categories.push("{{ data.label }}");
+            seriesData.push({{ data.count }});
+        {% endif %}
+    {% endfor %}
+    
+    // Options du graphique en barres
+    const options = {
+        series: [{
+            name: 'Tests Techniques',
+            data: seriesData
+        }],
+        chart: {
+            type: 'bar',
+            height: 400,
+            toolbar: {
+                show: true
+            }
+        },
+        plotOptions: {
+            bar: {
+                horizontal: false,
+                columnWidth: '55%',
+                endingShape: 'rounded',
+                distributed: true
+            },
+        },
+        dataLabels: {
+            enabled: false
+        },
+        colors: colors,
+        stroke: {
+            show: true,
+            width: 2,
+            colors: ['transparent']
+        },
+        xaxis: {
+            categories: categories,
+        },
+        yaxis: {
+            title: {
+                text: 'Nombre de tests'
+            }
+        },
+        fill: {
+            opacity: 1
+        },
+        tooltip: {
+            y: {
+                formatter: function(val) {
+                    const total = {{ statistics.total }};
+                    const percentage = Math.round((val / total) * 100);
+                    return val + " (" + percentage + "%)";
+                }
+            }
+        }
+    };
+    
+    // Créer le graphique
+    const chart = new ApexCharts(document.querySelector("#statusChart"), options);
+    chart.render();
+});
+</script>
+{% endblock %}

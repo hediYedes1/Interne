@@ -1,0 +1,28 @@
+<div class="modal fade" id="quizResultModal" tabindex="-1" aria-labelledby="quizResultModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header {{ is_accepted ? 'bg-success' : 'bg-danger' }} text-white">
+                <h5 class="modal-title" id="quizResultModalLabel">Résultat du Quiz</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-4">
+                    <i class="fas {{ is_accepted ? 'fa-check-circle' : 'fa-times-circle' }} fa-5x {{ is_accepted ? 'text-success' : 'text-danger' }}"></i>
+                    <h3 class="mt-3">{{ statut }}</h3>
+                    <p class="lead">Votre score: {{ score }}</p>
+                </div>
+                <p class="text-muted text-center">
+                    {{ is_accepted ? 'Félicitations! Vous avez réussi le test technique.' : 'Malheureusement, vous n\'avez pas atteint le score requis.' }}
+                </p>
+            </div>
+            <div class="modal-footer">
+    <a href="{{ path('app_testtechnique_show_front', {'idtesttechnique': test_id}) }}" class="btn btn-secondary">
+        <i class="fas fa-times"></i> Fermer
+    </a>
+    <a href="{{ path('app_testtechnique_show_front', {'idtesttechnique': test_id}) }}" class="btn btn-primary">
+        <i class="fas fa-info-circle"></i> Voir les détails
+    </a>
+</div>
+        </div>
+    </div>
+</div>

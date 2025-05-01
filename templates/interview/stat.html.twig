@@ -1,0 +1,154 @@
+{# templates/interview/statistics.html.twig #}
+
+{% extends 'base2.html.twig' %}
+
+{% block title %}Statistiques des Interviews{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/apexcharts@3.35.3/dist/apexcharts.css">
+{% endblock %}
+
+{% block sideBar %}
+    {{ parent() }}
+{% endblock %}
+
+{% block headside %}
+    {{ parent() }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+{% endblock %}
+{% block body %}
+<div class="pc-container">
+    <div class="pc-content">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Statistiques des Interviews par Type</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if not statistics.has_data %}
+                            <div class="alert alert-info">
+                                Aucune donnée d'interview disponible pour le moment.
+                            </div>
+                        {% else %}
+                            <div class="row">
+                                <!-- Diagramme circulaire -->
+                                <div class="col-md-6">
+                                    <div id="interviewChart"></div>
+                                </div>
+                                
+                                <!-- Tableau des statistiques -->
+                                <div class="col-md-6">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                            <thead class="thead-light">
+                                                <tr>
+                                                    <th>Type</th>
+                                                    <th>Nombre</th>
+                                                    <th>Pourcentage</th>
+                                                    <th>Première date</th>
+                                                    <th>Dernière date</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for type, data in statistics.types %}
+                                                    {% if data.count > 0 %}
+                                                        <tr>
+                                                            <td>{{ data.label }}</td>
+                                                            <td>{{ data.count }}</td>
+                                                            <td>{{ data.percentage }}%</td>
+                                                            <td>{{ data.earliest_date ? data.earliest_date|date('d/m/Y') : 'N/A' }}</td>
+                                                            <td>{{ data.latest_date ? data.latest_date|date('d/m/Y') : 'N/A' }}</td>
+                                                        </tr>
+                                                    {% endif %}
+                                                {% endfor %}
+                                                <tr class="table-primary">
+                                                    <td><strong>Total</strong></td>
+                                                    <td colspan="4"><strong>{{ statistics.total }}</strong></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const stats = {{ statistics|json_encode|raw }};
+    
+    // Préparer les données pour le graphique
+    const labels = [];
+    const series = [];
+    const colors = [];
+    
+    {% for type, data in statistics.types %}
+        {% if data.count > 0 %}
+            labels.push("{{ data.label }}");
+            series.push({{ data.count }});
+            colors.push(getRandomColor());
+        {% endif %}
+    {% endfor %}
+    
+    // Options du graphique
+    const options = {
+        series: series,
+        chart: {
+            type: 'pie',
+            height: 400
+        },
+        labels: labels,
+        colors: colors,
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: 200
+                },
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }],
+        legend: {
+            position: 'right',
+            offsetY: 0,
+            height: 230,
+        },
+        tooltip: {
+            y: {
+                formatter: function(value, { seriesIndex, w }) {
+                    const total = w.config.series.reduce((a, b) => a + b, 0);
+                    const percentage = Math.round((value / total) * 100);
+                    return `${value} (${percentage}%)`;
+                }
+            }
+        }
+    };
+    
+    // Créer le graphique
+    const chart = new ApexCharts(document.querySelector("#interviewChart"), options);
+    chart.render();
+    
+    // Fonction pour générer des couleurs aléatoires
+    function getRandomColor() {
+        const letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+});
+</script>
+{% endblock %}

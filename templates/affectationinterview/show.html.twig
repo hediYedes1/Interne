@@ -16,11 +16,9 @@
 {% endblock %}
 {% block breadcrumb %}
     {{ parent() }}
-    <li class="breadcrumb-item"><a href="../dashboard/index.html">Interviews</a></li>
-    <li class="breadcrumb-item active">New</li>
 {% endblock %}
 {% block body %}
-    <h1>Affectationinterview</h1>
+    <h1>Affectation interview</h1>
 
     <table class="table">
         <tbody>
@@ -31,9 +29,9 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_affectationinterview_index') }}">back to list</a>
+    <a href="{{ path('app_affectationinterview_index') }}">retourner a la liste</a>
 
-    <a href="{{ path('app_affectationinterview_edit', {'idinterview': affectationinterview.idinterview}) }}">edit</a>
+    <a href="{{ path('app_affectationinterview_edit', {'idinterview': affectationinterview.idinterview}) }}">Modifier</a>
 
     {{ include('affectationinterview/_delete_form.html.twig') }}
 {% endblock %}

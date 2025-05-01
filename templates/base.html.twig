@@ -14,10 +14,10 @@
 		<meta name="csrf-token" content="{{ csrf_token('face-registration') }}">
 
 		<!-- Title -->
-        <title>Mediplus - Free Medical and Doctor Directory HTML Template.</title>
+        <title>{% block title %}Welcome!{% endblock %}</title>
 		
 		<!-- Favicon -->
-        <link rel="icon" href="img/favicon.png">
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚕️</text></svg>">
 		
 		<!-- Google Fonts -->
 		<link href="https://fonts.googleapis.com/css?family=Poppins:200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i&display=swap" rel="stylesheet">
@@ -110,42 +110,41 @@
 			<!-- End Topbar -->
 			<!-- Header Inner -->
             {% block navBar %}
-					<div class="inner">
-						<div class="row">
-							<div class="col-lg-3 col-md-3 col-12">
-								<!-- Start Logo -->
-								<div class="logo">
-									<a href="index.html"> <img src="{{ asset('images/logoIn.png') }}" alt="#"></a>
-								</div>
-								<!-- End Logo -->
-								<!-- Mobile Nav -->
-								<div class="mobile-nav"></div>
-								<!-- End Mobile Nav -->
-							</div>
-							<div class="col-lg-7 col-md-9 col-12">
-								<!-- Main Menu -->
-								<div class="main-menu">
-									<nav class="navigation">
-										<ul class="nav menu">
-											<li class="active"><a href="#">Home</a>
-											
-											<li><a href="{{ path('app_interview_index_front') }}">Interview</a></li>
-											<li><a href="#">Partenariat </a></li>
-											<li><a href="#">Publication</a>
-											<li><a href="{{path('app_entreprise_index_front')}}">Entreprise</a></li>
-							                <li><a href="#">Partenariat</a></li>
-							<li><a href="#">Contact Us</a></li>
-										</ul>
-									</nav>
-								</div>
-								<!--/ End Main Menu -->
-							</div>
-							
-						</div>
-					</div>
-				</div>
-			</div>
-            {% endblock %}
+<div class="header-inner">
+    <div class="container">
+        <div class="inner">
+            <div class="row align-items-center">
+                <div class="col-lg-3 col-md-3 col-12">
+                    <!-- Start Logo -->
+                    <div class="logo">
+                        <a href="index.html"><img src="{{ asset('images/logoIn.png') }}" alt="Logo"></a>
+                    </div>
+                    <!-- End Logo -->
+                    <!-- Mobile Nav -->
+                    <div class="mobile-nav"></div>
+                    <!-- End Mobile Nav -->
+                </div>
+                <div class="col-lg-9 col-md-9 col-12">
+                    <!-- Main Menu -->
+                    <div class="main-menu">
+                        <nav class="navigation">
+                            <ul class="nav menu d-flex justify-content-end">
+                                <li class="active"><a href="#">Home</a></li>
+                                <li><a href=" {{ path('app_interview_index_front') }}">Interview</a></li>
+                                <li><a href="#">Partenariat</a></li>
+                                <li><a href="#">Publication</a></li>
+                                <li><a href="{{path('app_entreprise_index_front')}}">Entreprise</a></li>
+                                <li><a href="contact.html">Contact Us</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <!--/ End Main Menu -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
 			<!--/ End Header Inner -->
 		</header>
 		<!-- End Header Area -->
@@ -731,6 +730,53 @@
 <!-- Main JS -->
 <script src="{{ asset('js/main.js') }}"></script>
 
+        <script>
+            const ws = new WebSocket('ws://localhost:8080');
+            
+            ws.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                
+                // Créer la notification
+                if (Notification.permission === "granted") {
+                    new Notification(data.message, {
+                        body: `Date: ${data.data.date} à ${data.data.time}`,
+                        icon: '/images/notification-icon.png'
+                    });
+                }
+
+                // Mettre à jour le compteur de notifications
+                const badge = document.querySelector('.pc-h-badge');
+                if (badge) {
+                    const currentCount = parseInt(badge.textContent) || 0;
+                    badge.textContent = currentCount + 1;
+                }
+
+                // Ajouter la notification à la liste
+                const notificationList = document.querySelector('.list-group');
+                if (notificationList) {
+                    const notificationItem = document.createElement('a');
+                    notificationItem.className = 'list-group-item list-group-item-action';
+                    notificationItem.innerHTML = `
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                <i class="ti ti-calendar-event text-primary"></i>
+                            </div>
+                            <div class="flex-grow-1 ms-1">
+                                <span class="float-end text-muted">${data.timestamp}</span>
+                                <p class="text-body mb-1">${data.message}</p>
+                                <span class="text-muted">Interview #${data.data.interview_id}</span>
+                            </div>
+                        </div>
+                    `;
+                    notificationList.insertBefore(notificationItem, notificationList.firstChild);
+                }
+            };
+
+            // Demander la permission pour les notifications
+            if (Notification.permission !== "granted" && Notification.permission !== "denied") {
+                Notification.requestPermission();
+            }
+        </script>
         {% endblock %}
     </body>
 </html>

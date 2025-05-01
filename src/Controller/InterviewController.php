@@ -12,6 +12,18 @@ use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\Testtechnique;
 use App\Repository\InterviewRepository;
 use App\Enum\TypeInterview;
+use App\Utils\GoogleMeetService;
+use App\Utils\GoogleOAuthService;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Psr\Log\LoggerInterface;
+use App\Utils\InterviewStatisticsService;
+use Doctrine\ORM\Tools\Pagination\Paginator;
+use Knp\Component\Pager\PaginatorInterface;
+
+
+
+
+
 use App\Entity\Affectationinterview;
 use App\Repository\AffectationinterviewRepository;
 
@@ -21,60 +33,91 @@ final class InterviewController extends AbstractController
 // src/Controller/InterviewController.php
 
 #[Route('/list', name: 'app_interview_index', methods: ['GET'])]
-public function index(Request $request, InterviewRepository $interviewRepository): Response
-{
+public function index(
+    Request $request,
+    InterviewRepository $interviewRepository,
+    PaginatorInterface $paginator
+): Response {
     $user = $this->getUser();
     if (!$user) {
         throw $this->createAccessDeniedException('Vous devez être connecté pour voir vos interviews.');
     }
+
     $titre = $request->query->get('titreoffre');
     $type = $request->query->get('typeinterview');
-    
-   // $interviews = $interviewRepository->findByFilters($titre, $type);
-   $interviews = $interviewRepository->findInterviewsByUserWithFilters($user, $titre, $type);
+
+    // Requête personnalisée filtrée par utilisateur + titre + type
+    $query = $interviewRepository->findInterviewsByUserWithFilters($user, $titre, $type);
+
+    // Pagination
+    $pagination = $paginator->paginate(
+        $query,
+        $request->query->getInt('page', 1),
+        5
+    );
+
     return $this->render('interview/index.html.twig', [
-        'interviews' => $interviews,
+        'pagination' => $pagination,
     ]);
 }
+
 
 #[Route('/listBack', name: 'app_interview_index_back', methods: ['GET'])]
-public function indexBack(Request $request, InterviewRepository $interviewRepository): Response
+public function indexBack(Request $request, InterviewRepository $interviewRepository, PaginatorInterface $paginator): Response
 {
     $user = $this->getUser();
     if (!$user) {
         throw $this->createAccessDeniedException('Vous devez être connecté pour voir vos interviews.');
     }
+
     $titre = $request->query->get('titreoffre');
     $type = $request->query->get('typeinterview');
-    
-    $interviews = $interviewRepository->findInterviewsByUserWithFilters($user, $titre, $type);
-    
+
+    $query = $interviewRepository->findInterviewsByUserWithFilters($user, $titre, $type);
+
+    $pagination = $paginator->paginate(
+        $query,
+        $request->query->getInt('page', 1),
+        5
+    );
+
     return $this->render('interview/indexBack.html.twig', [
-        'interviews' => $interviews,
+        'pagination' => $pagination,
     ]);
 }
 
+
 #[Route('/listFront', name: 'app_interview_index_front', methods: ['GET'])]
-public function indexFront(Request $request, InterviewRepository $interviewRepository): Response
+public function indexFront(Request $request, InterviewRepository $interviewRepository, PaginatorInterface $paginator): Response
 {
     $user = $this->getUser();
     if (!$user) {
         throw $this->createAccessDeniedException('Vous devez être connecté pour voir vos interviews.');
     }
+
     $titre = $request->query->get('titreoffre');
     $type = $request->query->get('typeinterview');
-    
-    $interviews = $interviewRepository->findInterviewsByUserWithFilters($user, $titre, $type);
-    
+
+    $query = $interviewRepository->findInterviewsByUserWithFilters($user, $titre, $type);
+
+    $pagination = $paginator->paginate(
+        $query,
+        $request->query->getInt('page', 1),
+        5
+    );
+
     return $this->render('interview/indexFront.html.twig', [
-        'interviews' => $interviews,
+        'pagination' => $pagination,
     ]);
 }
-    
+
 #[Route('/new', name: 'app_interview_new', methods: ['GET', 'POST'])]
-public function new(Request $request, EntityManagerInterface $entityManager): Response
-{
-    // Récupérer l'utilisateur connecté
+public function new(
+    Request $request, 
+    EntityManagerInterface $em,
+    GoogleMeetService $googleMeetService,
+    LoggerInterface $logger
+): Response {
     $user = $this->getUser();
     if (!$user) {
         throw $this->createAccessDeniedException('Vous devez être connecté pour créer une interview.');
@@ -85,28 +128,65 @@ public function new(Request $request, EntityManagerInterface $entityManager): Re
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
-        // Copier le titre de l'offre
-        $interview->setTitreoffre($interview->getIdoffre()->getTitreoffre());
-        
-        // Persister l'interview d'abord
-        $entityManager->persist($interview);
-        $entityManager->flush(); // Nécessaire pour obtenir l'ID de l'interview
-        
-        // Créer l'affectation
-        $affectation = new Affectationinterview();
-        $affectation->setIdutilisateur($user);
-        $affectation->setIdinterview($interview);
-        $affectation->setDateaffectationinterview(new \DateTime());
-        
-        $entityManager->persist($affectation);
-        $entityManager->flush();
+        try {
+            // Copie le titre de l'offre
+            $interview->setTitreoffre($interview->getIdoffre()->getTitreoffre());
+            
+            // Gestion Google Meet
+            if ($interview->getTypeinterview() === TypeInterview::ENLIGNE) {
+                $interview->setLocalisation(null);
+                $date = $interview->getDateinterview();
+                $time = $interview->getTimeinterview();
+                
+                $startDateTime = new \DateTime($date->format('Y-m-d') . ' ' . $time->format('H:i:s'));
+                $endDateTime = clone $startDateTime;
+                $endDateTime->modify('+1 hour');
 
-        return $this->redirectToRoute('app_interview_index', [], Response::HTTP_SEE_OTHER);
+                try {
+                    $meetLink = $googleMeetService->createMeetLink($startDateTime, $endDateTime);
+                    $interview->setLienmeet($meetLink);
+                    $logger->info('Meet link created', ['link' => $meetLink]);
+                } catch (\Exception $e) {
+                    $logger->error('Google Meet error', ['error' => $e]);
+                    $this->addFlash('warning', 'Redirection vers Google pour authentification...');
+                    return $this->redirectToRoute('google_auth_callback');
+                }
+            } else {
+                $interview->setLienmeet(null);
+            }
+
+            // Création de l'affectation
+            $affectation = new Affectationinterview();
+            $affectation->setIdutilisateur($user);
+            $affectation->setIdinterview($interview);
+            $affectation->setDateaffectationinterview(new \DateTime());
+            
+            $em->persist($interview);
+            $em->persist($affectation);
+            $em->flush();
+
+            $logger->info('Interview saved', [
+                'id' => $interview->getIdinterview(),
+                'meet_link' => $interview->getLienmeet()
+            ]);
+            
+            $this->addFlash('success', 'Interview créée avec succès!');
+            return $this->redirectToRoute('app_interview_index');
+
+        } catch (\Exception $e) {
+            $logger->error('Error saving interview', ['error' => $e->getMessage()]);
+            $this->addFlash('error', 'Une erreur est survenue lors de la création de l\'interview: ' . $e->getMessage());
+        }
+    } elseif ($form->isSubmitted()) {
+        // Gestion des erreurs de validation du formulaire
+        foreach ($form->getErrors(true) as $error) {
+            $this->addFlash('error', $error->getMessage());
+        }
     }
 
     return $this->render('interview/new.html.twig', [
-        'interview' => $interview,
         'form' => $form->createView(),
+        'interview' => $interview,
     ]);
 }
 
@@ -135,15 +215,18 @@ public function new(Request $request, EntityManagerInterface $entityManager): Re
     }
 
     #[Route('/{idinterview}/edit', name: 'app_interview_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Interview $interview, EntityManagerInterface $entityManager): Response
-    {
-        // Récupérer l'utilisateur connecté
+    public function edit(
+        Request $request, 
+        Interview $interview, 
+        EntityManagerInterface $entityManager
+    ): Response {
+        // Vérification de l'authentification et des permissions
         $user = $this->getUser();
         if (!$user) {
             throw $this->createAccessDeniedException('Vous devez être connecté pour modifier une interview.');
         }
     
-        // Vérifier que l'utilisateur est bien associé à cette interview
+        // Vérification que l'utilisateur est bien associé à cette interview
         $affectation = $entityManager->getRepository(Affectationinterview::class)->findOneBy([
             'idinterview' => $interview,
             'idutilisateur' => $user
@@ -153,19 +236,47 @@ public function new(Request $request, EntityManagerInterface $entityManager): Re
             throw $this->createAccessDeniedException('Vous ne pouvez pas modifier cette interview.');
         }
     
+        // Sauvegarde de l'ancien type avant modification
+        $oldType = $interview->getTypeinterview();
+        
         $form = $this->createForm(InterviewType::class, $interview);
         $form->handleRequest($request);
     
         if ($form->isSubmitted() && $form->isValid()) {
-            // Mettre à jour le titre de l'offre si l'offre a changé
-            $interview->setTitreoffre($interview->getIdoffre()->getTitreoffre());
-            
-            // Mettre à jour la date de modification dans l'affectation
-            $affectation->setDateaffectationinterview(new \DateTime());
-            
-            $entityManager->flush();
+            try {
+                // Mise à jour du titre de l'offre si nécessaire
+                $interview->setTitreoffre($interview->getIdoffre()->getTitreoffre());
+                
+                // Gestion du changement de type d'interview
+                $newType = $interview->getTypeinterview();
+                
+                if ($oldType !== $newType) {
+                    if ($newType === TypeInterview::ENLIGNE) {
+                        $interview->setLocalisation(null);
+                        // Ici vous pourriez ajouter la génération d'un nouveau lien Meet si nécessaire
+                    } else {
+                        $interview->setLienmeet(null);
+                    }
+                } else {
+                    // Cohérence des champs même si le type n'a pas changé
+                    if ($newType === TypeInterview::ENLIGNE) {
+                        $interview->setLocalisation(null);
+                    } else {
+                        $interview->setLienmeet(null);
+                    }
+                }
+                
+                // Mise à jour de la date de modification dans l'affectation
+                $affectation->setDateaffectationinterview(new \DateTime());
+                
+                $entityManager->flush();
     
-            return $this->redirectToRoute('app_interview_index', [], Response::HTTP_SEE_OTHER);
+                $this->addFlash('success', 'Interview modifiée avec succès!');
+                return $this->redirectToRoute('app_interview_index', [], Response::HTTP_SEE_OTHER);
+                
+            } catch (\Exception $e) {
+                $this->addFlash('error', 'Une erreur est survenue lors de la modification: ' . $e->getMessage());
+            }
         }
     
         return $this->render('interview/edit.html.twig', [
@@ -194,7 +305,14 @@ public function new(Request $request, EntityManagerInterface $entityManager): Re
             'tests' => $tests,
         ]);
     }
- 
-
-
+   
+    #[Route('/interview/statistics', name: 'app_interview_stats', methods: ['GET'])]
+    public function statistics(InterviewStatisticsService $statisticsService): Response
+    {
+        $stats = $statisticsService->getInterviewStatistics();
+        
+        return $this->render('interview/stat.html.twig', [
+            'statistics' => $stats
+        ]);
+    }
 }

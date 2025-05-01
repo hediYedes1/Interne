@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Testtechnique;
 use App\Entity\Interview;
+use App\Entity\QuizQuestion;
 use App\Utils\QuizApiService;
 use App\Form\TesttechniqueType;
 use App\Repository\TesttechniqueRepository;
@@ -14,6 +15,8 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Enum\StatutTestTechnique;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Utils\EmailService;
+use App\Utils\GrammarCheckerService;
+use App\Utils\TestTechniqueStatisticsService;
 
 #[Route('/testtechnique')]
 final class TesttechniqueController extends AbstractController
@@ -62,7 +65,10 @@ final class TesttechniqueController extends AbstractController
    
 
     #[Route('/new', name: 'app_testtechnique_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(
+        Request $request,
+        EntityManagerInterface $entityManager, 
+        ): Response
     {
         $testtechnique = new Testtechnique();
         $form = $this->createForm(TesttechniqueType::class, $testtechnique);
@@ -135,7 +141,9 @@ public function showFront(Testtechnique $testtechnique): Response
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('app_testtechnique_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_testtechnique_by_interview', [
+            'idinterview' => $testtechnique->getIdinterview()->getIdinterview()
+        ], Response::HTTP_SEE_OTHER);
     }
  
 #[Route('/interview/{idinterview}/tests', name: 'app_testtechnique_by_interview', methods: ['GET'])]
@@ -205,8 +213,47 @@ public function indexByInterviewFront(
 }
 
 #[Route('/new/{idinterview}', name: 'app_testtechnique_new_for_interview', methods: ['GET', 'POST'])]
-public function newForInterview(Request $request, EntityManagerInterface $entityManager, Interview $idinterview): Response
-{
+public function newForInterview(
+    Request $request,
+    EntityManagerInterface $entityManager,
+    Interview $idinterview,
+    GrammarCheckerService $grammarCheckerService
+): Response {
+    header('Content-Type: text/html; charset=UTF-8');
+    $request->setDefaultLocale('fr');
+    // Gestion des requêtes AJAX pour la vérification grammaticale
+    if ($request->isXmlHttpRequest()) {
+        $text = $request->request->get('text', '');
+        
+        if (empty($text)) {
+            return $this->json([
+                'error' => 'Aucun texte à vérifier'
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        try {
+            // Limiter la fréquence des requêtes
+            $session = $request->getSession();
+            $lastCheck = $session->get('last_grammar_check', 0);
+            
+            if (time() - $lastCheck < 5) {
+                return $this->json([
+                    'error' => 'Veuillez attendre 5 secondes entre chaque vérification'
+                ], Response::HTTP_TOO_MANY_REQUESTS);
+            }
+            
+            $session->set('last_grammar_check', time());
+            
+            $correctionResult = $grammarCheckerService->checkGrammar($text);
+            return $this->json($correctionResult);
+        } catch (\Exception $e) {
+            return $this->json([
+                'error' => 'Erreur lors de la vérification: ' . $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // Gestion normale du formulaire
     $testtechnique = new Testtechnique();
     $testtechnique->setIdinterview($idinterview);
 
@@ -334,5 +381,22 @@ public function showQuizFront(Testtechnique $testtechnique): Response
         'testtechnique' => $testtechnique
     ]);
 }
-   
+#[Route('/quiz/result/{id}', name: 'quiz_result')]
+public function showResult(Testtechnique $test , QuizQuestion $quiz): Response
+{
+    return $this->render('quiz/result.html.twig', [
+        'test' => $test,
+        'score' => $quiz->$test->getScore(), 
+        'statut' => $test->getStatuttesttechnique()
+    ]);
+}
+#[Route('/test-technique/statistics', name: 'app_test_technique_stats', methods: ['GET'])]
+public function testTechniqueStatistics(TestTechniqueStatisticsService $statisticsService): Response
+{
+    $stats = $statisticsService->getTestTechniqueStatistics();
+    
+    return $this->render('testtechnique/stat.html.twig', [
+        'statistics' => $stats
+    ]);
+}
 }

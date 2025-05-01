@@ -4,6 +4,7 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    google.redirect_uri: 'http://localhost:8000/auth/google/callback'
     logo_directory: '%kernel.project_dir%/public/uploads/logos'
 
 
@@ -16,6 +17,18 @@ services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    App\Utils\GoogleOAuthService:
+        arguments:
+            $params: '@parameter_bag'
+
+            # config/services.yaml
+    App\Twig\AppExtension:
+        tags: ['twig.extension']
+
+    App\Utils\GoogleMeetService:
+        arguments:
+            $googleOAuthService: '@App\Utils\GoogleOAuthService'
 
     # Register all commands in the Command directory
     App\Command\:
@@ -39,7 +52,6 @@ services:
         arguments:
             $router: '@router'
     # please note that last definitions always *replace* previous ones
-
     # Face recognition service
     App\Service\FaceRecognitionService:
         public: true
