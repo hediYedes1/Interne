@@ -475,6 +475,17 @@
       </div>
       {% endblock %}
       {% block body %}
+    <div class="container mt-4">
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label == 'success' ? 'success' : (label == 'error' ? 'danger' : 'info') }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+
       <div class="row">
         <!-- [ sample-page ] start -->
         <div class="col-md-6 col-xl-3">
@@ -801,6 +812,7 @@
     
 {% endblock %}
 </body>
+
 <!-- [Body] end -->
 
 </html>

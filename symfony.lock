@@ -35,12 +35,6 @@
             "./migrations/.gitignore"
         ]
     },
-    "knplabs/knp-paginator-bundle": {
-        "version": "v6.8.0"
-    },
-    "php-flasher/flasher-symfony": {
-        "version": "v1.15.14"
-    },
     "google/apiclient": {
         "version": "2.18",
         "recipe": {

@@ -15,7 +15,6 @@
 
 		<!-- Title -->
         <title>{% block title %}Welcome!{% endblock %}</title>
-        <title>Interne.</title>
 		
 		<!-- Favicon -->
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚕️</text></svg>">
@@ -24,29 +23,18 @@
 		<link href="https://fonts.googleapis.com/css?family=Poppins:200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i&display=swap" rel="stylesheet">
         {% block css %}
 	<link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
-<!-- Nice Select CSS -->
-<link rel="stylesheet" href="{{ asset('css/nice-select.css') }}">
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<!-- Font Awesome CSS -->
-<link rel="stylesheet" href="{{ asset('css/font-awesome.min.css') }}">
-<!-- icofont CSS -->
-<link rel="stylesheet" href="{{ asset('css/icofont.css') }}">
-<!-- Slicknav -->
-<link rel="stylesheet" href="{{ asset('css/slicknav.min.css') }}">
-<!-- Owl Carousel CSS -->
-<link rel="stylesheet" href="{{ asset('css/owl-carousel.css') }}">
-<!-- Datepicker CSS -->
-<link rel="stylesheet" href="{{ asset('css/datepicker.css') }}">
-<!-- Animate CSS -->
-<link rel="stylesheet" href="{{ asset('css/animate.min.css') }}">
-<!-- Magnific Popup CSS -->
-<link rel="stylesheet" href="{{ asset('css/magnific-popup.css') }}">
-<!-- Medipro CSS -->
-<link rel="stylesheet" href="{{ asset('css/normalize.css') }}">
-<link rel="stylesheet" href="{{ asset('style.css') }}">
-<link rel="stylesheet" href="{{ asset('css/responsive.css') }}">
-
+	<link rel="stylesheet" href="{{ asset('css/nice-select.css') }}">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="stylesheet" href="{{ asset('css/font-awesome.min.css') }}">
+	<link rel="stylesheet" href="{{ asset('css/icofont.css') }}">
+	<link rel="stylesheet" href="{{ asset('css/slicknav.min.css') }}">
+	<link rel="stylesheet" href="{{ asset('css/owl-carousel.css') }}">
+	<link rel="stylesheet" href="{{ asset('css/datepicker.css') }}">
+	<link rel="stylesheet" href="{{ asset('css/animate.min.css') }}">
+	<link rel="stylesheet" href="{{ asset('css/magnific-popup.css') }}">
+	<link rel="stylesheet" href="{{ asset('css/normalize.css') }}">
+	<link rel="stylesheet" href="{{ asset('style.css') }}">
+	<link rel="stylesheet" href="{{ asset('css/responsive.css') }}">
 		{% endblock %}
     </head>
     <body>
@@ -56,7 +44,6 @@
             <div class="loader">
                 <div class="loader-outter"></div>
                 <div class="loader-inner"></div>
-
                 <div class="indicator"> 
                     <svg width="16px" height="12px">
                         <polyline id="back" points="1 6 4 6 6 11 10 1 12 6 15 6"></polyline>
@@ -101,7 +88,6 @@
 									<li><i class="fa fa-user"></i><a href="{{ path('app_login') }}">Login</a></li>
 								</ul>
 								{% endif %}
-							
 							<!-- End Top Contact -->
 						</div>
 					</div>
@@ -111,86 +97,58 @@
 			<!-- End Topbar -->
 			<!-- Header Inner -->
             {% block navBar %}
-<div class="header-inner">
-    <div class="container">
-        <div class="inner">
-            <div class="row align-items-center">
-                <div class="col-lg-3 col-md-3 col-12">
-                    <!-- Start Logo -->
-                    <div class="logo">
-                        <a href="index.html"><img src="{{ asset('images/logoIn.png') }}" alt="Logo"></a>
-                    </div>
-                    <!-- End Logo -->
-                    <!-- Mobile Nav -->
-                    <div class="mobile-nav"></div>
-                    <!-- End Mobile Nav -->
-                </div>
-                <div class="col-lg-9 col-md-9 col-12">
-                    <!-- Main Menu -->
-                    <div class="main-menu">
-                        <nav class="navigation">
-                            <ul class="nav menu d-flex justify-content-end">
-                                <li class="active"><a href="#">Home</a></li>
-                                <li><a href=" {{ path('app_interview_index_front') }}">Interview</a></li>
-                                <li><a href="#">Partenariat</a></li>
-                                <li><a href="#">Publication</a></li>
-                                <li><a href="{{path('app_entreprise_index_front')}}">Entreprise</a></li>
-                                <li><a href="contact.html">Contact Us</a></li>
-                            </ul>
-                        </nav>
-                    </div>
-                    <!--/ End Main Menu -->
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
 			<div class="header-inner">
 				<div class="container">
 					<div class="inner">
-						<div class="row">
+						<div class="row align-items-center">
 							<div class="col-lg-3 col-md-3 col-12">
 								<!-- Start Logo -->
 								<div class="logo">
-									<a href="index.html"><img src="img/logoIn.png" alt="#"></a>
+									<a href="index.html"><img src="{{ asset('images/logoIn.png') }}" alt="Logo"></a>
 								</div>
 								<!-- End Logo -->
 								<!-- Mobile Nav -->
 								<div class="mobile-nav"></div>
 								<!-- End Mobile Nav -->
 							</div>
-							<div class="col-lg-7 col-md-9 col-12">
+							<div class="col-lg-9 col-md-9 col-12">
 								<!-- Main Menu -->
 								<div class="main-menu">
 									<nav class="navigation">
-										<ul class="nav menu">
-											<li class="active"><a href="#">Home</a>
-											
-											<li><a href="#">Interview </a></li>
-											<li><a href="#">Partenariat </a></li>
-											<li><a href="#">Publication</a>
+										<ul class="nav menu d-flex justify-content-end">
+											<li class="active"><a href="#">Home</a></li>
+											<li><a href=" {{ path('app_interview_index_front') }}">Interview</a></li>
+											<li><a href="#">Partenariat</a></li>
+											<li><a href="#">Publication</a></li>
+											<li><a href="{{path('app_entreprise_index_front')}}">Entreprise</a></li>
 											<li><a href="{{ path('front_projet_index') }}">Projet</a></li>
 											<li><a href="{{ path('front_offre_index') }}">Offre</a></li>
-											<li><a href="#">Entreprise</a></li>
-							                <li><a href="#">Partenariat</a></li>
-							
 											<li><a href="contact.html">Contact Us</a></li>
 										</ul>
 									</nav>
 								</div>
 								<!--/ End Main Menu -->
 							</div>
-							
 						</div>
 					</div>
 				</div>
 			</div>
-            {% endblock %}
+			{% endblock %}
 			<!--/ End Header Inner -->
 		</header>
 		<!-- End Header Area -->
 		{% block body %}
+    <div class="container mt-4">
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label == 'success' ? 'success' : (label == 'error' ? 'danger' : 'info') }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+
 		<!-- Slider Area -->
 		<section class="slider">
 			<div class="hero-slider">
@@ -419,8 +377,6 @@
 		</div>
 		<!--/ End Fun-facts -->
 		
-		
-		
 		<!-- Start Call to action -->
 		<section class="call-action overlay" data-stellar-background-ratio="0.5">
 			<div class="container">
@@ -567,7 +523,6 @@
 		</section>
 		<!--/ End service -->
 		
-		
 		<!-- Start clients -->
 		<div class="clients overlay">
 			<div class="container">
@@ -608,7 +563,6 @@
 		</div>
 		<!--/Ens clients -->
 		{% endblock %}
-		
 		
 		<!-- Start Newsletter Area -->
 		{% block subscribe %}
@@ -742,46 +696,26 @@
 		<!-- jquery Min JS -->
         {% block js %}
         <script src="{{ asset('js/jquery.min.js') }}"></script>
-<!-- jquery Migrate JS -->
-<script src="{{ asset('js/jquery-migrate-3.0.0.js') }}"></script>
-<!-- jquery Ui JS -->
-<script src="{{ asset('js/jquery-ui.min.js') }}"></script>
-<!-- Easing JS -->
-<script src="{{ asset('js/easing.js') }}"></script>
-<!-- Color JS -->
-<script src="{{ asset('js/colors.js') }}"></script>
-<!-- Popper JS -->
-<script src="{{ asset('js/popper.min.js') }}"></script>
-<!-- Bootstrap Datepicker JS -->
-<script src="{{ asset('js/bootstrap-datepicker.js') }}"></script>
-<!-- Jquery Nav JS -->
-<script src="{{ asset('js/jquery.nav.js') }}"></script>
-<!-- Slicknav JS -->
-<script src="{{ asset('js/slicknav.min.js') }}"></script>
-<!-- ScrollUp JS -->
-<script src="{{ asset('js/jquery.scrollUp.min.js') }}"></script>
-<!-- Niceselect JS -->
-<script src="{{ asset('js/niceselect.js') }}"></script>
-<!-- Tilt Jquery JS -->
-<script src="{{ asset('js/tilt.jquery.min.js') }}"></script>
-<!-- Owl Carousel JS -->
-<script src="{{ asset('js/owl-carousel.js') }}"></script>
-<!-- counterup JS -->
-<script src="{{ asset('js/jquery.counterup.min.js') }}"></script>
-<!-- Steller JS -->
-<script src="{{ asset('js/steller.js') }}"></script>
-<!-- Wow JS -->
-<script src="{{ asset('js/wow.min.js') }}"></script>
-<!-- Magnific Popup JS -->
-<script src="{{ asset('js/jquery.magnific-popup.min.js') }}"></script>
-<!-- Counter Up CDN JS (Lien externe, pas besoin de asset) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/2.0.3/waypoints.min.js"></script>
-<!-- Bootstrap JS -->
-<script src="{{ asset('js/bootstrap.min.js') }}"></script>
-<!-- Main JS -->
-<script src="{{ asset('js/main.js') }}"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gmaps.js/0.4.24/gmaps.min.js"></script>
-
+		<script src="{{ asset('js/jquery-migrate-3.0.0.js') }}"></script>
+		<script src="{{ asset('js/jquery-ui.min.js') }}"></script>
+		<script src="{{ asset('js/easing.js') }}"></script>
+		<script src="{{ asset('js/colors.js') }}"></script>
+		<script src="{{ asset('js/popper.min.js') }}"></script>
+		<script src="{{ asset('js/bootstrap-datepicker.js') }}"></script>
+		<script src="{{ asset('js/jquery.nav.js') }}"></script>
+		<script src="{{ asset('js/slicknav.min.js') }}"></script>
+		<script src="{{ asset('js/jquery.scrollUp.min.js') }}"></script>
+		<script src="{{ asset('js/niceselect.js') }}"></script>
+		<script src="{{ asset('js/tilt.jquery.min.js') }}"></script>
+		<script src="{{ asset('js/owl-carousel.js') }}"></script>
+		<script src="{{ asset('js/jquery.counterup.min.js') }}"></script>
+		<script src="{{ asset('js/steller.js') }}"></script>
+		<script src="{{ asset('js/wow.min.js') }}"></script>
+		<script src="{{ asset('js/jquery.magnific-popup.min.js') }}"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/2.0.3/waypoints.min.js"></script>
+		<script src="{{ asset('js/bootstrap.min.js') }}"></script>
+		<script src="{{ asset('js/main.js') }}"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/gmaps.js/0.4.24/gmaps.min.js"></script>
         {% endblock %}
     </body>
 </html>
