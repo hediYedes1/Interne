@@ -22,7 +22,6 @@ use Endroid\QrCode\Label\Font\OpenSans;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
-
 #[Route('/entreprise')]
 final class EntrepriseController extends AbstractController
 {
@@ -219,10 +218,16 @@ final class EntrepriseController extends AbstractController
     #[Route('/front/{identreprise}/qr-code', name: 'app_entreprise_qr_code', methods: ['GET'])]
     public function generateQrCode(Entreprise $entreprise): Response
     {
+        $qrData = [
+            'url' => $this->generateUrl('app_entreprise_show_front', ['identreprise' => $entreprise->getIdentreprise()], UrlGeneratorInterface::ABSOLUTE_URL),
+            'nom' => $entreprise->getNomentreprise(),
+            'logo' => $entreprise->getLogoentreprise()
+        ];
+
         $qrCode = Builder::create()
             ->writer(new PngWriter())
             ->writerOptions([])
-            ->data($this->generateUrl('app_entreprise_show_front', ['identreprise' => $entreprise->getIdentreprise()], UrlGeneratorInterface::ABSOLUTE_URL))
+            ->data(json_encode($qrData))
             ->encoding(new Encoding('UTF-8'))
             ->errorCorrectionLevel(ErrorCorrectionLevel::High)
             ->size(300)
@@ -244,7 +249,7 @@ final class EntrepriseController extends AbstractController
             'description' => $entreprise->getDescriptionentreprise(),
             'url' => $entreprise->getUrlentreprise(),
             'secteur' => $entreprise->getSecteurentreprise(),
-            'logo' => $this->getParameter('logo_directory') . '/' . $entreprise->getLogoentreprise()
+            'logo' => $entreprise->getLogoentreprise()
         ];
 
         $qrCode = Builder::create()
@@ -268,15 +273,6 @@ final class EntrepriseController extends AbstractController
         ]);
     }
 
-    #[Route('/mobile/{identreprise}', name: 'app_entreprise_mobile_view', methods: ['GET'])]
-    public function mobileView(Entreprise $entreprise): Response
-    {
-        return $this->render('entreprise/mobileView.html.twig', [
-            'entreprise' => $entreprise
-        ]);
-    }
-
- 
     #[Route('/list/pdf', name: 'app_entreprise_pdf', methods: ['GET'])]
     public function generatePdf(EntityManagerInterface $entityManager): Response
     {
@@ -318,7 +314,5 @@ final class EntrepriseController extends AbstractController
                 'Content-Disposition' => 'attachment; filename="' . $filename . '"'
             ]
         );
-
-}
-    
+    }
 }

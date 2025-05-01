@@ -1,71 +1,46 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Nouvelle Branche{% endblock %}
+{% block title %}Nouvelle Branche d'entreprise{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         #map {
             height: 400px;
             width: 100%;
             margin-bottom: 20px;
             border-radius: 8px;
-            border: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .form-group {
-            margin-bottom: 1rem;
+        .card {
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
+        .card-header {
+            background-color: #007bff;
+            color: white;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
         }
-        .form-control {
-            width: 100%;
-            padding: 0.5rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+        .btn-group {
+            gap: 10px;
         }
     </style>
 {% endblock %}
 
 {% block body %}
     <div class="container mt-4">
-        <h1>Créer une nouvelle branche</h1>
+        <h1 class="text-center mb-4">Nouvelle Branche d'entreprise</h1>
 
-        {{ form_start(form) }}
-            <div class="form-group">
-                {{ form_label(form.nombranche) }}
-                {{ form_widget(form.nombranche, {'attr': {'class': 'form-control'}}) }}
-            </div>
-
-            <div class="form-group">
-                {{ form_label(form.adressebranche) }}
-                {{ form_widget(form.adressebranche, {'attr': {'class': 'form-control'}}) }}
-            </div>
-
-            <div class="form-group">
-                <label for="search">Rechercher une adresse</label>
-                <input type="text" id="search" class="form-control" placeholder="Entrez une adresse...">
-            </div>
-
-            <div id="map"></div>
-
-            <div class="form-group">
-                {{ form_label(form.latitude) }}
-                {{ form_widget(form.latitude, {'attr': {'class': 'form-control', 'readonly': 'readonly'}}) }}
-            </div>
-
-            <div class="form-group">
-                {{ form_label(form.longitude) }}
-                {{ form_widget(form.longitude, {'attr': {'class': 'form-control', 'readonly': 'readonly'}}) }}
-            </div>
-
-            <button type="submit" class="btn btn-primary">Créer</button>
-        {{ form_end(form) }}
-
-        <a href="{{ path('app_brancheentreprise_index') }}" class="btn btn-secondary mt-3">Retour à la liste</a>
+        {{ include('brancheentreprise/_form.html.twig') }}
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="{{ asset('js/map.js') }}"></script>
 {% endblock %}
 
 {% block javascripts %}

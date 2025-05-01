@@ -142,7 +142,7 @@ class Brancheentreprise
         return $this->identreprise;
     }
 
-    public function setIdentreprise(?Entreprise $identreprise): static
+    public function setIdentreprise(?Entreprise $identreprise): self
     {
         $this->identreprise = $identreprise;
         return $this;
