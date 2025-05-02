@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 
+
 #[Route('/offre')]
 class OffreController extends AbstractController
 {
@@ -50,6 +51,8 @@ class OffreController extends AbstractController
             'selectedType' => $typeContrat
         ]);
     }
+
+
 
     #[Route('/new', name: 'front_offre_new', methods: ['GET', 'POST'])]
     public function newFront(Request $request, Security $security): Response
