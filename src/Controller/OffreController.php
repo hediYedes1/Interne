@@ -64,9 +64,9 @@ class OffreController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $user = $security->getUser();
             if ($user) {
-                $offre->setIdutilisateur($user);
+                $offre->setutilisateur($user);
                 if (method_exists($user, 'getEntreprise')) {
-                    $offre->setIdentreprise($user->getEntreprise());
+                    $offre->setentreprise($user->getEntreprise());
                 }
             }
 
@@ -224,9 +224,9 @@ class OffreController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $user = $security->getUser();
             if ($user) {
-                $offre->setIdutilisateur($user);
+                $offre->setutilisateur($user);
                 if (method_exists($user, 'getEntreprise')) {
-                    $offre->setIdentreprise($user->getEntreprise());
+                    $offre->setentreprise($user->getEntreprise());
                 }
             }
 
