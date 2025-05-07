@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'base2.html.twig' %}
 
 {% block title %}Liste des offres d'emploi{% endblock %}
 
@@ -10,6 +10,9 @@
                 <h1 class="display-5 fw-bold">
                     <i class="fas fa-briefcase me-2"></i>Nos offres d'emploi
                 </h1>
+                <a href="{{ path('rh_offre_new') }}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Nouvelle offre
+                </a>
             </div>
 
             {# Filtres #}
@@ -45,7 +48,7 @@
 
             {# Liste des offres #}
             <div id="offresContainer" class="row row-cols-1 row-cols-md-2 g-4">
-            {% include 'offre/_offres_list.html.twig' with {'route_show': 'front_offre_show'} %}
+            {% include 'offre/_offres_list.html.twig' with {'route_show': 'rh_offre_show'} %}
             </div>
         </div>
     </div>
@@ -66,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             const url = new URL(e.target.closest('.page-link').href);
             pageInput.value = url.searchParams.get('page') || 1;
-            performSearch();
+            performSearch(searchInput.value, typeContratSelect.value, pageInput.value);
         }
     });
 
@@ -75,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
         clearTimeout(timer);
         timer = setTimeout(function() {
             pageInput.value = 1; // Reset à la première page lors d'une nouvelle recherche
-            performSearch();
+            performSearch(searchInput.value, typeContratSelect.value, pageInput.value);
         }, 300);
     }
 
@@ -86,26 +89,22 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('searchForm').addEventListener('submit', function(e) {
         e.preventDefault();
         pageInput.value = 1;
-        performSearch();
+        performSearch(searchInput.value, typeContratSelect.value, pageInput.value);
     });
 
-    function performSearch() {
-        const route = "{{ path('front_offre_index') }}";
+    function performSearch(query, typeContrat, page) {
+        const route = "{{ path('rh_offre_index') }}";
         const params = new URLSearchParams();
-        
-        if (searchInput.value) params.append('search', searchInput.value);
-        if (typeContratSelect.value) params.append('typecontrat', typeContratSelect.value);
-        if (pageInput.value) params.append('page', pageInput.value);
+        if (query) params.append('search', query);
+        if (typeContrat) params.append('typecontrat', typeContrat);
+        if (page) params.append('page', page);
         
         fetch(route + '?' + params.toString(), {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
             }
         })
-        .then(response => {
-            if (!response.ok) throw new Error('Network response was not ok');
-            return response.text();
-        })
+        .then(response => response.text())
         .then(html => {
             offresContainer.innerHTML = html;
             // Scroll doux vers le haut après le chargement
@@ -116,7 +115,6 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(error => {
             console.error('Error:', error);
-            // Ajoutez un feedback utilisateur ici si nécessaire
         });
     }
 });

@@ -1,6 +1,5 @@
-{% extends 'base1.html.twig' %}
+{% extends 'base2.html.twig' %}
 {% block title %}Liste des projets{% endblock %}
-
 {% block body %}
 <div class="container mt-4">
     <h1 class="mb-4 text-center">Liste des projets</h1>
@@ -17,7 +16,7 @@
         </div>
         {% if searchQuery %}
         <div class="col-md-2">
-            <a href="{{ path('back_projet_index') }}" class="btn btn-secondary w-100">
+            <a href="{{ path('rh_projet_index') }}" class="btn btn-secondary w-100">
                 <i class="fas fa-times"></i> Réinitialiser
             </a>
         </div>
@@ -25,13 +24,13 @@
     </form>
 
     <div class="d-flex justify-content-end mb-3">
-        <a href="{{ path('back_projet_new') }}" class="btn btn-success">
+        <a href="{{ path('rh_projet_new') }}" class="btn btn-success">
             <i class="fas fa-plus"></i> Créer un nouveau projet
         </a>
     </div>
 
     <div id="projetsContainer" class="row">
-    {% include 'projet/_projet_list.html.twig' with {'route_show': 'back_projet_show'} %}
+    {% include 'projet/_projets_list.html.twig' with {'route_show': 'rh_projet_show'} %}
     </div>
 </div>
 
@@ -57,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function performSearch(query) {
-        const route = "{{ path('back_projet_index') }}";
+        const route = "{{ path('rh_projet_index') }}";
         
         fetch(route + '?search=' + encodeURIComponent(query), {
             headers: {

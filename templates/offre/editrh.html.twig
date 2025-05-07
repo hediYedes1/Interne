@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'base2.html.twig' %}
 
 {% block title %}Modifier l'offre{% endblock %}
 
@@ -33,7 +33,7 @@
                 
                 <div class="card-footer bg-light">
                     <div class="d-flex justify-content-between">
-                        <a href="{{ path('front_offre_index') }}" class="btn btn-outline-secondary">
+                        <a href="{{ path('rh_offre_index') }}" class="btn btn-outline-secondary">
                             <i class="fas fa-arrow-left me-1"></i> Retour à la liste
                         </a>
 
@@ -60,7 +60,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                <form action="{{ path('front_offre_delete', {'idoffre': offre.idoffre}) }}" method="POST" style="display:inline;">
+                <form action="{{ path('rh_offre_delete', {'idoffre': offre.idoffre}) }}" method="POST" style="display:inline;">
                     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ offre.idoffre) }}">
                     <button type="submit" class="btn btn-danger">
                         <i class="fas fa-trash-alt me-1"></i> Confirmer la suppression

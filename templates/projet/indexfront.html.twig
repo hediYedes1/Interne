@@ -23,15 +23,8 @@
         </div>
         {% endif %}
     </form>
-
-    <div class="d-flex justify-content-end mb-3">
-        <a href="{{ path('front_projet_new') }}" class="btn btn-success">
-            <i class="fas fa-plus"></i> Créer un nouveau projet
-        </a>
-    </div>
-
     <div id="projetsContainer" class="row">
-        {% include 'projet/_projets_list.html.twig' %}
+    {% include 'projet/_projets_list.html.twig' with {'route_show': 'front_projet_show'} %}
     </div>
 </div>
 

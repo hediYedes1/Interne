@@ -65,44 +65,12 @@
                 <i class="fas fa-arrow-left"></i> Retour
             </a>
 
-            <div class="d-flex gap-2">
-                <a href="{{ path('front_offre_edit', {'idoffre': offre.idoffre}) }}" class="btn btn-warning text-white">
-                    <i class="fas fa-edit"></i> Modifier
-                </a>
-
-                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ offre.idoffre }}">
-                    <i class="fas fa-trash-alt"></i> Supprimer
-                </button>
             </div>
         </div>
 
-        <!-- Modal Bootstrap 5 -->
-        <div class="modal fade" id="deleteModal{{ offre.idoffre }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ offre.idoffre }}" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="deleteModalLabel{{ offre.idoffre }}">Confirmation de suppression</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        Êtes-vous sûr de vouloir supprimer cette offre ?
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                        <form action="{{ path('front_offre_delete', {'idoffre': offre.idoffre}) }}" method="POST" style="display:inline;">
-                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ offre.idoffre) }}">
-                            <button type="submit" class="btn btn-danger">Supprimer</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- Boutons supplémentaires -->
         <div class="d-flex justify-content-end mt-4 gap-2">
-            <a href="{{ path('front_offre_new') }}" class="btn btn-success text-white">
-                <i class="fas fa-plus-circle"></i> Nouvelle offre
-            </a>
             <a href="{{ path('app_postuler', {'id': offre.idoffre}) }}" class="btn btn-primary text-white" id="apply-btn" {{ isExpired ? 'disabled' : '' }}>
                 Postuler à cette offre
             </a>

@@ -52,10 +52,37 @@ class OffreController extends AbstractController
         ]);
     }
 
+    #[Route('rh/list', name: 'rh_offre_index', methods: ['GET'])]
+    public function rhIndex(Request $request, PaginatorInterface $paginator): Response
+    {
+        $searchQuery = $request->query->get('search', '');
+        $typeContrat = $request->query->get('typecontrat', '');
+        
+        $query = $this->offreRepository->getSearchQuery($searchQuery, $typeContrat);
+        $offres = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            3
+        );
+
+        if ($request->isXmlHttpRequest()) {
+            return $this->render('offre/_offres_list.html.twig', [
+                'offres' => $offres,
+                'searchQuery' => $searchQuery,
+                'selectedType' => $typeContrat,
+            ]);
+        }
+
+        return $this->render('offre/indexrh.html.twig', [
+            'offres' => $offres,
+            'searchQuery' => $searchQuery,
+            'selectedType' => $typeContrat
+        ]);
+    }
 
 
-    #[Route('/new', name: 'front_offre_new', methods: ['GET', 'POST'])]
-    public function newFront(Request $request, Security $security): Response
+    #[Route('rh/new', name: 'rh_offre_new', methods: ['GET', 'POST'])]
+    public function rhFront(Request $request, Security $security): Response
     {
         $offre = new Offre();
         $form = $this->createForm(OffreType::class, $offre, [
@@ -77,14 +104,14 @@ class OffreController extends AbstractController
             $this->entityManager->flush();
 
             $this->addFlash('success', 'Votre offre a été créée avec succès');
-            return $this->redirectToRoute('front_offre_show', ['idoffre' => $offre->getIdoffre()]);
+            return $this->redirectToRoute('rh_offre_show', ['idoffre' => $offre->getIdoffre()]);
         }
 
         if ($form->isSubmitted() && !$form->isValid()) {
             $this->addFlash('error', 'Erreur lors de la création de l\'offre. Veuillez vérifier les informations.');
         }
 
-        return $this->render('offre/newfront.html.twig', [
+        return $this->render('offre/newrh.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -119,7 +146,36 @@ class OffreController extends AbstractController
             'datelimiteFormatted' => $datelimite->format('Y-m-d H:i:s'),
         ]);
     }
+    #[Route('rh/{idoffre}', name: 'rh_offre_show', methods: ['GET'], requirements: ['idoffre' => '\d+'])]
+    public function rhShow(int $idoffre): Response
+    {
+        $offre = $this->entityManager->getRepository(Offre::class)->find($idoffre);
 
+        if (!$offre) {
+            $this->addFlash('error', 'Offre non trouvée');
+            return $this->redirectToRoute('rh_offre_index');
+        }
+
+        $now = new \DateTime();
+        $datelimite = $offre->getDatelimite();
+        $remainingSeconds = $datelimite->getTimestamp() - $now->getTimestamp();
+        $isExpired = $remainingSeconds <= 0;
+
+        if ($isExpired) {
+            $this->entityManager->remove($offre);
+            $this->entityManager->flush();
+            $this->addFlash('warning', 'Cette offre a expiré et a été automatiquement supprimée');
+            return $this->redirectToRoute('rh_offre_index');
+        }
+
+        return $this->render('offre/showrh.html.twig', [
+            'offre' => $offre,
+            'projet' => $offre->getProjet(),
+            'isExpired' => $isExpired,
+            'remainingTime' => $remainingSeconds,
+            'datelimiteFormatted' => $datelimite->format('Y-m-d H:i:s'),
+        ]);
+    }
     #[Route('/{idoffre}/expire', name: 'front_offre_expire', methods: ['POST'])]
     public function expireOffer(int $idoffre, Request $request): JsonResponse
     {
@@ -135,14 +191,29 @@ class OffreController extends AbstractController
         return new JsonResponse(['success' => true]);
     }
 
-    #[Route('/{idoffre}/edit', name: 'front_offre_edit', methods: ['GET', 'POST'], requirements: ['idoffre' => '\d+'])]
-    public function editFront(Request $request, int $idoffre): Response
+    #[Route('rh/{idoffre}/expire', name: 'rh_offre_expire', methods: ['POST'])]
+    public function rhexpireOffer(int $idoffre, Request $request): JsonResponse
+    {
+        $offre = $this->entityManager->getRepository(Offre::class)->find($idoffre);
+
+        if (!$offre) {
+            return new JsonResponse(['error' => 'Offre non trouvée'], 404);
+        }
+
+        $this->entityManager->remove($offre);
+        $this->entityManager->flush();
+
+        return new JsonResponse(['success' => true]);
+    }
+
+    #[Route('rh/{idoffre}/edit', name: 'rh_offre_edit', methods: ['GET', 'POST'], requirements: ['idoffre' => '\d+'])]
+    public function rhedit(Request $request, int $idoffre): Response
     {
         $offre = $this->entityManager->getRepository(Offre::class)->find($idoffre);
         
         if (!$offre) {
             $this->addFlash('error', 'Offre non trouvée');
-            return $this->redirectToRoute('front_offre_index');
+            return $this->redirectToRoute('rh_offre_index');
         }
 
         $form = $this->createForm(OffreType::class, $offre, [
@@ -154,27 +225,27 @@ class OffreController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
             $this->addFlash('success', 'L\'offre a été modifiée avec succès');
-            return $this->redirectToRoute('front_offre_show', ['idoffre' => $offre->getIdoffre()]);
+            return $this->redirectToRoute('rh_offre_show', ['idoffre' => $offre->getIdoffre()]);
         }
 
         if ($form->isSubmitted() && !$form->isValid()) {
             $this->addFlash('error', 'Erreur lors de la modification. Veuillez vérifier les informations.');
         }
 
-        return $this->render('offre/editfront.html.twig', [
+        return $this->render('offre/editrh.html.twig', [
             'offre' => $offre,
             'form' => $form->createView(),
         ]);
     }
 
-    #[Route('/{idoffre}/delete', name: 'front_offre_delete', methods: ['POST'], requirements: ['idoffre' => '\d+'])]
-    public function deleteFront(Request $request, int $idoffre): Response
+    #[Route('rh/{idoffre}/delete', name: 'rh_offre_delete', methods: ['POST'], requirements: ['idoffre' => '\d+'])]
+    public function rhdelete(Request $request, int $idoffre): Response
     {
         $offre = $this->entityManager->getRepository(Offre::class)->find($idoffre);
         
         if (!$offre) {
             $this->addFlash('error', 'Offre non trouvée');
-            return $this->redirectToRoute('front_offre_index');
+            return $this->redirectToRoute('rh_offre_index');
         }
 
         if ($this->isCsrfTokenValid('delete'.$offre->getIdoffre(), $request->request->get('_token'))) {
@@ -185,7 +256,7 @@ class OffreController extends AbstractController
             $this->addFlash('error', 'Token CSRF invalide. La suppression a échoué.');
         }
 
-        return $this->redirectToRoute('front_offre_index');
+        return $this->redirectToRoute('rh_offre_index');
     }
 
     #[Route('/admin/offres', name: 'back_offre_index', methods: ['GET'])]
