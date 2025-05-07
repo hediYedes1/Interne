@@ -62,15 +62,16 @@ final class ProjetController extends AbstractController
     #[Route('/rh/new', name: 'rh_projet_new', methods: ['GET', 'POST'])]
     public function newrh(Request $request, Security $security): Response
     {
+        $user = $this->getUser();
+        if (!$user) {
+            throw $this->createAccessDeniedException('Vous devez être connecté pour voir vos interviews.');
+        }
         $projet = new Projet();
         $form = $this->createForm(ProjetType::class, $projet);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $user = $security->getUser();
-            if ($user) {
-                $projet->setIdutilisateur($user);
-            }
+         
 
             $this->entityManager->persist($projet);
             $this->entityManager->flush();
@@ -155,15 +156,16 @@ final class ProjetController extends AbstractController
     #[Route('/admin/new', name: 'back_projet_new', methods: ['GET', 'POST'])]
     public function newBack(Request $request, Security $security): Response
     {
+        $user = $this->getUser();
+        if (!$user) {
+            throw $this->createAccessDeniedException('Vous devez être connecté pour voir vos interviews.');
+        }
         $projet = new Projet();
         $form = $this->createForm(ProjetType::class, $projet);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $user = $security->getUser();
-            if ($user) {
-                $projet->setIdutilisateur($user);
-            }
+           
 
             $this->entityManager->persist($projet);
             $this->entityManager->flush();

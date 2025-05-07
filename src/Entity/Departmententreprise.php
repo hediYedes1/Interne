@@ -25,27 +25,21 @@ class Departmententreprise
     )]
     private string $nomdepartement;
 
-    
     #[ORM\Column(type: "text")]
     #[Assert\NotBlank(message: "La description du département est obligatoire.")]
     #[Assert\Length(
-        min: 5,
-        minMessage: "La description du département doit contenir au moins {{ limit }} caractères.",
         max: 500,
         maxMessage: "La description ne peut pas dépasser {{ limit }} caractères."
     )]
     private string $descriptiondepartement;
 
-  
-#[ORM\Column(type: "text")]
-#[Assert\NotBlank(message: "Le responsable du département est obligatoire.")]
-#[Assert\Length(
-    min: 5,
-    minMessage: "Le nom du responsable doit contenir au moins {{ limit }} caractères.",
-    max: 100,
-    maxMessage: "Le nom du responsable ne peut pas dépasser {{ limit }} caractères."
-)]
-private string $responsabledepartement;
+    #[ORM\Column(type: "text")]
+    #[Assert\NotBlank(message: "Le responsable du département est obligatoire.")]
+    #[Assert\Length(
+        max: 100,
+        maxMessage: "Le nom du responsable ne peut pas dépasser {{ limit }} caractères."
+    )]
+    private string $responsabledepartement;
 
     #[ORM\Column(type: "integer")]
     #[Assert\NotBlank(message: "Le nombre d'employés est obligatoire.")]

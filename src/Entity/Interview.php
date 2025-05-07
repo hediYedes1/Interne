@@ -22,9 +22,9 @@ class Interview
     #[ORM\Column(type: "integer")]
     private int $idinterview;
 
-    #[ORM\ManyToOne(targetEntity: Offre::class, inversedBy: "interviews")]
+        #[ORM\ManyToOne(targetEntity: Offre::class, inversedBy: "interviews")]
     #[ORM\JoinColumn(name: 'idoffre', referencedColumnName: 'idoffre', onDelete: 'CASCADE')]
-    private Offre $offre;
+    private Offre $idoffre;
 
  
     #[ORM\Column(type: "text", nullable: true)] // Ajoutez nullable: true
@@ -67,14 +67,14 @@ class Interview
         $this->idinterview = $value;
     }
 
-    public function getoffre()
+    public function getIdoffre()
     {
-        return $this->offre;
+        return $this->idoffre;
     }
 
-    public function setoffre($value)
+    public function setIdoffre($value)
     {
-        $this->offre = $value;
+        $this->idoffre = $value;
     }
 
     public function getTitreoffre()

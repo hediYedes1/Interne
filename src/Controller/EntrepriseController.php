@@ -23,7 +23,7 @@ use Endroid\QrCode\Label\Font\OpenSans;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
-
+use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelLow;
 use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
 
 use App\Repository\EntrepriseRepository;
@@ -42,8 +42,15 @@ use Endroid\QrCode\Label\Label;
 use Endroid\QrCode\RoundBlockSizeMode;
 use Endroid\QrCode\Label\Alignment;
 use Endroid\QrCode\Label\LabelAlignment;
-
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Endroid\QrCode\Label\Alignment\LabelAlignmentLeft;
+use Endroid\QrCode\Label\Alignment\LabelAlignmentTop;
+
+use Endroid\QrCode\Label\Alignment\LabelAlignmentBottom;
+use Endroid\QrCode\Label\Alignment\LabelAlignmentMiddle;
+use Endroid\QrCode\Label\Alignment\LabelAlignmentRight;
+
+
 
 #[Route('/entreprise')]
 final class EntrepriseController extends AbstractController
@@ -259,7 +266,7 @@ final class EntrepriseController extends AbstractController
         $label = Label::create($entreprise->getNomentreprise())
             ->setTextColor(new Color(0, 0, 0))
             ->setFont(new NotoSans(20))
-            ->setAlignment(LabelAlignment::CENTER);
+            ->setAlignment(LabelAlignment::RIGHT);
 
         $writer = new PngWriter();
         $result = $writer->write($qrCode, null, $label);
