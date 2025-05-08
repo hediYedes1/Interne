@@ -47,16 +47,28 @@ final class PartenariatController extends AbstractController
     }
 
     #[Route('/{idpartenariat}', name: 'app_partenariat_show', methods: ['GET'])]
-    public function show(Partenariat $partenariat): Response
+    public function show(EntityManagerInterface $entityManager, $idpartenariat): Response
     {
+        $partenariat = $entityManager->getRepository(Partenariat::class)->find($idpartenariat);
+        
+        if (!$partenariat) {
+            throw $this->createNotFoundException('Le partenariat avec l\'ID ' . $idpartenariat . ' n\'existe pas.');
+        }
+        
         return $this->render('partenariat/show.html.twig', [
             'partenariat' => $partenariat,
         ]);
     }
 
     #[Route('/{idpartenariat}/edit', name: 'app_partenariat_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Partenariat $partenariat, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, EntityManagerInterface $entityManager, $idpartenariat): Response
     {
+        $partenariat = $entityManager->getRepository(Partenariat::class)->find($idpartenariat);
+        
+        if (!$partenariat) {
+            throw $this->createNotFoundException('Le partenariat avec l\'ID ' . $idpartenariat . ' n\'existe pas.');
+        }
+        
         $form = $this->createForm(PartenariatType::class, $partenariat);
         $form->handleRequest($request);
 
@@ -73,8 +85,14 @@ final class PartenariatController extends AbstractController
     }
 
     #[Route('/{idpartenariat}', name: 'app_partenariat_delete', methods: ['POST'])]
-    public function delete(Request $request, Partenariat $partenariat, EntityManagerInterface $entityManager): Response
+    public function delete(Request $request, EntityManagerInterface $entityManager, $idpartenariat): Response
     {
+        $partenariat = $entityManager->getRepository(Partenariat::class)->find($idpartenariat);
+        
+        if (!$partenariat) {
+            throw $this->createNotFoundException('Le partenariat avec l\'ID ' . $idpartenariat . ' n\'existe pas.');
+        }
+        
         if ($this->isCsrfTokenValid('delete'.$partenariat->getIdpartenariat(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($partenariat);
             $entityManager->flush();

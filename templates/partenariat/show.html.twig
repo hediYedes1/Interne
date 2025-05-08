@@ -1,34 +1,378 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Détails du Partenariat{% endblock %}
+{% block title %}{{ partenariat.nompartenariat }}{% endblock %}
 
 {% block body %}
-    <div class="container mt-5">
-        <h1 class="mb-4">📄 Détails du Partenariat</h1>
-
-        <table class="table table-bordered shadow-sm">
-            <tbody>
-                <tr>
-                    <th scope="row">ID</th>
-                    <td>{{ partenariat.idpartenariat }}</td>
-                </tr>
-                <tr>
-                    <th scope="row">Nom</th>
-                    <td>{{ partenariat.nompartenariat }}</td>
-                </tr>
-                <tr>
-                    <th scope="row">Adresse</th>
-                    <td>{{ partenariat.adressepartenariat }}</td>
-                </tr>
-                <tr>
-                    <th scope="row">Téléphone</th>
-                    <td>{{ partenariat.numtelpartenariat }}</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div class="mt-4 d-flex gap-2">
-            <a href="{{ path('app_partenariat_index') }}" class="btn btn-secondary">⬅️ Retour à la liste</a>
+<div class="partner-detail-page">
+    <!-- Header Section -->
+    <div class="header-section bg-white border-bottom">
+        <div class="container py-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="h2 mb-0 fw-bold text-primary">Détails du Partenariat</h1>
+                <div class="flash-button">
+                    <a href="{{ path('app_partenariat_index') }}" class="btn btn-flash">
+                        <span class="flash-content">
+                            <i class="fas fa-arrow-left me-2"></i> Retour à la liste
+                        </span>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
+
+    <!-- Main Content -->
+    <div class="container py-5">
+        <div class="row">
+            <!-- Partner Info -->
+            <div class="col-lg-8 mb-4 mb-lg-0">
+                <div class="card border-0 shadow-sm rounded-3">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="partner-logo me-3">
+                                <div class="logo-placeholder rounded-circle bg-primary-subtle d-flex align-items-center justify-content-center">
+                                    <span class="h3 mb-0 text-primary">{{ partenariat.nompartenariat|first|upper }}</span>
+                                </div>
+                            </div>
+                            <div>
+                                <h1 class="h3 mb-1 fw-bold text-dark">{{ partenariat.nompartenariat }}</h1>
+                                <p class="mb-0 text-muted">
+                                    <i class="fas fa-map-marker-alt me-2 text-primary"></i>
+                                    {{ partenariat.adressepartenariat }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="contact-info p-3 bg-light rounded-3 h-100">
+                                    <h3 class="h6 mb-3 text-dark">Contact</h3>
+                                    <p class="mb-2 d-flex align-items-center">
+                                        <i class="fas fa-phone me-2 text-primary"></i>
+                                        <span>{{ partenariat.numtelpartenariat }}</span>
+                                    </p>
+                                    <p class="mb-0 d-flex align-items-center">
+                                        <i class="fas fa-envelope me-2 text-primary"></i>
+                                        <span>contact@{{ partenariat.nompartenariat|lower|replace({' ': ''}) }}.com</span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="stats p-3 bg-light rounded-3 h-100">
+                                    <h3 class="h6 mb-3 text-dark">Statistiques</h3>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="text-muted">Hébergements</span>
+                                        <span class="fw-bold">12</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="text-muted">Réservations</span>
+                                        <span class="fw-bold">48</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span class="text-muted">Taux d'occupation</span>
+                                        <span class="fw-bold">87%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Performance Metrics -->
+                        <div class="performance-section mb-4">
+                            <h3 class="h5 mb-3 text-dark">Performance</h3>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <div class="metric-card p-3 bg-primary-subtle rounded-3 text-center h-100">
+                                        <div class="metric-icon mb-2">
+                                            <i class="fas fa-chart-line fa-2x text-primary"></i>
+                                        </div>
+                                        <h4 class="h6 mb-1">Taux d'occupation</h4>
+                                        <div class="h3 mb-2 fw-bold text-primary">87%</div>
+                                        <div class="progress" style="height: 6px;">
+                                            <div class="progress-bar bg-primary" role="progressbar" style="width: 87%;" aria-valuenow="87" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="metric-card p-3 bg-success-subtle rounded-3 text-center h-100">
+                                        <div class="metric-icon mb-2">
+                                            <i class="fas fa-smile fa-2x text-success"></i>
+                                        </div>
+                                        <h4 class="h6 mb-1">Satisfaction client</h4>
+                                        <div class="h3 mb-2 fw-bold text-success">92%</div>
+                                        <div class="progress" style="height: 6px;">
+                                            <div class="progress-bar bg-success" role="progressbar" style="width: 92%;" aria-valuenow="92" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="metric-card p-3 bg-info-subtle rounded-3 text-center h-100">
+                                        <div class="metric-icon mb-2">
+                                            <i class="fas fa-calendar-check fa-2x text-info"></i>
+                                        </div>
+                                        <h4 class="h6 mb-1">Taux de réservation</h4>
+                                        <div class="h3 mb-2 fw-bold text-info">78%</div>
+                                        <div class="progress" style="height: 6px;">
+                                            <div class="progress-bar bg-info" role="progressbar" style="width: 78%;" aria-valuenow="78" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                       
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm rounded-3 mb-4">
+                    <div class="card-body p-4">
+                        <h3 class="h5 mb-3 text-dark">Performance</h3>
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="text-muted small">Taux d'occupation</span>
+                                <span class="small">87%</span>
+                            </div>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar bg-primary" role="progressbar" style="width: 87%;" aria-valuenow="87" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="text-muted small">Satisfaction client</span>
+                                <span class="small">92%</span>
+                            </div>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: 92%;" aria-valuenow="92" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="text-muted small">Taux de réservation</span>
+                                <span class="small">78%</span>
+                            </div>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar bg-info" role="progressbar" style="width: 78%;" aria-valuenow="78" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm rounded-3">
+                    <div class="card-body p-4">
+                        <h3 class="h5 mb-3 text-dark">Hébergements récents</h3>
+                        <div class="recent-items">
+                            <div class="recent-item d-flex align-items-center p-2 rounded mb-2 hover-bg-light">
+                                <div class="icon-box bg-primary-subtle rounded-circle p-2 me-3">
+                                    <i class="fas fa-hotel text-primary"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">Appartement Luxe</h6>
+                                    <p class="small text-muted mb-0">Ajouté le 12/05/2023</p>
+                                </div>
+                            </div>
+                            <div class="recent-item d-flex align-items-center p-2 rounded mb-2 hover-bg-light">
+                                <div class="icon-box bg-primary-subtle rounded-circle p-2 me-3">
+                                    <i class="fas fa-hotel text-primary"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">Villa Panorama</h6>
+                                    <p class="small text-muted mb-0">Ajouté le 08/05/2023</p>
+                                </div>
+                            </div>
+                            <div class="recent-item d-flex align-items-center p-2 rounded hover-bg-light">
+                                <div class="icon-box bg-primary-subtle rounded-circle p-2 me-3">
+                                    <i class="fas fa-hotel text-primary"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">Studio Centre-Ville</h6>
+                                    <p class="small text-muted mb-0">Ajouté le 01/05/2023</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.partner-detail-page {
+    --primary-color: #4e73df;
+    --secondary-color: #5a5c69;
+    --success-color: #1cc88a;
+    --info-color: #36b9cc;
+    --warning-color: #f6c23e;
+    --danger-color: #e74a3b;
+    --light-bg: #f8f9fc;
+    --dark-text: #2e3338;
+    --border-radius: 8px;
+}
+
+.logo-placeholder {
+    width: 64px;
+    height: 64px;
+}
+
+.progress {
+    background-color: rgba(78, 115, 223, 0.1);
+    border-radius: 10px;
+}
+
+.progress-bar {
+    border-radius: 10px;
+}
+
+.badge {
+    font-weight: 500;
+    padding: 0.5em 0.85em;
+}
+
+.list-group-item {
+    border-left: none;
+    border-right: none;
+    transition: background-color 0.2s;
+}
+
+.list-group-item:first-child {
+    border-top: none;
+}
+
+.list-group-item:last-child {
+    border-bottom: none;
+}
+
+.text-primary { color: var(--primary-color) !important; }
+.text-success { color: var(--success-color) !important; }
+.text-info { color: var(--info-color) !important; }
+
+.bg-primary-subtle { background-color: rgba(78, 115, 223, 0.1); }
+.bg-success-subtle { background-color: rgba(28, 200, 138, 0.1); }
+.bg-info-subtle { background-color: rgba(54, 185, 204, 0.1); }
+
+.metric-card {
+    transition: transform 0.2s ease;
+}
+
+.metric-card:hover {
+    transform: translateY(-5px);
+}
+
+.chart-container {
+    position: relative;
+    height: 250px;
+}
+
+.icon-box {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hover-bg-light:hover {
+    background-color: var(--light-bg);
+    cursor: pointer;
+}
+
+/* Enhanced Button Styles */
+.btn-flash {
+    position: relative;
+    background-color: #fff;
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    border-radius: 30px;
+    padding: 0.6rem 1.5rem;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    z-index: 1;
+}
+
+.btn-flash:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: all 0.6s ease;
+    z-index: -1;
+}
+
+.btn-flash:hover {
+    color: #fff;
+    background-color: var(--primary-color);
+    box-shadow: 0 5px 15px rgba(78, 115, 223, 0.4);
+    transform: translateY(-2px);
+}
+
+.btn-flash:hover:before {
+    left: 100%;
+}
+
+.flash-button {
+    position: relative;
+    overflow: hidden;
+    border-radius: 30px;
+}
+
+.flash-content {
+    position: relative;
+    z-index: 2;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof Chart !== 'undefined') {
+        // Reservations chart
+        var ctx = document.getElementById('reservationsChart').getContext('2d');
+        var reservationsChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'],
+                datasets: [{
+                    label: 'Réservations',
+                    data: [12, 19, 15, 25, 22, 30],
+                    borderColor: '#4e73df',
+                    backgroundColor: 'rgba(78, 115, 223, 0.1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: '#4e73df',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    tension: 0.3,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            drawBorder: false
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    }
+});
+</script>
 {% endblock %}

@@ -1,4 +1,169 @@
-{{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+{{ form_start(form, {'attr': {'class': 'reservation-form needs-validation shadow-sm rounded p-4 bg-white', 'novalidate': 'novalidate'}}) }}
+    <div class="form-section mb-4 pb-3 border-bottom">
+        <h4 class="form-section-title d-flex align-items-center mb-3">
+            <span class="icon-circle bg-primary text-white me-2">
+                <i class="fas fa-hotel"></i>
+            </span>
+            <span>Hébergement</span>
+        </h4>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-floating">
+                    {{ form_widget(form.idhebergement, {
+                        'attr': {
+                            'class': 'form-select border-0 border-bottom rounded-0',
+                            'placeholder': 'Sélectionnez un hébergement'
+                        },
+                        'label': 'Sélectionnez votre hébergement'
+                    }) }}
+                    {{ form_label(form.idhebergement, 'Sélectionnez votre hébergement') }}
+                    <div class="invalid-feedback">
+                        {{ form_errors(form.idhebergement) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-section mb-4 pb-3 border-bottom">
+        <h4 class="form-section-title d-flex align-items-center mb-3">
+            <span class="icon-circle bg-primary text-white me-2">
+                <i class="fas fa-calendar-alt"></i>
+            </span>
+            <span>Dates de séjour</span>
+        </h4>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <div class="form-floating date-picker">
+                    {{ form_widget(form.datedebut, {
+                        'attr': {
+                            'class': 'form-control border-0 border-bottom rounded-0',
+                            'placeholder': 'Date d\'arrivée'
+                        }
+                    }) }}
+                    {{ form_label(form.datedebut, 'Date d\'arrivée') }}
+                    <div class="invalid-feedback">
+                        {{ form_errors(form.datedebut) }}
+                    </div>
+                    <div class="form-icon">
+                        <i class="fas fa-calendar-day text-primary"></i>
+                    </div>
+                </div>
+                <small class="text-muted mt-1 d-block">
+                    <i class="fas fa-info-circle me-1"></i>Check-in à partir de 14h00
+                </small>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+                <div class="form-floating date-picker">
+                    {{ form_widget(form.datefin, {
+                        'attr': {
+                            'class': 'form-control border-0 border-bottom rounded-0',
+                            'placeholder': 'Date de départ'
+                        }
+                    }) }}
+                    {{ form_label(form.datefin, 'Date de départ') }}
+                    <div class="invalid-feedback">
+                        {{ form_errors(form.datefin) }}
+                    </div>
+                    <div class="form-icon">
+                        <i class="fas fa-calendar-day text-primary"></i>
+                    </div>
+                </div>
+                <small class="text-muted mt-1 d-block">
+                    <i class="fas fa-info-circle me-1"></i>Check-out avant 11h00
+                </small>
+            </div>
+        </div>
+        <div class="nights-counter alert alert-light mt-3 border-start border-4 border-primary" id="nightsCounter">
+            <i class="fas fa-moon text-primary me-2"></i>
+            <span id="nightsCount" class="fw-medium">Sélectionnez vos dates</span>
+        </div>
+    </div>
+
+    <div class="form-section mb-4">
+        <h4 class="form-section-title d-flex align-items-center mb-3">
+            <span class="icon-circle bg-primary text-white me-2">
+                <i class="fas fa-file-signature"></i>
+            </span>
+            <span>Confirmation</span>
+        </h4>
+        <div class="form-check mb-3 ps-4">
+            <input class="form-check-input" type="checkbox" id="termsCheck" required>
+            <label class="form-check-label" for="termsCheck">
+                J'accepte les <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal" class="text-decoration-none">conditions générales</a>
+            </label>
+        </div>
+        
+        <div class="form-check mb-3 ps-4">
+            <input class="form-check-input" type="checkbox" id="privacyCheck" required>
+            <label class="form-check-label" for="privacyCheck">
+                J'accepte la <a href="#" data-bs-toggle="modal" data-bs-target="#privacyModal" class="text-decoration-none">politique de confidentialité</a>
+            </label>
+        </div>
+    </div>
+
+    <button type="submit" class="{{ button_class|default('btn btn-primary btn-lg w-100 d-flex align-items-center justify-content-center') }}">
+        <i class="fas fa-check-circle me-2"></i>
+        <span>{{ button_label|default('Confirmer ma réservation') }}</span>
+    </button>
 {{ form_end(form) }}
+
+<!-- Terms Modal -->
+<div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title" id="termsModalLabel">
+                    <i class="fas fa-file-contract text-primary me-2"></i>Conditions générales
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h6 class="fw-bold">1. Réservation</h6>
+                <p>La réservation est considérée comme confirmée après validation du paiement.</p>
+                
+                <h6 class="fw-bold">2. Annulation</h6>
+                <p>Annulation gratuite jusqu'à 48h avant la date d'arrivée. Au-delà, des frais peuvent s'appliquer.</p>
+                
+                <h6 class="fw-bold">3. Arrivée et départ</h6>
+                <p>L'arrivée se fait à partir de 14h et le départ avant 11h.</p>
+                
+                <h6 class="fw-bold">4. Paiement</h6>
+                <p>Le paiement intégral est requis pour confirmer la réservation.</p>
+            </div>
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">J'ai compris</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Privacy Modal -->
+<div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title" id="privacyModalLabel">
+                    <i class="fas fa-shield-alt text-primary me-2"></i>Politique de confidentialité
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Nous respectons votre vie privée et nous nous engageons à protéger vos données personnelles.</p>
+                
+                <h6 class="fw-bold">1. Collecte des données</h6>
+                <p>Nous collectons uniquement les données nécessaires à la gestion de votre réservation.</p>
+                
+                <h6 class="fw-bold">2. Utilisation des données</h6>
+                <p>Vos données sont utilisées exclusivement pour traiter votre réservation et améliorer nos services.</p>
+                
+                <h6 class="fw-bold">3. Protection des données</h6>
+                <p>Nous mettons en œuvre des mesures de sécurité appropriées pour protéger vos données.</p>
+            </div>
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">J'ai compris</button>
+            </div>
+        </div>
+    </div>
+</div>
