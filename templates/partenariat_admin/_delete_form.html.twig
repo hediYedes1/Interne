@@ -1,0 +1,9 @@
+<form method="post"
+      action="{{ path('app_partenariat_admin_delete', {'idpartenariat': partenariat.idpartenariat}) }}"
+      onsubmit="return confirm('Voulez-vous vraiment supprimer ce partenariat ?');"
+      style="display:inline;">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ partenariat.idpartenariat) }}">
+    <button class="btn btn-sm btn-outline-danger" title="Supprimer">
+        <i class="bi bi-trash"></i>
+    </button>
+</form>

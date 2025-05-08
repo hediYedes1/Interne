@@ -16,9 +16,11 @@
 {% endblock %}
 {% block breadcrumb %}
     {{ parent() }}
+    <li class="breadcrumb-item"><a href="../dashboard/index.html">Interviews</a></li>
+    <li class="breadcrumb-item active">New</li>
 {% endblock %}
 {% block body %}
-    <h1>Affectation interview</h1>
+    <h1>Affectationinterview index</h1>
 
     <table class="table">
         <thead>
@@ -44,7 +46,7 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_affectationinterview_new') }}">Creer nouveau</a>
+    <a href="{{ path('app_affectationinterview_new') }}">Create new</a>
 {% endblock %}
 
 {% block javascript %}

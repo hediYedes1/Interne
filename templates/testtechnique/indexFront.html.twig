@@ -356,8 +356,7 @@
         <div class="col-lg-4 col-md-6 mb-4">
           <div class="card-container position-relative">
             <!-- Bouton de lancement -->
-                
-            {% if testtechnique.questions|length > 0 and testtechnique.statuttesttechnique.value == 'ENATTENTE' %}
+            {% if testtechnique.questions|length > 0 %}
               <a href="{{ path('app_testtechnique_quiz_front', {'idtesttechnique': testtechnique.idtesttechnique}) }}" 
                  class="quiz-launch-btn btn btn-success text-white" 
                  title="Commencer le test">
@@ -420,12 +419,12 @@
                     <i class="fas fa-eye"></i> Détails
                   </a>
                   
-                     {% if testtechnique.questions|length > 0 and testtechnique.statuttesttechnique.value == 'ENATTENTE' %}
-        <a href="{{ path('app_testtechnique_quiz_front', {'idtesttechnique': testtechnique.idtesttechnique}) }}" 
-           class="btn btn-success btn-sm">
-            <i class="fas fa-play"></i> Quiz
-        </a>
-    {% endif %}
+                  {% if testtechnique.questions|length > 0 %}
+                    <a href="{{ path('app_testtechnique_quiz_front', {'idtesttechnique': testtechnique.idtesttechnique}) }}" 
+                       class="btn btn-success text-white">
+                      <i class="fas fa-play"></i> Démarrer
+                    </a>
+                  {% endif %}
                 </div>
               </div>
             </div>

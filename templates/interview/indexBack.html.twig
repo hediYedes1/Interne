@@ -37,10 +37,196 @@
 
 {% block sideBar %}
    
-    {{ parent() }}
+<nav class="pc-sidebar">
+  <div class="navbar-wrapper">
+    <div class="m-header">
+      <a href="../dashboard/index.html" class="b-brand text-primary">
+        <!-- ========   Change your logo from here   ============ -->
+        <a href="{{ asset('index.html') }}"><img src="{{ asset('images/hedi.png') }}" alt="#"></a>
+      </a>
+   
+    </div>
+    <div class="navbar-content">
+      <ul class="pc-navbar">
+        <li class="pc-item">
+          <a href="{{ path('app_interview_index_front') }}" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-dashboard"></i></span>
+            <span class="pc-mtext">Dashboard</span>
+          </a>
+        </li>
+
+        <li class="pc-item pc-caption">
+          <label>charts</label>
+          <i class="ti ti-dashboard"></i>
+        </li>
+        <li class="pc-item">
+          <a href="{{ path('app_interview_index') }}" class="pc-link">
+    <span class="pc-micon"><i class="ti ti-lock"></i></span>
+    <span class="pc-mtext">Interview</span>
+</a>
+        </li>
+        <li class="pc-item">
+          <a href="../elements/bc_color.html" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-color-swatch"></i></span>
+            <span class="pc-mtext">Utilisateur</span>
+          </a>
+        </li>
+        <li class="pc-item">
+          <a href="../elements/icon-tabler.html" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-plant-2"></i></span>
+            <span class="pc-mtext">Hebergement</span>
+          </a>
+        </li>
+
+        <li class="pc-item pc-caption">
+          <label>Pages</label>
+          <i class="ti ti-news"></i>
+        </li>
+        <li class="pc-item">
+          <a href="../pages/login.html" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-lock"></i></span>
+            <span class="pc-mtext">Login</span>
+          </a>
+        </li>
+        <li class="pc-item">
+          <a href="../pages/register.html" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-user-plus"></i></span>
+            <span class="pc-mtext">Register</span>
+          </a>
+        </li>
+         <li class="pc-item">
+          <a href="{{ path('app_interview_index') }}" class="pc-link">
+    <span class="pc-micon"><i class="ti ti-lock"></i></span>
+    <span class="pc-mtext">Interview</span>
+</a>
+        </li>
+        <li class="pc-item">
+          <a href="../pages/register.html" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-user-plus"></i></span>
+            <span class="pc-mtext">Publication</span>
+          </a>
+        </li>
+         <li class="pc-item">
+          <a href="../pages/login.html" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-lock"></i></span>
+            <span class="pc-mtext">Offre</span>
+          </a>
+        </li>
+        <li class="pc-item">
+          <a href="../pages/register.html" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-user-plus"></i></span>
+            <span class="pc-mtext">Entreprise</span>
+          </a>
+        </li>
+         <li class="pc-item">
+          <a href="../pages/login.html" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-lock"></i></span>
+            <span class="pc-mtext">Partenariat</span>
+          </a>
+        </li>
+        <li class="pc-item">
+          <a href="../pages/register.html" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-user-plus"></i></span>
+            <span class="pc-mtext">Hebergement</span>
+          </a>
+        </li>
+         <li class="pc-item">
+          <a href="../pages/login.html" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-lock"></i></span>
+            <span class="pc-mtext">Branche</span>
+          </a>
+        </li>
+        <li class="pc-item">
+          <a href="../pages/register.html" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-user-plus"></i></span>
+            <span class="pc-mtext">Departement</span>
+          </a>
+        </li>
+         <li class="pc-item">
+          <a href="../pages/login.html" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-lock"></i></span>
+            <span class="pc-mtext">Utilisateur</span>
+          </a>
+        </li>
+        <li class="pc-item">
+          <a href="../pages/register.html" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-user-plus"></i></span>
+            <span class="pc-mtext">Projet</span>
+          </a>
+        </li>
+         <li class="pc-item">
+          <a href="../pages/login.html" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-lock"></i></span>
+            <span class="pc-mtext">Test Technique</span>
+          </a>
+        </li>
+        <li class="pc-item">
+          <a href="../pages/register.html" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-user-plus"></i></span>
+            <span class="pc-mtext">Reponse</span>
+          </a>
+        </li>
+        <li class="pc-item pc-caption">
+          <label>Other</label>
+          <i class="ti ti-brand-chrome"></i>
+        </li>
+<li class="pc-item pc-hasmenu">
+          <a href="#!" class="pc-link"><span class="pc-micon"><i class="ti ti-menu"></i></span><span class="pc-mtext">Menu
+              levels</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
+          <ul class="pc-submenu">
+            <li class="pc-item"><a class="pc-link" href="#!">Level 2.1</a></li>
+            <li class="pc-item pc-hasmenu">
+              <a href="#!" class="pc-link">Level 2.2<span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
+              <ul class="pc-submenu">
+                <li class="pc-item"><a class="pc-link" href="#!">Level 3.1</a></li>
+                <li class="pc-item"><a class="pc-link" href="#!">Level 3.2</a></li>
+                <li class="pc-item pc-hasmenu">
+                  <a href="#!" class="pc-link">Level 3.3<span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
+                  <ul class="pc-submenu">
+                    <li class="pc-item"><a class="pc-link" href="#!">Level 4.1</a></li>
+                    <li class="pc-item"><a class="pc-link" href="#!">Level 4.2</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li class="pc-item pc-hasmenu">
+              <a href="#!" class="pc-link">Level 2.3<span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
+              <ul class="pc-submenu">
+                <li class="pc-item"><a class="pc-link" href="#!">Level 3.1</a></li>
+                <li class="pc-item"><a class="pc-link" href="#!">Level 3.2</a></li>
+                <li class="pc-item pc-hasmenu">
+                  <a href="#!" class="pc-link">Level 3.3<span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
+                  <ul class="pc-submenu">
+                    <li class="pc-item"><a class="pc-link" href="#!">Level 4.1</a></li>
+                    <li class="pc-item"><a class="pc-link" href="#!">Level 4.2</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li class="pc-item">
+          <a href="../other/sample-page.html" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-brand-chrome"></i></span>
+            <span class="pc-mtext">Sample page</span>
+          </a>
+        </li>
+        
+        
+      </ul>
+      <div class="card text-center">
+        <div class="card-body">
+          <img src="images/img-navbar-card.png" alt="images" class="img-fluid mb-2">
+          <h5>Upgrade To Pro</h5>
+          <p>To get more features and components</p>
+          <a href="https://codedthemes.com/item/berry-bootstrap-5-admin-template/" target="_blank"
+          class="btn btn-success">Buy Now</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
 {% endblock %}
-
-
 
 
 {% block headside %}
@@ -49,7 +235,8 @@
 
 {% block breadcrumb %}
     {{ parent() }}
-  
+    <li class="breadcrumb-item"><a href="../dashboard/index.html">Interviews</a></li>
+    <li class="breadcrumb-item active">Liste</li>
 {% endblock %}
 
 {% block body %}
@@ -58,7 +245,7 @@
 
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Liste des Interviews</h1>
+            <h1 class="h3 mb-0 text-gray-800">Gestion des Interviews</h1>
         </div>
 
         <!-- Search and Filter Form -->
@@ -98,7 +285,7 @@
                     {% if app.request.get('titreoffre') %} | {% endif %}
                     Type: <strong>{{ app.request.get('typeinterview') == 'ENLIGNE' ? 'En ligne' : 'En personne' }}</strong>
                 {% endif %}
-                ({{ pagination|length }} résultat(s) trouvé(s))
+                ({{ interviews|length }} résultat(s) trouvé(s))
             </div>
         {% endif %}
 
@@ -106,7 +293,7 @@
         <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex justify-content-between align-items-center">
                 <h6 class="m-0 font-weight-bold text-primary">Liste des interviews</h6>
-                <span class="badge badge-primary">{{ pagination|length }} total</span>
+                <span class="badge badge-primary">{{ interviews|length }} total</span>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -123,7 +310,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                        {% for interview in pagination %}
+                        {% for interview in interviews %}
                             <tr>
                                 <td>{{ interview.titreoffre }}</td>
                                 <td>{{ interview.dateinterview ? interview.dateinterview|date('d/m/Y') : '' }}</td>
@@ -141,13 +328,7 @@
                                         <span class="text-muted">N/A</span>
                                     {% endif %}
                                 </td>
-                                <td>
-                    {% if interview.localisation %}
-                      {{ interview.localisation }}
-                    {% else %}
-                      <span class="text-muted">N/A</span>
-                    {% endif %}
-                  </td>
+                                <td>{{ interview.localisation }}</td>
                                 <td>{{ interview.timeinterview ? interview.timeinterview|date('H:i') : '' }}</td>
                                 <td class="action-buttons">
                                     <div class="btn-group" role="group">
@@ -174,30 +355,6 @@
                         {% endfor %}
                         </tbody>
                     </table>
-                     <div class="pagination-container">
-               <nav aria-label="Page navigation">
-              <ul class="pagination">
-               {% if pagination.previousPageNumber is defined %}
-                <li class="page-item">
-                <a class="page-link" href="{{ path('app_interview_index_back', app.request.query.all | merge({'page': pagination.previousPageNumber})) }}">Précédent</a>
-                </li>
-                      {% endif %}
-
-                      {% for page in 1..pagination.pageCount %}
-                    <li class="page-item {{ page == pagination.currentPageNumber ? 'active' : '' }}">
-                      <a class="page-link" href="{{ path('app_interview_index_back', app.request.query.all | merge({'page': page})) }}">{{ page }}</a>
-                        </li>
-                       {% endfor %}
-
-{% if pagination.nextPageNumber is defined %}
-  <li class="page-item">
-    <a class="page-link" href="{{ path('app_interview_index_back', app.request.query.all | merge({'page': pagination.nextPageNumber})) }}">Suivant</a>
-  </li>
-{% endif %}
-
-              </ul>
-            </nav>
-</div>
                 </div>
             </div>
         </div>

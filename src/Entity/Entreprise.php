@@ -36,6 +36,7 @@ class Entreprise
     private string $descriptionentreprise;
 
     #[ORM\Column(type: "string", length: 255)]
+    
     private string $logoentreprise;
 
     #[ORM\Column(type: "text")]
@@ -62,7 +63,7 @@ class Entreprise
     #[ORM\OneToMany(mappedBy: "identreprise", targetEntity: Brancheentreprise::class)]
     private Collection $brancheentreprises;
 
-    #[ORM\OneToMany(mappedBy: "entreprise", targetEntity: Offre::class)]
+    #[ORM\OneToMany(mappedBy: "identreprise", targetEntity: Offre::class)]
     private Collection $offres;
 
     public function __construct()
@@ -116,6 +117,7 @@ class Entreprise
     public function setLogoentreprise(string $value): self
     {
         $this->logoentreprise = $value;
+
         return $this;
     }
 

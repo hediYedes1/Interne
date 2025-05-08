@@ -1,4 +1,4 @@
-{% extends 'base2.html.twig' %}
+{% extends 'base1.html.twig' %}
 
 {% block title %}Détails de l'Interview #{{ interview.idinterview }}{% endblock %}
 
@@ -16,6 +16,8 @@
 
 {% block breadcrumb %}
     {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('app_interview_index') }}">Interviews</a></li>
+    <li class="breadcrumb-item active">Détails</li>
 {% endblock %}
 
 {% block body %}

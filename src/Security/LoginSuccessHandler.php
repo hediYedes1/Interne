@@ -24,19 +24,18 @@ class LoginSuccessHandler implements AuthenticationSuccessHandlerInterface
 
         $roles = $user->getRoles();
 
-        // Check if the user has the ADMIN role
+        // Check if the user has the CANDIDAT role
         if (in_array(Role::ADMIN->value, $roles, true)) {
-            // Redirect to base1 for ADMIN
-            return new RedirectResponse($this->router->generate('app_base1'));
-        }
-
-        // Check if the user has the RH role
-        if (in_array(Role::RH->value, $roles, true)) {
-            // Redirect to base2 for RH
+            // Redirect to base2 for ADMIN
             return new RedirectResponse($this->router->generate('app_base2'));
         }
 
-        // Redirect to base for other roles (CANDIDAT)
+        if (in_array(Role::RH->value, $roles, true)) {
+            // Redirect to base2 for ADMIN
+            return new RedirectResponse($this->router->generate('app_base2'));
+        }
+
+        // Redirect to base for other roles
         return new RedirectResponse($this->router->generate('app_base'));
     }
 }

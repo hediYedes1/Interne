@@ -1,49 +1,18 @@
-# config/services.yaml
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
-    # Environment variables will be used instead
-    env(CLOUDINARY_CLOUD_NAME): 'dkjyekxne'
-    env(CLOUDINARY_API_KEY): '635948861942666'
-    env(CLOUDINARY_API_SECRET): 'hoMRHm2K9a7LPaSEIg7AfkSqNU4'
-    google.redirect_uri: 'http://localhost:8000/auth/google/callback'
     logo_directory: '%kernel.project_dir%/public/uploads/logos'
 
 
     profile_images_directory: '%kernel.project_dir%/public/uploads/profile_images'
-    face_api_key: '%env(FACE_API_KEY)%'
-    face_api_secret: '%env(FACE_API_SECRET)%'
-
 services:
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
-        bind:              # Global parameter binding
-            $logger: '@logger'
-            $httpClient: '@http_client'
-            $params: '@parameter_bag'
-
-    App\Utils\GoogleOAuthService:
-        arguments:
-            $params: '@parameter_bag'
-
-    App\Controller\ProjetController:
-        public: true
-        autowire: true
-        tags: ['controller.service_arguments']
-
-
-            # config/services.yaml
-    App\Twig\AppExtension:
-        tags: ['twig.extension']
-
-    App\Utils\GoogleMeetService:
-        arguments:
-            $googleOAuthService: '@App\Utils\GoogleOAuthService'
-
-    # Register all commands in the Command directory
-    App\Command\:
-        resource: '../src/Command'
-        tags: ['console.command']
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -55,26 +24,10 @@ services:
             - '../src/Kernel.php'
             - '../src/Tests/'
 
-    # Explicit service definitions
-    Cloudinary\Cloudinary:
-        arguments:
-            - cloud_name: '%env(CLOUDINARY_CLOUD_NAME)%'
-              api_key: '%env(CLOUDINARY_API_KEY)%'
-              api_secret: '%env(CLOUDINARY_API_SECRET)%'
+    # add more service definitions when explicit configuration is needed
 
-    Smalot\PdfParser\Parser: ~
-
-    # Service definitions with explicit configuration (lowercase to match your directory)
-    App\services\UploadService:
+    # Explicitly register the LoginSuccessHandler service
+    App\Security\LoginSuccessHandler:
         arguments:
-            $logger: '@logger'
-    
-    App\services\CVParserService:
-        arguments:
-            $logger: '@logger'
-            $params: '@parameter_bag'
-    
-    App\services\SimilarityService:
-        arguments:
-            $httpClient: '@http_client'
-            $logger: '@logger'
+            $router: '@router'
+    # please note that last definitions always *replace* previous ones

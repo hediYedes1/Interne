@@ -19,7 +19,7 @@ class Brancheentreprise
 
     #[ORM\ManyToOne(targetEntity: Entreprise::class, inversedBy: "brancheentreprises")]
     #[ORM\JoinColumn(name: 'identreprise', referencedColumnName: 'identreprise', onDelete: 'CASCADE')]
-    private ?Entreprise $identreprise = null;
+    private Entreprise $identreprise;
 
     #[ORM\ManyToOne(targetEntity: Utilisateur::class, inversedBy: "brancheentreprises")]
     #[ORM\JoinColumn(name: 'idutilisateur', referencedColumnName: 'idutilisateur', onDelete: 'CASCADE')]
@@ -33,14 +33,14 @@ class Brancheentreprise
     )]
     private string $localisationbranche;
 
-    #[ORM\Column(type: "text")]
-    #[Assert\NotBlank(message: "L'email de la branche est obligatoire.")]
-    #[Assert\Email(message: "L'email '{{ value }}' n'est pas valide.")]
-    #[Assert\Regex(
-        pattern: "/^[a-zA-Z0-9._%+-]+@esprit\.tn$/",
-        message: "L'email doit être au format 'nom.prenom@esprit.tn'."
-    )]
-    private string $emailbranche;
+#[ORM\Column(type: "text")]
+#[Assert\NotBlank(message: "L'email de la branche est obligatoire.")]
+#[Assert\Email(message: "L'email '{{ value }}' n'est pas valide.")]
+#[Assert\Regex(
+    pattern: "/^[a-zA-Z0-9._%+-]+@esprit\.tn$/",
+    message: "L'email doit être au format 'nom.prenom@esprit.tn'."
+)]
+private string $emailbranche;
 
     #[ORM\Column(type: "string", length: 15)]
     #[Assert\NotBlank(message: "Le contact de la branche est obligatoire.")]
@@ -80,12 +80,12 @@ class Brancheentreprise
         return $this->idbranche;
     }
 
-    public function getIdentreprise(): ?Entreprise
+    public function getIdentreprise(): Entreprise
     {
         return $this->identreprise;
     }
 
-    public function setIdentreprise(?Entreprise $identreprise): self
+    public function setIdentreprise(Entreprise $identreprise): self
     {
         $this->identreprise = $identreprise;
 

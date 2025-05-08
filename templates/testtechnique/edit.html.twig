@@ -1,6 +1,6 @@
-{% extends 'base2.html.twig' %}
+{% extends 'base1.html.twig' %}
 
-{% block title %}modifier Testtechnique{% endblock %}
+{% block title %}Edit Testtechnique{% endblock %}
 {% block css %}
   {{ parent() }}
  
@@ -16,9 +16,11 @@
 {% endblock %}
 {% block breadcrumb %}
     {{ parent() }}
+    <li class="breadcrumb-item"><a href="../dashboard/index.html">Interviews</a></li>
+    <li class="breadcrumb-item active">New</li>
 {% endblock %}
 {% block body %}
-    <h1>modifier Testtechnique</h1>
+    <h1>Edit Testtechnique</h1>
 
     {{ include('testtechnique/_form.html.twig', {'button_label': 'Update'}) }}
 

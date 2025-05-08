@@ -10,12 +10,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 #[Route('/brancheentreprise')]
-final class BrancheentrepriseController extends AbstractController
-{
-    #[Route('/list', name: 'app_brancheentreprise_index', methods: ['GET'])]
+final class BrancheentrepriseController extends AbstractController{
+    #[Route('/list',name: 'app_brancheentreprise_index', methods: ['GET'])]
     public function index(EntityManagerInterface $entityManager): Response
     {
         $brancheentreprises = $entityManager
@@ -26,43 +24,35 @@ final class BrancheentrepriseController extends AbstractController
             'brancheentreprises' => $brancheentreprises,
         ]);
     }
-
     #[Route('/new/{id}', name: 'app_brancheentreprise_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, $id): Response
-    {
-        $brancheentreprise = new Brancheentreprise();
-        $form = $this->createForm(BrancheentrepriseType::class, $brancheentreprise);
-        $form->handleRequest($request);
+public function new(Request $request, EntityManagerInterface $entityManager, $id): Response
+{
+    $brancheentreprise = new Brancheentreprise();
+    $form = $this->createForm(BrancheentrepriseType::class, $brancheentreprise);
+    $form->handleRequest($request);
 
-        // Récupération de l'entreprise
-        $entreprise = $entityManager->getRepository(Entreprise::class)->find($id);
+    // Récupération de l'entreprise
+    $entreprise = $entityManager->getRepository(Entreprise::class)->find($id);
 
-        if (!$entreprise) {
-            throw $this->createNotFoundException('Entreprise non trouvée avec l\'ID : ' . $id);
-        }
+    if (!$entreprise) {
+        throw $this->createNotFoundException('Entreprise non trouvée avec l\'ID : ' . $id);
+    }
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $brancheentreprise->setIdentreprise($entreprise);
-            
-            // Récupérer les coordonnées du champ caché
-            $coords = $request->request->get('location_coords');
-            if ($coords) {
-                $brancheentreprise->setLocalisationbranche($coords);
-            }
-            
-            $entityManager->persist($brancheentreprise);
-            $entityManager->flush();
+    if ($form->isSubmitted() && $form->isValid()) {
+        $brancheentreprise->setIdentreprise($entreprise);
+        $entityManager->persist($brancheentreprise);
+        $entityManager->flush();
 
-            return $this->redirectToRoute('app_entreprise_show_back', [
-                'identreprise' => $entreprise->getIdentreprise(),
-            ]);
-        }
-
-        return $this->render('brancheentreprise/new.html.twig', [
-            'brancheentreprise' => $brancheentreprise,
-            'form' => $form,
+        return $this->redirectToRoute('app_entreprise_show_back', [
+            'identreprise' => $entreprise->getIdentreprise(), // le paramètre attendu
         ]);
     }
+
+    return $this->render('brancheentreprise/new.html.twig', [
+        'brancheentreprise' => $brancheentreprise,
+        'form' => $form,
+    ]);
+}
 
     #[Route('/{idbranche}', name: 'app_brancheentreprise_show', methods: ['GET'])]
     public function show(Brancheentreprise $brancheentreprise): Response
@@ -79,17 +69,9 @@ final class BrancheentrepriseController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Récupérer les coordonnées du champ caché
-            $coords = $request->request->get('location_coords');
-            if ($coords) {
-                $brancheentreprise->setLocalisationbranche($coords);
-            }
-            
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_entreprise_show_back', [
-                'identreprise' => $brancheentreprise->getIdentreprise()->getIdentreprise(),
-            ], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_brancheentreprise_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('brancheentreprise/edit.html.twig', [
@@ -101,53 +83,11 @@ final class BrancheentrepriseController extends AbstractController
     #[Route('/{idbranche}', name: 'app_brancheentreprise_delete', methods: ['POST'])]
     public function delete(Request $request, Brancheentreprise $brancheentreprise, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete' . $brancheentreprise->getIdbranche(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('delete'.$brancheentreprise->getIdbranche(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($brancheentreprise);
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('app_entreprise_show_back', [
-            'identreprise' => $brancheentreprise->getIdentreprise()->getIdentreprise(),
-        ], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_brancheentreprise_index', [], Response::HTTP_SEE_OTHER);
     }
-
-
-    #[Route('/chatbot/gemini', name: 'chatbot_gemini', methods: ['POST'])]
-    public function chatbotGemini(Request $request): JsonResponse
-    {
-        $apiKey = "AIzaSyDQdsjlrFYKODaku3FSZ0fLC-pIckLY0lw";
-        $userMessage = trim($request->request->get('message'));
-    
-        $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" . $apiKey;
-    
-        $data = [
-            "contents" => [
-                [
-                    "parts" => [
-                        ["text" => $userMessage]
-                    ]
-                ]
-            ]
-        ];
-    
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-    
-        $response = curl_exec($ch);
-        curl_close($ch);
-    
-        $decoded = json_decode($response, true);
-    
-        $botResponse = "Je ne comprends pas.";
-        if (isset($decoded["candidates"][0]["content"]["parts"][0]["text"])) {
-            $botResponse = $decoded["candidates"][0]["content"]["parts"][0]["text"];
-        }
-    
-        return new JsonResponse(["bot" => $botResponse]);
-    }
-
-
 }

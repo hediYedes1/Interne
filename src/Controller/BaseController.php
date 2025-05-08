@@ -8,19 +8,9 @@ use PhpParser\Node\Stmt\ElseIf_;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-use App\Service\CaptchaService;
 
 final class BaseController extends AbstractController
 {
-    private CaptchaService $captchaService;
-
-    public function __construct(CaptchaService $captchaService)
-    {
-        $this->captchaService = $captchaService;
-    }
-
-    // Candidat interface
     #[Route('/base1', name: 'app_base')]
     public function index(): Response
     {
@@ -46,49 +36,17 @@ final class BaseController extends AbstractController
         return $this->render('base.html.twig');
     }
 
-    // RH interface
-    #[Route('/baseRH', name: 'app_base2')]
-    public function indexRH(): Response
-    {
-        return $this->render('base2.html.twig');
-    }
 
-    // Admin interface
-    #[Route('/base2', name: 'app_base1')]
+    #[Route('/base2', name: 'app_base2')]
     public function index2(): Response
     {
-        return $this->render('base1.html.twig', [
-            'project_dir' => $this->getParameter('kernel.project_dir'),
-            
-        ]);
+        return $this->render('base1.html.twig');
     }
 
     #[Route('/base3', name: 'app_base3')]
-    public function index3(AuthenticationUtils $authenticationUtils): Response
+    public function index3(): Response
     {
-        // If user is already logged in, redirect to appropriate page
-        if ($this->getUser()) {
-            $roles = $this->getUser()->getRoles();
-            if (in_array(Role::CANDIDAT->value, $roles, true)) {
-                return $this->redirectToRoute('app_base');
-            } elseif (in_array(Role::RH->value, $roles, true)) {
-                return $this->redirectToRoute('app_base2');
-            } elseif (in_array(Role::ADMIN->value, $roles, true)) {
-                return $this->redirectToRoute('app_base1');
-            }
-        }
-
-        // Generate CAPTCHA
-        $captcha = $this->captchaService->generateCaptcha();
-        
-        $error = $authenticationUtils->getLastAuthenticationError();
-        $lastUsername = $authenticationUtils->getLastUsername();
-
-        return $this->render('utilisateur/login.html.twig', [
-            'last_username' => $lastUsername,
-            'error' => $error,
-            'captcha' => $captcha
-        ]);
+        return $this->render('Utilisateur/login.html.twig');
     }
 
     #[Route('/base4', name: 'app_base4')]
@@ -120,4 +78,6 @@ final class BaseController extends AbstractController
     {
         return $this->render('Utilisateur/adminProfile.html.twig');
     }
+    
+
 }

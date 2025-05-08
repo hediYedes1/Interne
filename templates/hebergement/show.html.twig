@@ -1,0 +1,54 @@
+{% extends 'baseadmin.html.twig' %}
+
+{% block title %}Hebergement{% endblock %}
+
+{% block body %}
+    <h1>Hebergement</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Idhebergement</th>
+                <td>{{ hebergement.idhebergement }}</td>
+            </tr>
+            <tr>
+                <th>Nomhebergement</th>
+                <td>{{ hebergement.nomhebergement }}</td>
+            </tr>
+            <tr>
+                <th>Adressehebergement</th>
+                <td>{{ hebergement.adressehebergement }}</td>
+            </tr>
+            <tr>
+                <th>Typehebergement</th>
+                <td>{{ hebergement.typehebergement }}</td>
+            </tr>
+            <tr>
+                <th>Descriptionhebergement</th>
+                <td>{{ hebergement.descriptionhebergement }}</td>
+            </tr>
+            <tr>
+                <th>Nbrnuitehebergement</th>
+                <td>{{ hebergement.nbrnuitehebergement }}</td>
+            </tr>
+            <tr>
+                <th>Disponibilitehebergement</th>
+                <td>{{ hebergement.disponibilitehebergement ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Localisationhebergement</th>
+                <td>{{ hebergement.localisationhebergement }}</td>
+            </tr>
+            <tr>
+                <th>Prixhebergement</th>
+                <td>{{ hebergement.prixhebergement }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_hebergement_index') }}">back to list</a>
+
+    <a href="{{ path('app_hebergement_edit', {'idhebergement': hebergement.idhebergement}) }}">edit</a>
+
+    {{ include('hebergement/_delete_form.html.twig') }}
+{% endblock %}

@@ -3,98 +3,67 @@
 namespace App\Repository;
 
 use App\Entity\Interview;
-use App\Entity\Utilisateur;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-
+use App\Enum\TypeInterview;
+use App\Entity\Utilisateur;
 class InterviewRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Interview::class);
     }
-
-    /**
-     * Filtre les interviews sans tenir compte de l'utilisateur.
-     */
-    public function findByFilters(?string $titre = null, ?string $type = null): array
-    {
-        $qb = $this->createQueryBuilder('i');
-
-        if ($titre) {
-            $qb->andWhere('i.titreoffre LIKE :titre')
-                ->setParameter('titre', '%' . $titre . '%');
-        }
-
-        if ($type) {
-            $qb->andWhere('i.typeinterview = :type')
-                ->setParameter('type', $type);
-        }
-
-        return $qb->orderBy('i.dateinterview', 'DESC')
-            ->getQuery()
-            ->getResult();
-    }
-
-    /**
-     * Filtre les interviews selon un utilisateur donné.
-     */
+  
     public function findInterviewsByUserWithFilters(Utilisateur $user, ?string $titre = null, ?string $type = null): array
     {
         $qb = $this->createQueryBuilder('i')
-            ->innerJoin('i.affectationinterviews', 'a') // assure-toi que la relation existe
+            ->innerJoin('i.affectationinterviews', 'a') // Assurez-vous que c'est bien le nom de la relation
             ->where('a.idutilisateur = :user')
             ->setParameter('user', $user);
-
+        
         if ($titre) {
             $qb->andWhere('i.titreoffre LIKE :titre')
-                ->setParameter('titre', '%' . $titre . '%');
+               ->setParameter('titre', '%'.$titre.'%');
         }
-
+        
         if ($type) {
             $qb->andWhere('i.typeinterview = :type')
-                ->setParameter('type', $type);
+               ->setParameter('type', $type);
         }
-
+        
         return $qb->orderBy('i.dateinterview', 'ASC')
-            ->getQuery()
-            ->getResult();
+                  ->getQuery()
+                  ->getResult();
     }
 
+    // Vous pouvez garder les autres méthodes si elles sont utilisées ailleurs
     public function findByTitreoffre(string $titre): array
     {
         return $this->createQueryBuilder('i')
             ->where('LOWER(i.titreoffre) LIKE :titre')
-            ->setParameter('titre', '%' . mb_strtolower($titre) . '%')
+            ->setParameter('titre', '%'.mb_strtolower($titre).'%')
             ->getQuery()
             ->getResult();
     }
-
-    public function findInterviewsInNext24Hours(): array
+    public function findByFilters(?string $titre = null, ?string $type = null): array
     {
-        $now = new \DateTime();
-        $in24Hours = (new \DateTime())->add(new \DateInterval('PT24H'));
-
-        return $this->createQueryBuilder('i')
-            ->where('i.dateinterview BETWEEN :now AND :in24Hours')
-            ->andWhere('i.timeinterview IS NOT NULL')
-            ->setParameter('now', $now)
-            ->setParameter('in24Hours', $in24Hours)
-            ->getQuery()
-            ->getResult();
+        $qb = $this->createQueryBuilder('i');
+        
+        if ($titre) {
+            $qb->andWhere('i.titreoffre LIKE :titre')
+               ->setParameter('titre', '%'.$titre.'%');
+        }
+        
+        if ($type) {
+            $qb->andWhere('i.typeinterview = :type')
+               ->setParameter('type', $type);
+        }
+        
+        return $qb->getQuery()->getResult();
     }
 
-    public function getStatisticsByType(): array
-    {
-        return $this->createQueryBuilder('i')
-            ->select([
-                'i.typeinterview as type',
-                'COUNT(i.idinterview) as count',
-                'MIN(i.dateinterview) as earliest_date',
-                'MAX(i.dateinterview) as latest_date'
-            ])
-            ->groupBy('i.typeinterview')
-            ->getQuery()
-            ->getResult();
-    }
+    
+    
+
+    // Add custom methods as needed
 }
