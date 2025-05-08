@@ -1,0 +1,108 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des publications{% endblock %}
+{% block css %}
+{{ parent() }}
+{% endblock %}
+
+{% block sideBar %}
+{{ parent() }}
+{% endblock %}
+
+{% block headside %}
+  {{ parent() }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <div class="flex justify-between items-center mb-4">
+            <h1 class="text-2xl font-bold text-gray-800">📚 Liste des publications</h1>
+            <a href="{{ path('app_publication_new') }}"
+               class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm transition">
+                ➕ Nouvelle publication
+            </a>
+        </div>
+
+        <!-- Search & Sort Form -->
+        <form method="get" class="flex flex-wrap items-center gap-4 mb-4">
+            <input type="text" name="search" value="{{ search ?? '' }}"
+                   placeholder="🔍 Rechercher par titre ou contenu"
+                   class="px-3 py-2 border rounded w-full md:w-64 text-sm"/>
+
+            <div class="flex items-center gap-2 text-sm">
+                <label for="sort">Trier par:</label>
+                <select name="sort" id="sort" class="border rounded px-2 py-1 text-sm">
+                    <option value="titre" {% if sort == 'titre' %}selected{% endif %}>Titre</option>
+                    <option value="datePublication" {% if sort == 'datePublication' %}selected{% endif %}>Date</option>
+                </select>
+            </div>
+
+            <div class="flex items-center gap-2 text-sm">
+                <label for="order">Ordre:</label>
+                <select name="order" id="order" class="border rounded px-2 py-1 text-sm">
+                    <option value="asc" {% if order == 'asc' %}selected{% endif %}>Croissant</option>
+                    <option value="desc" {% if order == 'desc' %}selected{% endif %}>Décroissant</option>
+                </select>
+            </div>
+
+            <button type="submit"
+                    class="bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700 text-sm">
+                🔄 Appliquer
+            </button>
+        </form>
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full table-auto border border-gray-200 rounded-lg shadow-sm">
+                <thead class="bg-gray-100 text-gray-700 text-sm uppercase text-left">
+                <tr>
+                    <th class="px-4 py-3">ID</th>
+                    <th class="px-4 py-3">Titre</th>
+                    <th class="px-4 py-3">Contenu</th>
+                    <th class="px-4 py-3">Date</th>
+                    <th class="px-4 py-3">Note</th>
+                    <th class="px-4 py-3">Image</th>
+                    <th class="px-4 py-3 text-center">Actions</th>
+                </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 text-sm">
+                {% for publication in publications %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-4 py-3 text-gray-800">{{ publication.idPublication }}</td>
+                        <td class="px-4 py-3">{{ publication.titre }}</td>
+                        <td class="px-4 py-3 truncate max-w-xs">{{ publication.contenu }}</td>
+                        <td class="px-4 py-3">
+                            {{ publication.datePublication ? publication.datePublication|date('d/m/Y H:i') : '—' }}
+                        </td>
+                        <td class="px-4 py-3">{{ publication.rating }}</td>
+                        <td class="px-4 py-3">
+                            {% if publication.imagePath %}
+                                <img src="{{ asset('uploads/' ~ publication.imagePath) }}" alt="Image" class="h-10 rounded">
+                            {% else %}
+                                <em class="text-gray-400">Aucune</em>
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-3 text-center space-x-2">
+                            <a href="{{ path('app_publication_show', {'idPublication': publication.idPublication}) }}"
+                               class="text-blue-600 hover:underline">Voir</a>
+                            <a href="{{ path('app_publication_edit', {'idPublication': publication.idPublication}) }}"
+                               class="text-yellow-600 hover:underline">Modifier</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7" class="px-4 py-6 text-center text-gray-500">Aucune publication trouvée.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+  {{ parent() }}
+{% endblock %}

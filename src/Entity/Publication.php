@@ -1,98 +1,113 @@
 <?php
 
 namespace App\Entity;
-
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use App\Entity\Commentaire;
 use Doctrine\ORM\Mapping as ORM;
 
-use App\Entity\Utilisateur;
-use Doctrine\Common\Collections\Collection;
-use App\Entity\Commentairepublication;
-
 #[ORM\Entity]
+#[ORM\Table(name: 'publication')]
 class Publication
 {
 
+    public function __construct()
+    {
+        $this->datePublication = new \DateTime();
+    }
+
     #[ORM\Id]
-    #[ORM\Column(type: "integer")]
-    private int $idpublication;
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
+    #[ORM\Column(name: 'id_publication', type: 'integer')]
+    private int $idPublication;
 
-        #[ORM\ManyToOne(targetEntity: Utilisateur::class, inversedBy: "publications")]
-    #[ORM\JoinColumn(name: 'idutilisateur', referencedColumnName: 'idutilisateur', onDelete: 'CASCADE')]
-    private Utilisateur $idutilisateur;
+    #[ORM\Column(type: 'string', length: 255)]
+    private string $titre;
 
-    #[ORM\Column(type: "text")]
+    #[ORM\Column(type: 'text')]
     private string $contenu;
 
-    #[ORM\Column(type: "datetime")]
-    private \DateTimeInterface $datepublication;
+    #[ORM\Column(name: 'date_publication', type: 'datetime', options: ['default' => 'CURRENT_TIMESTAMP'])]
+    private \DateTime $datePublication;
 
-    public function getIdpublication()
+    #[ORM\Column(type: 'integer')]
+    private int $rating;
+
+    #[ORM\Column(name: 'image_path', type: 'string', length: 255, nullable: true)]
+    private ?string $imagePath = null;
+
+    #[ORM\OneToMany(mappedBy: 'publication', targetEntity: Commentaire::class, orphanRemoval: true)]
+    private Collection $commentaires;
+
+    public function getCommentaires(): Collection
     {
-        return $this->idpublication;
+        return $this->commentaires;
     }
 
-    public function setIdpublication($value)
+    public function setCommentaires(Collection $commentaires): void
     {
-        $this->idpublication = $value;
+        $this->commentaires = $commentaires;
     }
 
-    public function getIdutilisateur()
+    public function getIdPublication(): int
     {
-        return $this->idutilisateur;
+        return $this->idPublication;
     }
 
-    public function setIdutilisateur($value)
+    public function setIdPublication(int $idPublication): void
     {
-        $this->idutilisateur = $value;
+        $this->idPublication = $idPublication;
     }
 
-    public function getContenu()
+    public function getRating(): int
+    {
+        return $this->rating;
+    }
+
+    public function setRating(int $rating): void
+    {
+        $this->rating = $rating;
+    }
+
+    public function getImagePath(): ?string
+    {
+        return $this->imagePath;
+    }
+
+    public function setImagePath(?string $imagePath): void
+    {
+        $this->imagePath = $imagePath;
+    }
+
+    public function getDatePublication(): \DateTime
+    {
+        return $this->datePublication;
+    }
+
+    public function setDatePublication(\DateTime $datePublication): void
+    {
+        $this->datePublication = $datePublication;
+    }
+
+    public function getContenu(): string
     {
         return $this->contenu;
     }
 
-    public function setContenu($value)
+    public function setContenu(string $contenu): void
     {
-        $this->contenu = $value;
+        $this->contenu = $contenu;
     }
 
-    public function getDatepublication()
+    public function getTitre(): string
     {
-        return $this->datepublication;
+        return $this->titre;
     }
 
-    public function setDatepublication($value)
+    public function setTitre(string $titre): void
     {
-        $this->datepublication = $value;
+        $this->titre = $titre;
     }
 
-    #[ORM\OneToMany(mappedBy: "idpublication", targetEntity: Commentairepublication::class)]
-    private Collection $commentairepublications;
 
-        public function getCommentairepublications(): Collection
-        {
-            return $this->commentairepublications;
-        }
-    
-        public function addCommentairepublication(Commentairepublication $commentairepublication): self
-        {
-            if (!$this->commentairepublications->contains($commentairepublication)) {
-                $this->commentairepublications[] = $commentairepublication;
-                $commentairepublication->setIdpublication($this);
-            }
-    
-            return $this;
-        }
-    
-        public function removeCommentairepublication(Commentairepublication $commentairepublication): self
-        {
-            if ($this->commentairepublications->removeElement($commentairepublication)) {
-                // set the owning side to null (unless already changed)
-                if ($commentairepublication->getIdpublication() === $this) {
-                    $commentairepublication->setIdpublication(null);
-                }
-            }
-    
-            return $this;
-        }
 }

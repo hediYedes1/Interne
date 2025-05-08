@@ -1,0 +1,100 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détail de la publication{% endblock %}
+
+{% block css %}
+{{ parent() }}
+{% endblock %}
+
+{% block sideBar %}
+{{ parent() }}
+{% endblock %} 
+
+{% block headside %}
+  {{ parent() }}
+{% endblock %}
+
+
+{% block breadcrumb %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-2xl font-semibold mb-4">{{ publication.titre }}</h2>
+
+        <div class="space-y-2">
+            <p><strong>ID:</strong> {{ publication.idPublication }}</p>
+            <p><strong>Contenu:</strong> {{ publication.contenu }}</p>
+            <p><strong>Date:</strong>
+                {{ publication.datePublication ? publication.datePublication|date('d/m/Y H:i') : 'Non précisée' }}
+            </p>
+            <p><strong>Note:</strong> ⭐ {{ publication.rating }}</p>
+
+            {% if publication.imagePath %}
+                <p>
+                    <img src="{{ asset('uploads/' ~ publication.imagePath) }}" alt="Image" class="w-64 h-auto rounded-md mt-2">
+                </p>
+            {% endif %}
+        </div>
+
+        <div class="mt-6 flex gap-4 items-center">
+            <a href="{{ path('app_publication_edit', {'idPublication': publication.idPublication}) }}"
+               class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                ✏️ Modifier
+            </a>
+
+            {# 🔥 Correction ici : on passe bien la variable publication au fichier partiel #}
+            {{ include('publication/_delete_form.html.twig', { publication: publication }) }}
+
+            <a href="{{ path('app_publication_index') }}"
+               class="text-gray-600 hover:underline text-sm">
+                ← Retour à la liste
+            </a>
+        </div>
+    </div>
+
+    {# 💬 Liste des commentaires #}
+    <div class="mt-10 bg-white p-6 rounded-lg shadow-md">
+        <h3 class="text-xl font-semibold mb-4">💬 Commentaires</h3>
+
+        {% if commentaires is not empty %}
+
+            <ul class="space-y-4">
+                {% for commentaire in commentaires %}
+                    <li class="bg-gray-100 p-4 rounded shadow-sm">
+                        <p class="text-sm text-gray-800">
+                            <strong>Posté le :</strong> {{ commentaire.dateCommentaire|date('d/m/Y H:i') }}
+                        </p>
+                        <p class="mt-2 text-gray-700">{{ commentaire.contenu }}</p>
+                        <div class="mt-2 text-sm text-gray-500">
+                            👍 {{ commentaire.likes }} | 👎 {{ commentaire.dislikes }}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-gray-500">Aucun commentaire pour cette publication.</p>
+        {% endif %}
+    </div>
+
+    {# ➕ Formulaire d'ajout de commentaire #}
+    <div class="mt-10 bg-white p-6 rounded-lg shadow-md">
+        <h3 class="text-xl font-semibold mb-4">➕ Ajouter un commentaire</h3>
+
+        {{ form_start(form, {'attr': {'class': 'space-y-4'}}) }}
+        <div>
+            {{ form_label(form.contenu, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
+            {{ form_widget(form.contenu) }}
+            {{ form_errors(form.contenu) }}
+        </div>
+        <button class="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded hover:bg-green-700 transition">
+            💬 Commenter
+        </button>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
+
+{% block javascript %}
+  {{ parent() }}
+{% endblock %}
