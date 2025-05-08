@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Réservations{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <h1 class="h2 mb-0">
+            <i class="bi bi-calendar-check text-primary me-2"></i>Liste des Réservations
+        </h1>
+        <a href="{{ path('app_affectationhebergement_new') }}" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-1"></i> Nouvelle Réservation
+        </a>
+    </div>
+
+    {% if affectationhebergements is empty %}
+        <div class="alert alert-info text-center py-4">
+            <i class="bi bi-info-circle-fill me-2"></i>Aucune réservation trouvée.
+        </div>
+    {% else %}
+        <div class="row g-4">
+            {% for affectationhebergement in affectationhebergements %}
+                <div class="col-lg-6">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h5 class="card-title mb-0">
+                                    <span class="badge {% if affectationhebergement.datedebut < "now"|date("Y-m-d") %}bg-danger{% else %}bg-success{% endif %} me-2">
+                                        {% if affectationhebergement.datedebut < "now"|date("Y-m-d") %}
+                                            Terminée
+                                        {% else %}
+                                            Active
+                                        {% endif %}
+                                    </span>
+                                    {{ affectationhebergement.idhebergement.nomhebergement }}
+                                </h5>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li>
+                                            <a class="dropdown-item" href="{{ path('app_affectationhebergement_show', {'idhebergement': affectationhebergement.idhebergement.idhebergement}) }}">
+                                                <i class="bi bi-eye me-2"></i>Voir
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="{{ path('app_affectationhebergement_edit', {'idhebergement': affectationhebergement.idhebergement.idhebergement}) }}">
+                                                <i class="bi bi-pencil me-2"></i>Modifier
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center text-muted mb-3">
+                                <i class="bi bi-calendar-date me-2"></i>
+                                {{ affectationhebergement.datedebut|date('d/m/Y') }} → {{ affectationhebergement.datefin|date('d/m/Y') }}
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-light text-dark">
+                                    <i class="bi bi-house-door me-1"></i>
+                                    {{ affectationhebergement.idhebergement.typehebergement }}
+                                </span>
+                                <span class="text-primary fw-bold">
+                                    {{ affectationhebergement.idhebergement.prixhebergement }} dt
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

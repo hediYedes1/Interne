@@ -1,0 +1,359 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails du Test Technique{% endblock %}
+
+{% block css %}
+{{ parent() }}
+<style>
+    /* Style général */
+    .test-details-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+    
+    /* En-tête */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .page-title {
+        color: #2e2f3e;
+        font-weight: 600;
+        margin: 0;
+    }
+    
+    /* Cartes */
+    .detail-card {
+        background: white;
+        border-radius: 0.5rem;
+        box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+        margin-bottom: 1.5rem;
+        border-left: 4px solid #4e73df;
+    }
+    
+    .card-header {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid #e3e6f0;
+        display: flex;
+        align-items: center;
+    }
+    
+    .card-title {
+        font-weight: 600;
+        color: #4e73df;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+    }
+    
+    /* Tableau */
+    .info-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .info-table th {
+        background-color: #f8f9fc;
+        text-align: left;
+        padding: 1rem;
+        width: 30%;
+        border-bottom: 1px solid #e3e6f0;
+    }
+    
+    .info-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #e3e6f0;
+        vertical-align: top;
+    }
+    
+    /* Badges */
+    .status-badge {
+        display: inline-block;
+        padding: 0.35rem 0.75rem;
+        border-radius: 2rem;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+    
+    .badge-success {
+        background-color: rgba(28, 200, 138, 0.1);
+        color: #1cc88a;
+        border: 1px solid #1cc88a;
+    }
+    
+    .badge-secondary {
+        background-color: rgba(133, 135, 150, 0.1);
+        color: #858796;
+        border: 1px solid #858796;
+    }
+    
+    .badge-warning {
+        background-color: rgba(246, 194, 62, 0.1);
+        color: #f6c23e;
+        border: 1px solid #f6c23e;
+    }
+    
+    /* Boutons */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.35rem;
+        font-weight: 500;
+        transition: all 0.2s;
+        text-decoration: none;
+        cursor: pointer;
+        gap: 0.5rem;
+    }
+    
+    .btn i {
+        font-size: 0.9em;
+    }
+    
+    .btn-primary {
+        background-color: #4e73df;
+        color: white;
+        border: none;
+    }
+    
+    .btn-primary:hover {
+        background-color: #3a5bbf;
+        transform: translateY(-2px);
+        box-shadow: 0 0.25rem 0.5rem rgba(58, 91, 191, 0.3);
+    }
+    
+    .btn-outline {
+        background-color: white;
+        color: #4e73df;
+        border: 1px solid #4e73df;
+    }
+    
+    .btn-outline:hover {
+        background-color: #f8f9fc;
+        transform: translateY(-2px);
+    }
+    
+    .btn-secondary {
+        background-color: #858796;
+        color: white;
+        border: none;
+    }
+    
+    .btn-secondary:hover {
+        background-color: #6c757d;
+        transform: translateY(-2px);
+    }
+    
+    /* Liste des questions */
+    .question-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .question-item {
+        padding: 1rem 0;
+        border-bottom: 1px dashed #e3e6f0;
+    }
+    
+    .question-item:last-child {
+        border-bottom: none;
+    }
+    
+    .question-text {
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+    
+    .answer-list {
+        list-style: none;
+        padding-left: 1.5rem;
+        margin: 0;
+    }
+    
+    .answer-item {
+        padding: 0.25rem 0;
+    }
+    
+    /* Actions */
+    .action-card .btn {
+        width: 100%;
+        margin-bottom: 0.75rem;
+    }
+    
+    @media (max-width: 768px) {
+        .test-details-container {
+            padding: 1rem;
+        }
+        
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .info-table th, 
+        .info-table td {
+            display: block;
+            width: 100%;
+        }
+        
+        .info-table th {
+            padding-bottom: 0.5rem;
+        }
+        
+        .info-table td {
+            padding-top: 0.5rem;
+            padding-bottom: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="test-details-container">
+    <!-- En-tête -->
+    <div class="page-header">
+        <h1 class="page-title">
+            <i class="fas fa-clipboard-check"></i> Détails du Test Technique
+        </h1>
+        <a href="{{ path('app_testtechnique_by_interview_front', {'idinterview': testtechnique.idinterview.idinterview}) }}" 
+   class="btn btn-secondary text-white">
+    <i class="fas fa-arrow-left"></i> Retour à la liste
+</a>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Carte des informations principales -->
+            <div class="detail-card">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <i class="fas fa-info-circle"></i> Informations principales
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <table class="info-table">
+                        <tbody>
+                            <tr>
+                                <th>ID</th>
+                                <td>{{ testtechnique.idtesttechnique }}</td>
+                            </tr>
+                            <tr>
+                                <th>Titre</th>
+                                <td>{{ testtechnique.titretesttechnique }}</td>
+                            </tr>
+                            <tr>
+                                <th>Description</th>
+                                <td>{{ testtechnique.descriptiontesttechnique }}</td>
+                            </tr>
+                            <tr>
+                                <th>Durée</th>
+                                <td>{{ testtechnique.dureetesttechnique }}</td>
+                            </tr>
+                            <tr>
+    <th class="bg-light">Statut</th>
+    <td>{{ testtechnique.statuttesttechnique.value }}</td>
+</tr>
+                            <tr>
+                                <th>Date de création</th>
+                                <td>{{ testtechnique.datecreationtesttechnique ? testtechnique.datecreationtesttechnique|date('d/m/Y H:i') : 'Non définie' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Questions</th>
+                                <td>
+                                    {% if testtechnique.questions %}
+                                        <ul class="question-list">
+                                            {% for question in testtechnique.questions %}
+                                                <li class="question-item">
+                                                    <div class="question-text">{{ question.question }}</div>
+                                                    <ul class="answer-list">
+                                                        {% for key, answer in question.answers %}
+                                                            {% if answer %}
+                                                                <li class="answer-item">
+                                                                    <strong>{{ key }}:</strong> {{ answer }}
+                                                                </li>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </ul>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% else %}
+                                        <span class="text-muted">Aucune question définie</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Carte des actions -->
+            <div class="detail-card action-card">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <i class="fas fa-tasks"></i> Actions
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <button class="btn btn-outline" onclick="window.print()">
+                        <i class="fas fa-print"></i> Imprimer les détails
+                    </button>
+                    
+                    {% if testtechnique.statuttesttechnique == 'Actif' %}
+                    <a href="#" class="btn btn-primary">
+                        <i class="fas fa-play"></i> Commencer le test
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Carte d'information supplémentaire -->
+            <div class="detail-card">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <i class="fas fa-lightbulb"></i> Conseils
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info" style="background-color: #e8f1ff; border-left: 4px solid #4e73df; padding: 1rem;">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        <strong>Pour réussir votre test :</strong>
+                        <ul class="mt-2 mb-0 pl-3">
+                            <li>Lisez attentivement chaque question</li>
+                            <li>Gérez bien votre temps</li>
+                            <li>Relisez vos réponses avant de soumettre</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+{{ parent() }}
+<script>
+    $(document).ready(function() {
+        // Animation des cartes
+        $('.detail-card').hide().each(function(i) {
+            $(this).delay(i * 100).fadeIn(300);
+        });
+    });
+</script>
+{% endblock %}

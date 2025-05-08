@@ -1,0 +1,21 @@
+{% extends 'base1.html.twig' %}
+
+{% block title %}Nouvelle Branche d'entreprise{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-header bg-gradient bg-primary text-white rounded-top-4">
+            <h2 class="mb-0"><i class="bi bi-building-add"></i> Créer une nouvelle branche d’entreprise</h2>
+        </div>
+        <div class="card-body">
+            {{ include('brancheentreprise/_form.html.twig') }}
+        </div>
+        <div class="card-footer bg-light text-end">
+            <a href="{{ path('app_brancheentreprise_index') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left-circle"></i> Retour à la liste
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,485 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails de l'Interview #{{ interview.idinterview }}{% endblock %}
+
+{% block css %}
+  {{ parent() }}
+  <style>
+    /* Variables de couleurs */
+    :root {
+      --primary: #4e73df;
+      --primary-light: #e8f1ff;
+      --secondary: #858796;
+      --success: #1cc88a;
+      --info: #36b9cc;
+      --warning: #f6c23e;
+      --danger: #e74a3b;
+      --light: #f8f9fc;
+      --dark: #5a5c69;
+      --border: #e3e6f0;
+    }
+
+    /* Structure principale */
+    .interview-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+
+    /* En-tête */
+    .interview-header {
+      background-color: white;
+      border-radius: 0.5rem;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+      position: relative;
+      border-left: 4px solid var(--primary);
+    }
+
+    .interview-title {
+      color: var(--dark);
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .interview-subtitle {
+      color: var(--secondary);
+      font-size: 0.9rem;
+    }
+
+    .type-badge {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      font-size: 0.8rem;
+      padding: 0.35rem 1rem;
+      border-radius: 2rem;
+      font-weight: 500;
+    }
+
+    .badge-online {
+      background-color: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid var(--primary);
+    }
+
+    .badge-inperson {
+      background-color: rgba(28, 200, 138, 0.1);
+      color: var(--success);
+      border: 1px solid var(--success);
+    }
+
+    /* Métadonnées */
+    .interview-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px dashed var(--border);
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .meta-icon {
+      color: var(--primary);
+      font-size: 1.1rem;
+    }
+
+    .meta-label {
+      font-size: 0.8rem;
+      color: var(--secondary);
+    }
+
+    .meta-value {
+      font-weight: 600;
+      color: var(--dark);
+    }
+
+    /* Cartes */
+    .detail-card {
+      background-color: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+      margin-bottom: 1.5rem;
+      border: none;
+      overflow: hidden;
+    }
+
+    .card-header {
+      background-color: var(--light);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 1.5rem;
+      font-weight: 600;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card-header i {
+      font-size: 1rem;
+    }
+
+    .card-body {
+      padding: 1.5rem;
+    }
+
+    /* Détails */
+    .detail-item {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+      align-items: flex-start;
+    }
+
+    .detail-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .detail-icon {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      background-color: var(--primary-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      flex-shrink: 0;
+      font-size: 1rem;
+    }
+
+    .detail-content {
+      flex: 1;
+    }
+
+    .detail-label {
+      font-size: 0.8rem;
+      color: var(--secondary);
+      margin-bottom: 0.25rem;
+    }
+
+    .detail-value {
+      color: var(--dark);
+      font-weight: 500;
+    }
+
+    .empty-value {
+      color: var(--secondary);
+      font-style: italic;
+    }
+
+    /* Boutons */
+    .action-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      border-radius: 0.3rem;
+      font-weight: 500;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+      width: 100%;
+      margin-bottom: 0.75rem;
+      border: none;
+    }
+
+    .action-btn i {
+      font-size: 0.9rem;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-tests {
+      background-color: var(--info);
+      color: white;
+    }
+
+    .btn-print {
+      background-color: white;
+      color: var(--dark);
+      border: 1px solid var(--border);
+    }
+
+    .btn-join {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .btn-back {
+      background-color: white;
+      color: var(--dark);
+      border: 1px solid var(--border);
+    }
+
+    .btn-tests:hover {
+      background-color: #2aa1b5;
+      color: white;
+    }
+
+    .btn-print:hover {
+      background-color: var(--light);
+      color: var(--dark);
+    }
+
+    .btn-join:hover {
+      background-color: #3a5bbf;
+      color: white;
+    }
+
+    .btn-back:hover {
+      background-color: var(--light);
+      color: var(--dark);
+    }
+
+    /* Lien Meet */
+    .meet-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background-color: var(--primary);
+      color: white;
+      border-radius: 0.3rem;
+      font-weight: 500;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .meet-link:hover {
+      background-color: #3a5bbf;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 0.25rem 0.5rem rgba(78, 115, 223, 0.3);
+    }
+
+    /* Alertes */
+    .custom-alert {
+      background-color: var(--primary-light);
+      border-left: 4px solid var(--primary);
+      color: var(--dark);
+      padding: 1rem;
+      border-radius: 0.3rem;
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+    }
+
+    .custom-alert i {
+      color: var(--primary);
+      margin-top: 0.2rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .interview-header {
+        padding: 1.5rem;
+      }
+      
+      .interview-meta {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .card-body {
+        padding: 1rem;
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block body %}
+  <div class="interview-container">
+    <!-- En-tête -->
+    <div class="interview-header">
+      <span class="type-badge {{ interview.typeinterview.value == 'ENLIGNE' ? 'badge-online' : 'badge-inperson' }}">
+        {{ interview.typeinterview.value == 'ENLIGNE' ? 'En ligne' : 'En personne' }}
+      </span>
+      
+      <h1 class="interview-title">{{ interview.titreoffre }}</h1>
+      <p class="interview-subtitle">Détails de votre entretien</p>
+      
+      <div class="interview-meta">
+        <div class="meta-item">
+          <i class="fas fa-calendar-day meta-icon"></i>
+          <div>
+            <div class="meta-label">Date</div>
+            <div class="meta-value">
+              {{ interview.dateinterview ? interview.dateinterview|date('d/m/Y') : 'Non définie' }}
+            </div>
+          </div>
+        </div>
+        
+        <div class="meta-item">
+          <i class="fas fa-clock meta-icon"></i>
+          <div>
+            <div class="meta-label">Heure</div>
+            <div class="meta-value">
+              {{ interview.timeinterview ? interview.timeinterview|date('H:i') : 'Non définie' }}
+            </div>
+          </div>
+        </div>
+        
+        {% if interview.typeinterview.value == 'ENPERSONNE' and interview.localisation %}
+        <div class="meta-item">
+          <i class="fas fa-map-marker-alt meta-icon"></i>
+          <div>
+            <div class="meta-label">Lieu</div>
+            <div class="meta-value">{{ interview.localisation }}</div>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-8">
+        <!-- Carte des détails -->
+        <div class="detail-card">
+          <div class="card-header">
+            <i class="fas fa-info-circle"></i>
+            <span>Informations détaillées</span>
+          </div>
+          <div class="card-body">
+            <div class="detail-item">
+              <div class="detail-icon">
+                <i class="fas fa-id-card"></i>
+              </div>
+              <div class="detail-content">
+                <div class="detail-label">Référence</div>
+                <div class="detail-value">#{{ interview.idinterview }}</div>
+              </div>
+            </div>
+
+            <div class="detail-item">
+              <div class="detail-icon">
+                <i class="fas fa-briefcase"></i>
+              </div>
+              <div class="detail-content">
+                <div class="detail-label">Poste concerné</div>
+                <div class="detail-value">{{ interview.titreoffre }}</div>
+              </div>
+            </div>
+
+            {% if interview.typeinterview.value == 'ENLIGNE' %}
+            <div class="detail-item">
+              <div class="detail-icon">
+                <i class="fas fa-video"></i>
+              </div>
+              <div class="detail-content">
+                <div class="detail-label">Lien de la réunion</div>
+                <div class="detail-value">
+                  {% if interview.lienmeet %}
+                    <a href="{{ interview.lienmeet }}" target="_blank" class="meet-link">
+                      <i class="fas fa-external-link-alt"></i> Rejoindre la réunion
+                    </a>
+                  {% else %}
+                    <span class="empty-value">Non spécifié</span>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            {% else %}
+            <div class="detail-item">
+              <div class="detail-icon">
+                <i class="fas fa-map-marker-alt"></i>
+              </div>
+              <div class="detail-content">
+                <div class="detail-label">Lieu de l'entretien</div>
+                <div class="detail-value">
+                  {{ interview.localisation ? interview.localisation : 'Non spécifié' }}
+                </div>
+              </div>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <!-- Carte des actions -->
+        <div class="detail-card">
+          <div class="card-header">
+            <i class="fas fa-tasks"></i>
+            <span>Actions</span>
+          </div>
+          <div class="card-body">
+            <a href="{{ path('app_testtechnique_by_interview_front', {'idinterview': interview.idinterview}) }}" 
+               class="action-btn btn-tests">
+              <i class="fas fa-clipboard-check"></i> Tests techniques
+            </a>
+
+            <button class="action-btn btn-print" onclick="window.print()">
+              <i class="fas fa-print"></i> Imprimer
+            </button>
+
+            {% if interview.typeinterview.value == 'ENLIGNE' and interview.lienmeet %}
+            <a href="{{ interview.lienmeet }}" target="_blank" 
+               class="action-btn btn-join">
+              <i class="fas fa-video"></i> Rejoindre
+            </a>
+            {% endif %}
+
+            <a href="{{ path('app_interview_index_front') }}" 
+               class="action-btn btn-back">
+              <i class="fas fa-arrow-left"></i> Retour
+            </a>
+          </div>
+        </div>
+
+        <!-- Carte de rappel -->
+        <div class="detail-card">
+          <div class="card-header">
+            <i class="fas fa-bell"></i>
+            <span>Conseils pratiques</span>
+          </div>
+          <div class="card-body">
+            <div class="custom-alert">
+              <i class="fas fa-info-circle"></i>
+              <div>
+                {% if interview.typeinterview.value == 'ENLIGNE' %}
+                  <strong>Pour un entretien réussi :</strong>
+                  <ul class="mt-2 mb-0 pl-3">
+                    <li>Testez votre connexion internet à l'avance</li>
+                    <li>Choisissez un endroit calme et bien éclairé</li>
+                    <li>Fermez les applications inutiles sur votre ordinateur</li>
+                  </ul>
+                {% else %}
+                  <strong>Pour un entretien réussi :</strong>
+                  <ul class="mt-2 mb-0 pl-3">
+                    <li>Prévoyez d'arriver 10-15 minutes en avance</li>
+                    <li>Apportez des copies de votre CV</li>
+                    <li>Habillez-vous de manière professionnelle</li>
+                  </ul>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block js %}
+  {{ parent() }}
+  <script>
+    $(document).ready(function() {
+      // Animation légère au chargement
+      $('.detail-card').hide().fadeIn(400);
+      
+      // Tooltips pour les icônes
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+  </script>
+{% endblock %}

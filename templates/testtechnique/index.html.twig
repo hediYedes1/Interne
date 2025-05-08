@@ -1,0 +1,256 @@
+{% extends 'base1.html.twig' %}
+
+{% block title %}Tests Techniques{% endblock %}
+
+{% block css %}
+  {{ parent() }}
+  <style>
+    .badge {
+      font-size: 0.9em;
+      padding: 5px 10px;
+      border-radius: 4px;
+    }
+    .badge-success {
+      background-color: #1cc88a;
+      color: white;
+    }
+    .badge-warning {
+      background-color: #f6c23e;
+      color: white;
+    }
+    .badge-danger {
+      background-color: #e74a3b;
+      color: white;
+    }
+    .form-inline .form-control {
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+    @media (max-width: 768px) {
+      .form-inline .form-control {
+        width: 100%;
+        margin-right: 0;
+      }
+    }
+    .action-buttons .btn {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.875rem;
+    }
+    .quiz-launch-btn {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    .card-container {
+      position: relative;
+    }
+    .questions-count {
+      font-size: 0.8rem;
+      color: #6c757d;
+    }
+  </style>
+{% endblock %}
+
+{% block sideBar %}
+  {{ parent() }}
+{% endblock %}
+
+{% block headside %}
+  {{ parent() }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="../dashboard/index.html">Interviews</a></li>
+    <li class="breadcrumb-item active">Tests Techniques</li>
+{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Tests Techniques</h1>
+            {% if interview is defined %}
+                <a href="{{ path('app_testtechnique_new_for_interview', {'idinterview': interview.idinterview}) }}" 
+                   class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Ajouter un Test
+                </a>
+            {% endif %}
+        </div>
+
+        {% if interview is defined %}
+            <h2 class="text-primary">Tests liés à l'Interview : {{ interview.titreoffre }}</h2>
+            <a href="{{ path('app_interview_index') }}" class="btn btn-secondary mb-3">Retour aux Interviews</a>
+        {% else %}
+            <h2 class="text-primary">Liste des Tests Techniques</h2>
+        {% endif %}
+
+        <!-- Search Form -->
+        <div class="mb-4">
+            <form method="get" action="{{ interview is defined ? path('app_testtechnique_by_interview', {'idinterview': interview.idinterview}) : path('app_testtechnique_index') }}" class="form-inline">
+                <div class="form-group mr-2">
+                    <input type="text" name="titretesttechnique" class="form-control" placeholder="Rechercher par titre"
+                           value="{{ app.request.get('titretesttechnique') }}">
+                </div>
+                
+                <div class="form-group mr-2">
+                    <select name="statuttesttechnique" class="form-control">
+                        <option value="">Tous les statuts</option>
+                        <option value="ACCEPTE" {{ app.request.get('statuttesttechnique') == 'ACCEPTE' ? 'selected' : '' }}>Accepté</option>
+                        <option value="ENATTENTE" {{ app.request.get('statuttesttechnique') == 'ENATTENTE' ? 'selected' : '' }}>En attente</option>
+                        <option value="REFUSE" {{ app.request.get('statuttesttechnique') == 'REFUSE' ? 'selected' : '' }}>Refusé</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn btn-primary mr-2">
+                    <i class="fas fa-search"></i> Rechercher
+                </button>
+                
+                <a href="{{ interview is defined ? path('app_testtechnique_by_interview', {'idinterview': interview.idinterview}) : path('app_testtechnique_index') }}" class="btn btn-secondary">
+                    <i class="fas fa-undo"></i> Réinitialiser
+                </a>
+            </form>
+        </div>
+
+        <!-- Results Info -->
+        {% if app.request.get('titretesttechnique') or app.request.get('statuttesttechnique') %}
+            <div class="alert alert-info">
+                Résultats pour: 
+                {% if app.request.get('titretesttechnique') %}
+                    <strong>"{{ app.request.get('titretesttechnique') }}"</strong>
+                {% endif %}
+                {% if app.request.get('statuttesttechnique') %}
+                    {% if app.request.get('titretesttechnique') %} | {% endif %}
+                    Statut: <strong>{{ app.request.get('statuttesttechnique') }}</strong>
+                {% endif %}
+                ({{ testtechniques|length }} résultat(s) trouvé(s))
+            </div>
+        {% endif %}
+
+        <div class="row">
+            {% for testtechnique in testtechniques %}
+                <div class="col-md-4 mb-4">
+                    <div class="card-container">
+                        <!-- Bouton pour lancer le quiz -->
+                        {% if testtechnique.questions|length > 0 %}
+                            <a href="{{ path('app_testtechnique_show', {'idtesttechnique': testtechnique.idtesttechnique}) }}" 
+                               class="quiz-launch-btn btn btn-success"
+                               title="Commencer le quiz">
+                                <i class="fas fa-play"></i>
+                            </a>
+                        {% else %}
+                            <button class="quiz-launch-btn btn btn-secondary"
+                                    title="Aucun quiz disponible"
+                                    disabled>
+                                <i class="fas fa-ban"></i>
+                            </button>
+                        {% endif %}
+                        
+                        <div class="card shadow">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0">{{ testtechnique.titretesttechnique }}</h5>
+                            </div>
+                            <div class="card-body">
+                                <p><strong>Description :</strong> {{ testtechnique.descriptiontesttechnique }}</p>
+                                <p><strong>Durée :</strong> {{ testtechnique.dureetesttechnique }} min</p>
+                                <p><strong>Statut :</strong> 
+                                    <span class="badge 
+                                        {% if testtechnique.statuttesttechnique.value == 'ACCEPTE' %}badge-success
+                                        {% elseif testtechnique.statuttesttechnique.value == 'ENATTENTE' %}badge-warning
+                                        {% else %}badge-danger{% endif %}">
+                                        {{ testtechnique.statuttesttechnique.value }}
+                                    </span>
+                                </p>
+                                <p><strong>Date de Création :</strong> 
+                                    {{ testtechnique.datecreationtesttechnique ? testtechnique.datecreationtesttechnique|date('d/m/Y H:i') : 'Non définie' }}
+                                </p>
+                                <p class="questions-count">
+                                    <i class="fas fa-question-circle"></i> 
+                                    {{ testtechnique.questions|length }} question(s)
+                                </p>
+                            </div>
+                            <div class="card-footer text-center">
+    <!-- Bouton Voir (détails du test) -->
+    <a href="{{ path('app_testtechnique_show', {'idtesttechnique': testtechnique.idtesttechnique}) }}" 
+       class="btn btn-info btn-sm">
+        <i class="fas fa-eye"></i> Voir
+    </a>
+    
+    <!-- Bouton Modifier -->
+    <a href="{{ path('app_testtechnique_edit', {'idtesttechnique': testtechnique.idtesttechnique}) }}" 
+       class="btn btn-warning btn-sm">
+        <i class="fas fa-edit"></i> Modifier
+    </a>
+    
+    <!-- Bouton Passer le Quiz (si questions existent) -->
+    {% if testtechnique.questions|length > 0 %}
+        <a href="{{ path('app_testtechnique_quiz', {'idtesttechnique': testtechnique.idtesttechnique}) }}" 
+           class="btn btn-success btn-sm">
+            <i class="fas fa-play"></i> Quiz
+        </a>
+    {% endif %}
+    
+    <!-- Bouton Ajouter Quiz -->
+    <a href="{{ path('app_testtechnique_add_quiz', {'idtesttechnique': testtechnique.idtesttechnique}) }}" 
+       class="btn btn-primary btn-sm">
+        <i class="fas fa-question-circle"></i> Ajouter Quiz
+    </a>
+    
+    <!-- Bouton Supprimer Quiz -->
+   {% if testtechnique.questions|length > 0 %}
+    <form method="post" action="{{ path('app_testtechnique_clear_quiz', {'idtesttechnique': testtechnique.idtesttechnique}) }}" style="display: inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer le quiz de ce test ?');">
+        <input type="hidden" name="_token" value="{{ csrf_token('clear_quiz' ~ testtechnique.idtesttechnique) }}">
+        <button class="btn btn-danger btn-sm">
+            <i class="fas fa-trash"></i> Suppr. Quiz
+        </button>
+    </form>
+{% endif %}
+
+</div>
+                            
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-12 text-center">
+                    <p class="text-muted">Aucun test technique trouvé.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+  {{ parent() }}
+   <script src="{{ asset('back/vendor/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('back/vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+
+    <!-- Page level custom scripts -->
+    <script>
+        $(document).ready(function() {
+            $('#dataTable').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.20/i18n/French.json"
+                },
+                "columnDefs": [
+                    { "orderable": false, "targets": [6] }, // Disable sorting on actions column
+                    { "searchable": false, "targets": [6] }  // Disable searching on actions column
+                ],
+                "responsive": true,
+                "dom": '<"top"f>rt<"bottom"lip><"clear">',
+                "initComplete": function() {
+                    // Reapply filters after DataTable initialization
+                    $('input[name="titretesttechnique"]').val("{{ app.request.get('titretesttechnique') }}");
+                    $('select[name="statuttesttechnique"]').val("{{ app.request.get('statuttesttechnique') }}");
+                }
+            });
+        });
+    </script>
+{% endblock %}

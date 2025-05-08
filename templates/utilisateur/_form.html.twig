@@ -1,0 +1,43 @@
+{{ form_start(form, { 'attr': { 'class': 'form-horizontal' } }) }}
+
+    <div class="form-group mb-3">
+        {{ form_label(form.nomutilisateur, null, { 'label_attr': { 'class': 'form-label' } }) }}
+        {{ form_widget(form.nomutilisateur, { 'attr': { 'class': 'form-control' } }) }}
+        {{ form_errors(form.nomutilisateur) }}
+    </div>
+
+    <div class="form-group mb-3">
+        {{ form_label(form.prenomutilisateur, null, { 'label_attr': { 'class': 'form-label' } }) }}
+        {{ form_widget(form.prenomutilisateur, { 'attr': { 'class': 'form-control' } }) }}
+        {{ form_errors(form.prenomutilisateur) }}
+    </div>
+
+    <div class="form-group mb-3">
+        {{ form_label(form.ageutilisateur, null, { 'label_attr': { 'class': 'form-label' } }) }}
+        {{ form_widget(form.ageutilisateur, { 'attr': { 'class': 'form-control' } }) }}
+        {{ form_errors(form.ageutilisateur) }}
+    </div>
+
+    <div class="form-group mb-3">
+        {{ form_label(form.emailutilisateur, null, { 'label_attr': { 'class': 'form-label' } }) }}
+        {{ form_widget(form.emailutilisateur, { 'attr': { 'class': 'form-control' } }) }}
+        {{ form_errors(form.emailutilisateur) }}
+    </div>
+
+    <div class="form-group mb-3">
+        {{ form_label(form.motdepasseutilisateur, null, { 'label_attr': { 'class': 'form-label' } }) }}
+        {{ form_widget(form.motdepasseutilisateur, { 'attr': { 'class': 'form-control' } }) }}
+        {{ form_errors(form.motdepasseutilisateur) }}
+    </div>
+
+    {% if form.roleutilisateur is defined %}
+        <div class="form-group mb-3">
+            {{ form_label(form.roleutilisateur, null, { 'label_attr': { 'class': 'form-label' } }) }}
+            {{ form_widget(form.roleutilisateur, { 'attr': { 'class': 'form-select' } }) }}
+            {{ form_errors(form.roleutilisateur) }}
+        </div>
+    {% endif %}
+
+    <button class="btn btn-primary">{{ button_label|default('Enregistrer') }}</button>
+
+{{ form_end(form) }}

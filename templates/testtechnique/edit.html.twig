@@ -1,0 +1,33 @@
+{% extends 'base1.html.twig' %}
+
+{% block title %}Edit Testtechnique{% endblock %}
+{% block css %}
+  {{ parent() }}
+ 
+  
+{% endblock %}
+
+{% block sideBar %}
+  {{ parent() }}
+{% endblock %}
+
+{% block headside %}
+  {{ parent() }}
+{% endblock %}
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="../dashboard/index.html">Interviews</a></li>
+    <li class="breadcrumb-item active">New</li>
+{% endblock %}
+{% block body %}
+    <h1>Edit Testtechnique</h1>
+
+    {{ include('testtechnique/_form.html.twig', {'button_label': 'Update'}) }}
+
+
+{% endblock %}
+
+{% block javascript %}
+  {{ parent() }}
+
+{% endblock %}

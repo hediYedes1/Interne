@@ -1,0 +1,39 @@
+{% extends 'base1.html.twig' %}
+
+{% block title %}Departmententreprise index{% endblock %}
+
+{% block body %}
+    <h1>Departmententreprise index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Iddepartement</th>
+                <th>Nomdepartement</th>
+                <th>Descriptiondepartement</th>
+                <th>Responsabledepartement</th>
+                <th>Nbremployedepartement</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for departmententreprise in departmententreprises %}
+            <tr>
+                <td>{{ departmententreprise.iddepartement }}</td>
+                <td>{{ departmententreprise.nomdepartement }}</td>
+                <td>{{ departmententreprise.descriptiondepartement }}</td>
+                <td>{{ departmententreprise.responsabledepartement }}</td>
+                <td>{{ departmententreprise.nbremployedepartement }}</td>
+                <td>
+                    <a href="{{ path('app_departmententreprise_show', {'iddepartement': departmententreprise.iddepartement}) }}">show</a>
+                    <a href="{{ path('app_departmententreprise_edit', {'iddepartement': departmententreprise.iddepartement}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

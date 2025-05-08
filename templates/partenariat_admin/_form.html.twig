@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Créer un Partenariat</title>
+    <style>
+        .custom-form {
+            background-color: #f9f9f9 !important;
+            padding: 20px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1) !important;
+            max-width: 600px !important;
+            margin: 30px auto !important;
+            font-family: Arial, sans-serif !important;
+        }
+
+        .custom-form input,
+        .custom-form select,
+        .custom-form textarea {
+            border: 2px solid #4b6cb7 !important;
+            border-radius: 8px !important;
+            padding: 10px !important;
+            font-size: 16px !important;
+            width: 100% !important;
+            margin-bottom: 15px !important;
+            box-sizing: border-box !important;
+        }
+
+        .custom-form label {
+            font-weight: bold !important;
+            margin-bottom: 5px !important;
+            display: block !important;
+            color: #2a2a2a !important;
+        }
+
+        .custom-form .btn {
+            background-color: #4b6cb7 !important;
+            color: white !important;
+            padding: 10px 20px !important;
+            border: none !important;
+            border-radius: 8px !important;
+            cursor: pointer !important;
+            font-size: 16px !important;
+        }
+
+        .custom-form .btn:hover {
+            background-color: #3c5ba3 !important;
+        }
+    </style>
+</head>
+<body>
+
+    {{ form_start(form, {'attr': {'class': 'custom-form'}}) }}
+        {{ form_widget(form) }}
+        <button class="btn">{{ button_label|default('Enregistrer') }}</button>
+    {{ form_end(form) }}
+
+</body>
+</html>

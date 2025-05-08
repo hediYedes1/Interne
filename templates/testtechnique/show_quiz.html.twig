@@ -1,0 +1,278 @@
+{% extends 'base1.html.twig' %}
+
+{% block title %}Passer le Quiz - {{ testtechnique.titretesttechnique }}{% endblock %}
+{% block css %}
+{{ parent() }}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<style>
+    .quiz-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    .question-card {
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 25px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        background: white;
+    }
+    .question-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    .question-number {
+        background: #4e73df;
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        font-weight: bold;
+    }
+    .question-text {
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin: 0;
+    }
+    .question-description {
+        color: #6c757d;
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+    }
+    .answers-container {
+        margin-left: 45px;
+    }
+    .answer-option {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        padding: 8px 12px;
+        border-radius: 5px;
+        transition: all 0.3s;
+    }
+    .answer-option:hover {
+        background-color: #f8f9fa;
+    }
+    .answer-option input {
+        margin-right: 10px;
+    }
+    .answer-label {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        cursor: pointer;
+    }
+    .answer-letter {
+        display: inline-block;
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        background: #f8f9fa;
+        color: #495057;
+        text-align: center;
+        line-height: 25px;
+        margin-right: 10px;
+        font-weight: bold;
+    }
+    .correct-answer {
+        background-color: #d4edda;
+        border-left: 4px solid #28a745;
+    }
+    .incorrect-answer {
+        background-color: #f8d7da;
+        border-left: 4px solid #dc3545;
+    }
+    .feedback {
+        margin-top: 15px;
+        padding: 10px;
+        border-radius: 5px;
+        display: none;
+    }
+    .explanation {
+        background-color: #e7f5ff;
+        border-left: 4px solid #4e73df;
+    }
+    .tip {
+        background-color: #fff3bf;
+        border-left: 4px solid #ffd43b;
+    }
+    .quiz-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+    .quiz-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+    .quiz-score {
+        background: #4e73df;
+        color: white;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-weight: bold;
+    }
+    .submit-btn {
+        padding: 10px 30px;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid quiz-container">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <div class="quiz-header">
+                <h1 class="quiz-title">Quiz: {{ testtechnique.titretesttechnique }}</h1>
+                <div class="quiz-score">Score: <span id="score-display">0</span>/{{ testtechnique.questions|length }}</div>
+            </div>
+        </div>
+        <div class="card-body">
+            <form id="quiz-form" action="{{ path('quiz_submit') }}" method="POST">
+                <input type="hidden" name="test_id" value="{{ testtechnique.idtesttechnique }}">
+                
+                {% for question in testtechnique.questions %}
+                <div class="question-card" id="question-{{ loop.index0 }}">
+                    <div class="question-header">
+                        <div class="question-number">{{ loop.index }}</div>
+                        <h3 class="question-text">{{ question.question }}</h3>
+                    </div>
+                    
+                    {% if question.description is defined and question.description %}
+                        <p class="question-description">{{ question.description }}</p>
+                    {% endif %}
+                    
+                    <div class="answers-container">
+                        {% set letters = ['A', 'B', 'C', 'D', 'E', 'F'] %}
+                        {% for key, answer in question.answers %}
+                            {% if answer %}
+                            <div class="answer-option">
+                                <input class="form-check-input" type="radio" 
+                                       name="answers[{{ loop.parent.loop.index0 }}]" 
+                                       id="q{{ loop.parent.loop.index0 }}_a{{ loop.index0 }}" 
+                                       value="{{ key }}"
+                                       required>
+                                <label class="answer-label" for="q{{ loop.parent.loop.index0 }}_a{{ loop.index0 }}">
+                                    <span class="answer-letter">{{ letters[loop.index0] }}</span>
+                                    <span class="answer-text">{{ answer }}</span>
+                                </label>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="feedback mt-3" style="display: none;">
+                        {% if question.explanation is defined and question.explanation %}
+                            <div class="alert alert-info explanation">{{ question.explanation }}</div>
+                        {% endif %}
+                        
+                        {% if question.tip is defined and question.tip %}
+                            <div class="alert alert-warning tip"><strong>Astuce:</strong> {{ question.tip }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+                
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary submit-btn">
+                        <i class="fas fa-paper-plane"></i> Soumettre le quiz
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+$(document).ready(function() {
+    $('#quiz-form').on('submit', function(e) {
+        e.preventDefault();
+        
+        const $form = $(this);
+        const $submitBtn = $form.find('button[type="submit"]');
+        $submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Envoi en cours...');
+
+        // Construction des réponses
+        const answers = {};
+        $('input[type="radio"]:checked').each(function() {
+            const name = $(this).attr('name');
+            const match = name.match(/answers\[(\d+)\]/);
+            if (match) {
+                answers[match[1]] = $(this).val();
+            }
+        });
+
+        $.ajax({
+            url: $form.attr('action'),
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                test_id: $('input[name="test_id"]').val(),
+                answers: answers
+            }),
+            dataType: 'json'
+        })
+        .done(function(response) {
+            if (response.success) {
+                // Afficher les bonnes/mauvaises réponses
+                response.results.forEach((result, index) => {
+                    const $question = $(`#question-${index}`);
+                    const $selectedAnswer = $question.find(`input[value="${answers[index]}"]`).parent();
+                    
+                    if (result.isCorrect) {
+                        $selectedAnswer.addClass('correct-answer');
+                    } else {
+                        $selectedAnswer.addClass('incorrect-answer');
+                        // Trouver et marquer la bonne réponse
+                        const correctKey = result.correctAnswer;
+                        $question.find(`input[value="${correctKey}"]`).parent().addClass('correct-answer');
+                    }
+                    
+                    // Afficher les feedbacks
+                    $question.find('.feedback').show();
+                });
+                
+                // Afficher le résultat avec SweetAlert
+                Swal.fire({
+                    title: 'Résultats du Quiz',
+                    html: `Vous avez obtenu <b>${response.score}/${response.total}</b> bonnes réponses.<br>
+                           Statut: <span class="${response.statut === 'ACCEPTE' ? 'text-success' : 'text-danger'}">
+                           ${response.statut}</span>`,
+                    icon: response.statut === 'ACCEPTE' ? 'success' : 'error',
+                    showCancelButton: false,
+                    confirmButtonText: 'Voir les détails',
+                    allowOutsideClick: false
+                }).then((result) => {
+                    // Redirection après la fermeture de l'alerte
+                    window.location.href = response.redirect;
+                });
+                
+                // Mettre à jour le score affiché
+                $('#score-display').text(response.score);
+            } else {
+                Swal.fire('Erreur', response.error || 'Une erreur est survenue', 'error');
+                $submitBtn.prop('disabled', false).html('Soumettre');
+            }
+        })
+        .fail(function(xhr) {
+            console.error("Erreur AJAX:", xhr.responseText);
+            Swal.fire('Erreur', 'Échec de communication avec le serveur', 'error');
+            $submitBtn.prop('disabled', false).html('<i class="fas fa-paper-plane"></i> Soumettre');
+        });
+    });
+});
+</script>
+{% endblock %}

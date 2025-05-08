@@ -1,0 +1,64 @@
+{{ form_start(form, {'attr': {'class': 'form-horizontal', 'novalidate': 'novalidate'}}) }}
+
+<div class="form-group row">
+    <div class="col-md-6 mb-3">
+        <label for="{{ form.idoffre.vars.id }}" class="col-sm-4 col-form-label">Offre</label>
+        <div class="col-sm-10">
+            {{ form_widget(form.idoffre, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        {{ form_errors(form.idoffre, {'attr': {'class': 'text-danger'}}) }}
+    </div>
+    <div class="col-md-6 mb-3">
+        <label for="{{ form.dateinterview.vars.id }}" class="col-sm-4 col-form-label">Date Interview</label>
+        <div class="col-sm-10">
+            {{ form_widget(form.dateinterview, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        {{ form_errors(form.dateinterview, {'attr': {'class': 'text-danger'}}) }}
+    </div>
+</div>
+
+<div class="form-group row">
+    <div class="col-md-6 mb-3">
+        <label for="{{ form.timeinterview.vars.id }}" class="col-sm-4 col-form-label">Heure de l'Interview</label>
+        <div class="col-sm-10">
+            {{ form_widget(form.timeinterview, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        {{ form_errors(form.timeinterview, {'attr': {'class': 'text-danger'}}) }}
+    </div>
+    <div class="col-md-6 mb-3">
+        <label for="{{ form.typeinterview.vars.id }}" class="col-sm-4 col-form-label">Type d'Interview</label>
+        <div class="col-sm-10">
+            {{ form_widget(form.typeinterview, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        {{ form_errors(form.typeinterview, {'attr': {'class': 'text-danger'}}) }}
+    </div>
+</div>
+
+<div class="form-group mb-3">
+    <label for="{{ form.lienmeet.vars.id }}" class="col-sm-4 col-form-label">Lien de Visio-conférence</label>
+    <div class="col-sm-10">
+        {{ form_widget(form.lienmeet, {'attr': {'class': 'form-control', 'placeholder': 'https://meet.google.com/...'}}) }}
+    </div>
+    {{ form_errors(form.lienmeet, {'attr': {'class': 'text-danger'}}) }}
+    <small class="form-text text-muted">Laissez vide si l'entretien est en présentiel</small>
+</div>
+
+<div class="form-group mb-3">
+    <label for="{{ form.localisation.vars.id }}" class="col-sm-4 col-form-label">Lieu</label>
+    <div class="col-sm-10">
+        {{ form_widget(form.localisation, {'attr': {'class': 'form-control'}}) }}
+    </div>
+    {{ form_errors(form.localisation, {'attr': {'class': 'text-danger'}}) }}
+    <small class="form-text text-muted">Adresse physique si entretien en présentiel</small>
+</div>
+
+<div class="form-group text-right mt-4">
+    <button type="submit" class="btn btn-primary">
+        {{ button_label|default('Enregistrer') }}
+    </button>
+    <a href="{{ path('app_interview_index') }}" class="btn btn-secondary ml-2">
+        Annuler
+    </a>
+</div>
+
+{{ form_end(form) }}

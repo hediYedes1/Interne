@@ -1,0 +1,43 @@
+{% extends 'base1.html.twig' %}
+
+{% block title %}Brancheentreprise index{% endblock %}
+
+{% block body %}
+    <h1>Brancheentreprise index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Idbranche</th>
+                <th>Localisationbranche</th>
+                <th>Emailbranche</th>
+                <th>Contactbranche</th>
+                <th>Nombreemploye</th>
+                <th>Responsablebranche</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for brancheentreprise in brancheentreprises %}
+            <tr>
+                <td>{{ brancheentreprise.idbranche }}</td>
+                <td>{{ brancheentreprise.localisationbranche }}</td>
+                <td>{{ brancheentreprise.emailbranche }}</td>
+                <td>{{ brancheentreprise.contactbranche }}</td>
+                <td>{{ brancheentreprise.nombreemploye }}</td>
+                <td>{{ brancheentreprise.responsablebranche }}</td>
+                <td>
+                    <a href="{{ path('app_brancheentreprise_show', {'idbranche': brancheentreprise.idbranche}) }}">show</a>
+                    <a href="{{ path('app_brancheentreprise_edit', {'idbranche': brancheentreprise.idbranche}) }}">edit</a>
+
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

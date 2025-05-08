@@ -1,0 +1,116 @@
+{% extends 'base1.html.twig' %}
+
+{% block title %}Nouvelle Entreprise{% endblock %}
+
+{% block css %}
+  {{ parent() }}
+  <style>
+    .pc-container {
+      margin-top: 30px;
+    }
+
+    .card {
+      border-radius: 8px;
+      border: 1px solid #ddd;
+    }
+
+    .card-header {
+      font-size: 1.5rem;
+      background-color: #007bff;
+      color: #fff;
+      padding: 15px 20px;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+    }
+
+    .card-body {
+      padding: 2rem;
+      background-color: #f9f9f9;
+      border-bottom-left-radius: 8px;
+      border-bottom-right-radius: 8px;
+    }
+
+    .form-group label {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+      border-radius: 5px;
+      padding: 0.75rem;
+      font-size: 1rem;
+      width: 100%;
+    }
+
+    .form-control:focus {
+      box-shadow: 0 0 5px rgba(0, 123, 255, 0.6);
+      border-color: #007bff;
+    }
+
+    .btn-secondary {
+      font-size: 1rem;
+      padding: 0.5rem 1.5rem;
+      border-radius: 5px;
+    }
+
+    .btn-secondary:hover {
+      background-color: #0056b3;
+      border-color: #0056b3;
+    }
+
+    .mt-3 {
+      margin-top: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .col-lg-8.offset-lg-2 {
+      padding: 0;
+    }
+
+    .pc-content {
+      padding: 30px;
+    }
+  </style>
+{% endblock %}
+
+{% block sideBar %}
+  {{ parent() }}
+{% endblock %}
+
+{% block headside %}
+  {{ parent() }}
+{% endblock %}
+
+{% block body %}
+<!-- [ Main Content ] start -->
+  <div class="pc-content">
+    <div class="row">
+      <div class="col-lg-8 offset-lg-2">
+        <div class="card shadow-sm">
+          <div class="card-header">
+            <h5 class="mb-0">Créer une nouvelle entreprise</h5>
+          </div>
+          <div class="card-body">
+            <!-- Inclusion du formulaire pour ajouter une entreprise -->
+            {{ include('entreprise/_form.html.twig') }}
+
+            <!-- Bouton retour à la liste des entreprises -->
+            <a href="{{ path('app_entreprise_index') }}" class="btn btn-secondary mt-3">
+              <i class="ti ti-arrow-left"></i> Retour à la liste
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- [ Main Content ] end -->
+{% endblock %}
+
+{% block javascript %}
+  {{ parent() }}
+  {# Scripts personnalisés ici si besoin #}
+{% endblock %}

@@ -1,0 +1,156 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des Entreprises{% endblock %}
+
+{% block css %}
+  {{ parent() }}
+  <style>
+    :root {
+      --primary: #4e73df;
+      --primary-light: #e8f1ff;
+      --secondary: #6c757d;
+      --success: #1cc88a;
+      --info: #36b9cc;
+      --warning: #f6c23e;
+      --danger: #e74a3b;
+      --light: #f8f9fc;
+      --dark: #5a5c69;
+      --border: #e3e6f0;
+    }
+
+    .company-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .page-header {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 2rem;
+    }
+
+    @media (min-width: 768px) {
+      .page-header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+    }
+
+    .page-title {
+      color: var(--dark);
+      font-weight: 600;
+      margin-bottom: 1rem;
+      font-size: 1.75rem;
+    }
+
+    .company-card {
+      background: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+      transition: all 0.3s ease;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      border-left: 4px solid var(--primary);
+      overflow: hidden;
+    }
+
+    .company-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0.5rem 1.5rem rgba(58, 59, 69, 0.2);
+    }
+
+    .card-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      background-color: var(--light);
+    }
+
+    .card-title {
+      font-weight: 600;
+      color: var(--dark);
+      margin: 0;
+      padding-right: 2rem;
+      font-size: 1.1rem;
+    }
+
+    .card-body {
+      padding: 1.5rem;
+      flex: 1;
+    }
+
+    .card-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px dashed var(--border);
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      background-color: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      color: var(--border);
+      margin-bottom: 1.5rem;
+    }
+
+    .empty-state h4 {
+      color: var(--dark);
+      margin-bottom: 1rem;
+    }
+
+    .empty-state p {
+      color: var(--secondary);
+      margin-bottom: 1.5rem;
+    }
+  </style>
+{% endblock %}
+
+{% block body %}
+  <div class="company-container">
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1 class="page-title">🏢 Liste des Entreprises</h1>
+    </div>
+
+    <!-- Company Cards -->
+    <div class="row">
+      {% if entreprises|length > 0 %}
+        {% for entreprise in entreprises %}
+          <div class="col-lg-6 col-xl-4 mb-4">
+            <div class="company-card">
+              <div class="card-header">
+                <h3 class="card-title">{{ entreprise.nomentreprise }}</h3>
+              </div>
+              <div class="card-body">
+                <p>{{ entreprise.descriptionentreprise }}</p>
+                <p><strong>Secteur :</strong> {{ entreprise.secteurentreprise }}</p>
+                <p><strong>Site Web :</strong> <a href="http://{{ entreprise.urlentreprise }}" target="_blank">{{ entreprise.urlentreprise }}</a></p>
+              </div>
+              <div class="card-footer">
+                <a href="{{ path('app_entreprise_show_front', {identreprise: entreprise.identreprise}) }}" class="btn btn-primary">
+                  Voir les détails
+                </a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="empty-state">
+          <i class="fas fa-building"></i>
+          <h4>Aucune entreprise trouvée</h4>
+          <p>Essayez de modifier votre recherche ou ajoutez une nouvelle entreprise.</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

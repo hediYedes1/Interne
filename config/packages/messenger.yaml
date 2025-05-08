@@ -1,0 +1,25 @@
+framework:
+    messenger:
+        failure_transport: failed
+
+        transports:
+            # Transport synchrone pour les emails (envoi immédiat)
+            sync: 'sync://'
+            
+            # Transport asynchrone pour les autres messages
+            async:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                retry_strategy:
+                    max_retries: 3
+                    multiplier: 2
+            
+            # Transport pour les échecs
+            failed: 'doctrine://default?queue_name=failed'
+
+        routing:
+            # Force l'envoi synchrone des emails
+            'Symfony\Component\Mailer\Messenger\SendEmailMessage': sync
+            
+            # Exemples pour d'autres types de messages
+            'Symfony\Component\Notifier\Message\ChatMessage': async
+            'Symfony\Component\Notifier\Message\SmsMessage': async

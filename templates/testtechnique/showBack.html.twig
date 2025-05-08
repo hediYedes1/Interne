@@ -1,0 +1,102 @@
+{% extends 'base1.html.twig' %}
+
+{% block title %}Détails du Test Technique{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Détails du Test Technique</h1>
+        <div class="btn-group">
+            <a href="{{ path('app_testtechnique_by_interview_back', {'idinterview': testtechnique.idinterview.idinterview}) }}" 
+               class="d-none d-sm-inline-block btn btn-sm btn-secondary shadow-sm">
+                <i class="fas fa-arrow-left fa-sm text-white-50 mr-2"></i>Retour à la liste
+            </a>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Informations principales</h6>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <th class="bg-light">ID</th>
+                                <td>{{ testtechnique.idtesttechnique }}</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">Titre</th>
+                                <td>{{ testtechnique.titretesttechnique }}</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">Description</th>
+                                <td>{{ testtechnique.descriptiontesttechnique }}</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">Durée</th>
+                                <td>{{ testtechnique.dureetesttechnique }}</td>
+                            </tr>
+                            <tr>
+    <th class="bg-light">Statut</th>
+    <td>{{ testtechnique.statuttesttechnique.value }}</td>
+</tr>
+                            <tr>
+                                <th class="bg-light">Date de création</th>
+                                <td>{{ testtechnique.datecreationtesttechnique ? testtechnique.datecreationtesttechnique|date('d/m/Y H:i') : 'Non définie' }}</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">Questions</th>
+                                <td>
+                                    {% if testtechnique.questions %}
+                                        <ul class="list-unstyled">
+                                            {% for question in testtechnique.questions %}
+                                                <li class="mb-2">
+                                                    <strong>{{ question.question }}</strong>
+                                                    <ul>
+                                                        {% for key, answer in question.answers %}
+                                                            {% if answer %}
+                                                                <li>{{ key }}: {{ answer }}</li>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </ul>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% else %}
+                                        Aucune question définie
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Actions</h6>
+                </div>
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        
+                    </div>
+                    <div class="mb-3">
+                        <button class="btn btn-outline-secondary btn-block" onclick="window.print()">
+                            <i class="fas fa-print mr-2"></i>Imprimer les détails
+                        </button>
+                    </div>
+                    <div>
+                        {{ include('testtechnique/_delete_form.html.twig') }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

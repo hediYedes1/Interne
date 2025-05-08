@@ -1,0 +1,39 @@
+<form 
+    id="form-{{ utilisateur.idutilisateur }}" 
+    method="post" 
+    action="{{ path('app_utilisateur_delete', {'idutilisateur': utilisateur.idutilisateur}) }}" 
+    class="d-inline"
+>
+    <input 
+        type="hidden" 
+        name="_token" 
+        value="{{ csrf_token('delete' ~ utilisateur.idutilisateur) }}"
+    >
+    <button 
+        type="button" 
+        class="btn btn-danger btn-sm d-block mx-auto text-center" 
+        data-bs-toggle="modal" 
+        data-bs-target="#confirmDeleteModal-{{ utilisateur.idutilisateur }}"
+        style="width: 100px;"
+    >
+        <i class="fas fa-trash-alt"></i> Effacer
+    </button>
+</form>
+
+<div class="modal fade" id="confirmDeleteModal-{{ utilisateur.idutilisateur }}" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirmation</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Êtes-vous sûr de vouloir supprimer cet utilisateur ?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <button type="submit" class="btn btn-danger" onclick="document.querySelector('#form-{{ utilisateur.idutilisateur }}').submit();">Supprimer</button>
+      </div>
+    </div>
+  </div>
+</div>
