@@ -5,36 +5,42 @@
 {% block body %}
 <div class="container my-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="mb-0">Liste des Hébergements</h1>
-        <a href="{{ path('app_affectationhebergement_index') }}" class="btn btn-outline-primary">
-            <i class="fas fa-list"></i> Voir vos réservations
+        <h1 class="mb-0 fw-bold text-primary">Liste des Hébergements</h1>
+        <a href="{{ path('app_affectationhebergement_index') }}" class="btn btn-outline-primary rounded-pill">
+            <i class="fas fa-list me-1"></i> Voir vos réservations
         </a>
     </div>
     
     <div class="row mb-4">
         <div class="col-md-4">
-            <input type="text" id="searchInput" class="form-control" placeholder="🔍 Rechercher..." onkeyup="filterCards()">
+            <div class="input-group">
+                <span class="input-group-text bg-white"><i class="fas fa-search text-primary"></i></span>
+                <input type="text" id="searchInput" class="form-control border-start-0" placeholder="Rechercher..." onkeyup="filterCards()">
+            </div>
         </div>
         <div class="col-md-4">
-            <select id="typeFilter" class="form-select" onchange="filterCards()">
-                <option value="">Tous les types</option>
-                <option value="hotel">Hotel</option>
-                <option value="appartement">Appartement</option>
-                <option value="auberge">Auberge</option>
-            </select>
+            <div class="input-group">
+                <span class="input-group-text bg-white"><i class="fas fa-filter text-primary"></i></span>
+                <select id="typeFilter" class="form-select border-start-0" onchange="filterCards()">
+                    <option value="">Tous les types</option>
+                    <option value="hotel">Hotel</option>
+                    <option value="appartement">Appartement</option>
+                    <option value="auberge">Auberge</option>
+                </select>
+            </div>
         </div>
     </div>
 
     <div class="row">
         {% for hebergement in hebergements %}
         <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm hebergement-card">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="card-title mb-0">{{ hebergement.nomhebergement }}</h5>
+            <div class="card h-100 shadow hebergement-card">
+                <div class="card-header bg-primary text-white py-3">
+                    <h5 class="card-title mb-0 fw-bold">{{ hebergement.nomhebergement }}</h5>
                 </div>
                 <div class="card-body">
-                    <!-- Weather Widget -->
-                    <div class="weather-widget mb-3" data-location="{{ hebergement.adressehebergement }}">
+                    <!-- Weather Widget with improved styling -->
+                    <div class="weather-widget mb-3 p-2 bg-light rounded" data-location="{{ hebergement.adressehebergement }}">
                         <div class="weather-loading">
                             <div class="spinner-border spinner-border-sm text-primary" role="status">
                                 <span class="visually-hidden">Loading...</span>
@@ -51,45 +57,47 @@
                             </div>
                             <div class="weather-details mt-2 row small">
                                 <div class="col-6">
-                                    <i class="fas fa-tint me-1"></i>
+                                    <i class="fas fa-tint me-1 text-info"></i>
                                     <span class="weather-humidity"></span>%
                                 </div>
                                 <div class="col-6">
-                                    <i class="fas fa-wind me-1"></i>
+                                    <i class="fas fa-wind me-1 text-info"></i>
                                     <span class="weather-wind"></span> km/h
                                 </div>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="mb-2">
-                        <strong>Type:</strong>
-                        <span class="badge bg-info text-white">{{ hebergement.typehebergement }}</span>
+                    <div class="mb-3">
+                        <span class="badge bg-info text-white rounded-pill px-3 py-2 mb-2 d-inline-block">
+                            <i class="fas fa-building me-1"></i> {{ hebergement.typehebergement }}
+                        </span>
                     </div>
 
-                    <div class="mb-2">
-                        <strong>Adresse:</strong>
-                        <p class="mb-0">{{ hebergement.adressehebergement }}</p>
+                    <div class="mb-3">
+                        <h6 class="text-secondary mb-1"><i class="fas fa-map-marker-alt me-1"></i> Adresse:</h6>
+                        <p class="mb-0 ps-3 border-start border-primary border-3">{{ hebergement.adressehebergement }}</p>
                     </div>
                     
-                    <div class="mb-2">
-                        <strong>Description:</strong>
-                        <p class="card-text">
+                    <div class="mb-3">
+                        <h6 class="text-secondary mb-1"><i class="fas fa-info-circle me-1"></i> Description:</h6>
+                        <p class="card-text ps-3 border-start border-primary border-3">
                             {{ hebergement.descriptionhebergement|slice(0, 100) }}{% if hebergement.descriptionhebergement|length > 100 %}...{% endif %}
                         </p>
                     </div>
                     
-                    <div class="row mb-2">
+                    <div class="row mb-3">
                         <div class="col-6">
-                            <strong>Nuits:</strong> {{ hebergement.nbrnuitehebergement }}
+                            <h6 class="text-secondary mb-1"><i class="fas fa-moon me-1"></i> Nuits:</h6>
+                            <p class="fw-bold mb-0">{{ hebergement.nbrnuitehebergement }}</p>
                         </div>
                         <div class="col-6">
-                            <strong>Prix:</strong> 
-                            <span class="price-tnd fw-bold">{{ hebergement.prixhebergement }}</span> TND
+                            <h6 class="text-secondary mb-1"><i class="fas fa-tag me-1"></i> Prix:</h6> 
+                            <p class="mb-0"><span class="price-tnd fw-bold text-primary">{{ hebergement.prixhebergement }}</span> TND</p>
                             <div class="currency-conversion small mt-2">
-                                <div class="currency-box">
+                                <div class="currency-box bg-light p-2 rounded">
                                     <div class="currency-item">
-                                        <i class="fas fa-dollar-sign me-1"></i>
+                                        <i class="fas fa-dollar-sign me-1 text-success"></i>
                                         <span class="price-usd fw-bold">
                                             {% if hebergement.convertedPrices.USD is not null %}
                                                 {{ hebergement.convertedPrices.USD }}
@@ -99,7 +107,7 @@
                                         </span> USD
                                     </div>
                                     <div class="currency-item mt-1">
-                                        <i class="fas fa-euro-sign me-1"></i>
+                                        <i class="fas fa-euro-sign me-1 text-success"></i>
                                         <span class="price-eur fw-bold">
                                             {% if hebergement.convertedPrices.EUR is not null %}
                                                 {{ hebergement.convertedPrices.EUR }}
@@ -114,12 +122,12 @@
                     </div>
                     
                     <div class="mb-3">
-                        <strong>Disponibilité:</strong>
-                        <span class="badge {% if hebergement.disponibilitehebergement %}bg-success{% else %}bg-danger{% endif %}">
+                        <h6 class="text-secondary mb-1"><i class="fas fa-check-circle me-1"></i> Disponibilité:</h6>
+                        <span class="badge {% if hebergement.disponibilitehebergement %}bg-success{% else %}bg-danger{% endif %} rounded-pill px-3 py-2">
                             {% if hebergement.disponibilitehebergement %}
-                                ✔️ Disponible
+                                <i class="fas fa-check me-1"></i> Disponible
                             {% else %}
-                                ✖️ Non disponible
+                                <i class="fas fa-times me-1"></i> Non disponible
                             {% endif %}
                         </span>
                     </div>
@@ -128,8 +136,8 @@
                         <a href="{{ path('app_affectationhebergement_new', {
                             'idhebergement': hebergement.idhebergement, 
                             'prix': hebergement.prixhebergement
-                        }) }}" class="btn btn-success">
-                            <i class="fas fa-calendar-check"></i> Réserver
+                        }) }}" class="btn btn-success btn-lg rounded-pill shadow-sm">
+                            <i class="fas fa-calendar-check me-1"></i> Réserver
                         </a>
                     </div>
                 </div>
@@ -137,97 +145,78 @@
         </div>
         {% else %}
         <div class="col-12">
-            <div class="alert alert-info">Aucun hébergement trouvé.</div>
+            <div class="alert alert-info shadow-sm">
+                <i class="fas fa-info-circle me-2"></i> Aucun hébergement trouvé.
+            </div>
         </div>
         {% endfor %}
     </div>
 </div>
 
 <style>
+    :root {
+        --card-border-radius: 12px;
+        --transition-speed: 0.3s;
+    }
+    
     .card {
-        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        transition: transform var(--transition-speed) ease-in-out, 
+                    box-shadow var(--transition-speed) ease-in-out;
         border: none;
-        border-radius: 10px;
+        border-radius: var(--card-border-radius);
         overflow: hidden;
     }
     
     .card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
     }
     
     .card-header {
         border-bottom: none;
-        padding: 1rem 1.25rem;
     }
     
-    .weather-widget {
-        background: rgba(13, 110, 253, 0.05);
-        border-radius: 8px;
-        padding: 10px;
-        border-left: 3px solid #0d6efd;
-    }
-    
-    .weather-icon {
-        font-size: 24px;
-        width: 30px;
-        text-align: center;
-    }
-    
-    .weather-temp {
-        font-size: 1.2rem;
-        color: #0d6efd;
-    }
-    
-    .weather-details {
-        color: #6c757d;
-        font-size: 0.85rem;
-    }
-    
-    .currency-conversion {
-        line-height: 1.3;
+    .badge {
+        font-weight: 500;
+        letter-spacing: 0.5px;
     }
     
     .currency-box {
-        background-color: rgba(248, 249, 250, 0.8);
-        border-radius: 6px;
-        padding: 8px 10px;
-        border-left: 3px solid #0d6efd;
-        margin-top: 5px;
+        border-left: 3px solid var(--bs-success);
     }
     
-    .currency-item {
-        display: flex;
-        align-items: center;
-        font-size: 0.9rem;
+    .weather-widget {
+        transition: all var(--transition-speed);
     }
     
-    .currency-item i {
-        width: 16px;
-        text-align: center;
-        color: #6c757d;
+    .weather-widget:hover {
+        transform: scale(1.02);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
     }
     
-    .price-tnd {
-        color: #0d6efd;
-        font-weight: 600;
+    .btn-success {
+        transition: all var(--transition-speed);
     }
     
-    .price-usd, .price-eur {
-        color: #212529;
-        margin: 0 3px;
+    .btn-success:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3) !important;
     }
     
-    .conversion-loading {
-        display: flex;
-        align-items: center;
-        font-size: 0.85rem;
+    .input-group {
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        border-radius: 5px;
+        overflow: hidden;
     }
     
+    .input-group-text, .form-control, .form-select {
+        border-color: #e9ecef;
+    }
+    
+    /* Responsive adjustments */
     @media (max-width: 768px) {
         .col-md-4 {
-            flex: 0 0 100%;
-            max-width: 100%;
+            margin-bottom: 1rem;
         }
     }
 </style>
