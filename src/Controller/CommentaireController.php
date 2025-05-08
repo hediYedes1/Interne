@@ -111,4 +111,35 @@ final class CommentaireController extends AbstractController
 
         return $this->redirectToRoute('app_commentaire_index', [], Response::HTTP_SEE_OTHER);
     }
+    // src/Controller/CommentaireController.php
+
+
+    #[Route('/add/{idpublication}', name: 'add_front', methods: ['POST'])]
+    public function addFront(Request $request, ManagerRegistry $doctrine, int $idpublication): Response
+    {
+        $entityManager = $doctrine->getManager();
+        $publication = $doctrine->getRepository(Publication::class)->find($idpublication);
+
+        if (!$publication) {
+            throw $this->createNotFoundException('Publication non trouvée.');
+        }
+
+        $comment = new Commentaire();
+        $comment->setPublication($publication);
+        $comment->setDateCommentaire(new \DateTime());
+
+        $form = $this->createForm(CommentaireType::class, $comment);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($comment);
+            $entityManager->flush();
+            return $this->redirectToRoute('app_publication_index_front');
+        }
+
+        // Optional: If not valid, re-render the form (or just redirect)
+        return $this->redirectToRoute('app_publication_index_front');
+    }
+
+
 }

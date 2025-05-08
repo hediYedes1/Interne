@@ -12,23 +12,18 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class ReponseType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
-    {
-        $builder
-            ->add('contenuReponse')
-            ->add('dateReponse', null, [
-                'widget' => 'single_text',
-            ])
-            ->add('idCommentaire', EntityType::class, [
-                'class' => Commentaire::class,
-                'choice_label' => 'id',
-            ])
-        ;
-    }
-
-    public function configureOptions(OptionsResolver $resolver): void
-    {
-        $resolver->setDefaults([
-            'data_class' => Reponse::class,
+{
+    $builder
+        ->add('contenuReponse')
+        ->add('dateReponse', null, [
+            'widget' => 'single_text',
         ]);
-    }
+}
+
+public function configureOptions(OptionsResolver $resolver): void
+{
+    $resolver->setDefaults([
+        'data_class' => Reponse::class,
+    ]);
+}
 }

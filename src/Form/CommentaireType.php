@@ -1,10 +1,9 @@
 <?php
+// src/Form/CommentaireType.php
 
 namespace App\Form;
 
 use App\Entity\Commentaire;
-use App\Entity\Publication;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -19,12 +18,7 @@ class CommentaireType extends AbstractType
                 'widget' => 'single_text',
             ])
             ->add('likes')
-            ->add('dislikes')
-            ->add('idPublication', EntityType::class, [
-                'class' => Publication::class,
-                'choice_label' => 'idPublication',
-            ])
-        ;
+            ->add('dislikes');
     }
 
     public function configureOptions(OptionsResolver $resolver): void
