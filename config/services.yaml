@@ -7,6 +7,8 @@ parameters:
     google.redirect_uri: 'http://localhost:8000/auth/google/callback'
     logo_directory: '%kernel.project_dir%/public/uploads/logos'
 
+    images_directory: '%kernel.project_dir%/public/uploads/images'
+
 
     profile_images_directory: '%kernel.project_dir%/public/uploads/profile_images'
     face_api_key: '%env(FACE_API_KEY)%'
