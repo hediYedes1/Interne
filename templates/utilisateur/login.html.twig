@@ -21,35 +21,6 @@
   <link rel="stylesheet" href="fonts/material.css">
   <link rel="stylesheet" href="css/style.css" id="main-style-link">
   <link rel="stylesheet" href="css/style-preset.css">
-  <style>
-    .captcha-modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      z-index: 1050;
-      align-items: center;
-      justify-content: center;
-    }
-    .captcha-modal.show {
-      display: flex;
-    }
-    .captcha-modal-content {
-      background-color: white;
-      padding: 20px;
-      border-radius: 5px;
-      max-width: 400px;
-      width: 100%;
-    }
-    .loading {
-      display: none;
-      text-align: center;
-      margin-top: 10px;
-    }
-  </style>
 </head>
 <!-- [Head] end -->
 <!-- [Body] Start -->
@@ -67,19 +38,7 @@
               <h3 class="mb-0"><b>Connexion</b></h3>
               <p class="mb-0">Vous n'avez pas de compte ? <a href="{{ path('app_base4') }}" class="text-primary">Inscrivez-vous</a></p>
             </div>
-            {% if error %}
-                <div class="alert alert-danger d-flex align-items-center" role="alert">
-                    <i class="fas fa-exclamation-circle me-2"></i>
-                    <div>
-                        {% if error.messageKey == 'Your account has been banned. Please contact an administrator.' %}
-                            Votre compte a été banni. Veuillez contacter un administrateur.
-                        {% else %}
-                            {{ error.messageKey|trans(error.messageData, 'security') }}
-                        {% endif %}
-                    </div>
-                </div>
-            {% endif %}
-            <form action="{{ path('app_login') }}" method="post" id="loginForm" novalidate>
+            <form action="{{ path('app_login') }}" method="post" novalidate>
               <div class="form-group mb-3">
                 <label for="email" class="form-label">Adresse e-mail</label>
                 <input type="text" id="email" name="_email" class="form-control" placeholder="Adresse e-mail" value="{{ last_username|default('') }}" required>
@@ -88,33 +47,44 @@
                 <label for="password" class="form-label">Mot de passe</label>
                 <input type="password" id="password" name="_password" class="form-control" placeholder="Mot de passe" required>
               </div>
-              <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-              <input type="hidden" name="_captcha" id="captchaInput">
-              <input type="hidden" name="_captcha_solution" id="captchaSolution">
               <div class="d-flex mt-1 justify-content-between">
                 <div class="form-check">
                   <input class="form-check-input input-primary" type="checkbox" id="remember_me" name="_remember_me" checked>
                   <label class="form-check-label text-muted" for="remember_me">Rester connecté</label>
                 </div>
-                <a href="{{ path('app_forgot_password') }}" class="text-secondary f-w-400">Mot de passe oublié ?</a>
+                <a href="#" class="text-secondary f-w-400">Mot de passe oublié ?</a>
               </div>
               <div class="d-grid mt-4">
-                <button type="submit" class="btn btn-primary" id="loginButton">Connexion</button>
-              </div>
-              <div class="loading" id="loading">
-                <div class="spinner-border text-primary" role="status">
-                  <span class="visually-hidden">Loading...</span>
-                </div>
-              </div>
-              <div class="saprator mt-3">
-                  <span>OU</span>
-              </div>
-              <div class="d-grid mt-3">
-                  <a href="{{ path('app_face_login') }}" class="btn btn-outline-primary">
-                      <i class="fas fa-camera"></i> Connexion par reconnaissance faciale
-                  </a>
+                <button type="submit" class="btn btn-primary">Connexion</button>
               </div>
             </form>
+
+            <div class="saprator mt-3">
+              <span>Se connecter avec</span>
+            </div>
+            <div class="row">
+              <div class="col-4">
+                <div class="d-grid">
+                  <button type="button" class="btn mt-2 btn-light-primary bg-light text-muted">
+                    <img src="images/authentication/google.svg" alt="img"> <span class="d-none d-sm-inline-block"> Google</span>
+                  </button>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="d-grid">
+                  <button type="button" class="btn mt-2 btn-light-primary bg-light text-muted">
+                    <img src="images/authentication/twitter.svg" alt="img"> <span class="d-none d-sm-inline-block"> Twitter</span>
+                  </button>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="d-grid">
+                  <button type="button" class="btn mt-2 btn-light-primary bg-light text-muted">
+                    <img src="images/authentication/facebook.svg" alt="img"> <span class="d-none d-sm-inline-block"> Facebook</span>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="auth-footer row">
@@ -132,24 +102,6 @@
       </div>
     </div>
   </div>
-
-  <!-- CAPTCHA Modal -->
-  <div class="captcha-modal" id="captchaModal">
-    <div class="captcha-modal-content">
-      <h3 class="text-center mb-4">Veuillez compléter le CAPTCHA</h3>
-      <div class="mb-3">
-        <div class="d-flex align-items-center gap-2">
-          <img src="{{ captcha.image_url }}" alt="CAPTCHA" class="border rounded" style="height: 50px;">
-          <input type="text" id="inputCaptcha" class="form-control" required placeholder="Entrez le CAPTCHA">
-        </div>
-        <small class="text-muted">Veuillez entrer les caractères affichés dans l'image ci-dessus</small>
-      </div>
-      <div class="text-center">
-        <button class="btn btn-primary" id="verifyCaptcha">Vérifier</button>
-      </div>
-    </div>
-  </div>
-
   <script src="js/plugins/popper.min.js"></script>
   <script src="js/plugins/simplebar.min.js"></script>
   <script src="js/plugins/bootstrap.min.js"></script>
@@ -161,111 +113,6 @@
   <script>layout_rtl_change('false');</script>
   <script>preset_change("preset-1");</script>
   <script>font_change("Public-Sans");</script>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const loginForm = document.getElementById('loginForm');
-      const captchaModal = document.getElementById('captchaModal');
-      const captchaInput = document.getElementById('inputCaptcha');
-      const loading = document.getElementById('loading');
-      const loginButton = document.getElementById('loginButton');
-
-      // Handle form submission
-      loginForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        // Show loading spinner
-        loading.style.display = 'block';
-        loginButton.disabled = true;
-
-        // First validate credentials
-        const formData = new FormData(loginForm);
-        
-        fetch(loginForm.action, {
-          method: 'POST',
-          body: formData,
-          headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-          }
-        })
-        .then(response => response.json())
-        .then(data => {
-          loading.style.display = 'none';
-          loginButton.disabled = false;
-          
-          if (data.success) {
-            // If credentials are valid, show CAPTCHA
-            captchaModal.style.display = 'block';
-          } else {
-            // Show error message
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'alert alert-danger';
-            errorDiv.textContent = data.message;
-            loginForm.insertBefore(errorDiv, loginForm.firstChild);
-          }
-        })
-        .catch(error => {
-          loading.style.display = 'none';
-          loginButton.disabled = false;
-          console.error('Error:', error);
-        });
-      });
-
-      // Handle CAPTCHA verification
-      document.getElementById('verifyCaptcha').addEventListener('click', function() {
-        const userInput = captchaInput.value.trim();
-        const solution = '{{ captcha.solution }}';
-
-        if (userInput === solution) {
-          // Set the CAPTCHA values in the hidden inputs
-          document.getElementById('captchaInput').value = userInput;
-          document.getElementById('captchaSolution').value = solution;
-          
-          // Show loading spinner
-          loading.style.display = 'block';
-          loginButton.disabled = true;
-          
-          // Submit the form
-          const formData = new FormData(loginForm);
-          formData.append('_captcha', userInput);
-          formData.append('_captcha_solution', solution);
-
-          fetch(loginForm.action, {
-            method: 'POST',
-            body: formData
-          })
-          .then(response => {
-            if (response.redirected) {
-              window.location.href = response.url;
-            } else {
-              throw new Error('Authentication failed');
-            }
-          })
-          .catch(error => {
-            loading.style.display = 'none';
-            loginButton.disabled = false;
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'alert alert-danger';
-            errorDiv.textContent = 'Une erreur est survenue. Veuillez réessayer.';
-            loginForm.insertBefore(errorDiv, loginForm.firstChild);
-          });
-        } else {
-          const errorDiv = document.createElement('div');
-          errorDiv.className = 'alert alert-danger';
-          errorDiv.textContent = 'CAPTCHA invalide. Veuillez réessayer.';
-          captchaModal.querySelector('.captcha-modal-content').insertBefore(errorDiv, captchaModal.querySelector('.captcha-modal-content').firstChild);
-          captchaInput.value = '';
-        }
-      });
-
-      // Close modal when clicking outside
-      window.addEventListener('click', function(e) {
-        if (e.target === captchaModal) {
-          captchaModal.style.display = 'none';
-        }
-      });
-    });
-  </script>
 </body>
 <!-- [Body] end -->
 

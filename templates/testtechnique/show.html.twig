@@ -1,4 +1,4 @@
-{% extends 'base2.html.twig' %}
+{% extends 'base1.html.twig' %}
 
 {% block title %}Détails du Test Technique{% endblock %}
 
@@ -97,7 +97,9 @@
                             <i class="fas fa-print mr-2"></i>Imprimer les détails
                         </button>
                     </div>
-                     {{ include('testtechnique/_delete_form.html.twig') }}
+                    <div>
+                        {{ include('testtechnique/_delete_form.html.twig') }}
+                    </div>
                 </div>
             </div>
         </div>

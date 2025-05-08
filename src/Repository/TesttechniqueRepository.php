@@ -6,7 +6,6 @@ use App\Entity\Testtechnique;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Entity\Interview;
-use App\Enum\StatutTestTechnique;
 
 class TesttechniqueRepository extends ServiceEntityRepository
 {
@@ -42,18 +41,5 @@ public function findByFiltersForInterview(Interview $interview, ?string $titre, 
     }
 
     return $qb->getQuery()->getResult();
-}
-public function getStatisticsByStatus(): array
-{
-    return $this->createQueryBuilder('t')
-        ->select([
-            't.statuttesttechnique as status',
-            'COUNT(t.idtesttechnique) as count',
-            'MIN(t.datecreationtesttechnique) as earliest_date',
-            'MAX(t.datecreationtesttechnique) as latest_date'
-        ])
-        ->groupBy('t.statuttesttechnique')
-        ->getQuery()
-        ->getResult();
 }
 }

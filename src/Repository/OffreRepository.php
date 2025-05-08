@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Repository;
 
 use App\Entity\Offre;
@@ -12,20 +13,5 @@ class OffreRepository extends ServiceEntityRepository
         parent::__construct($registry, Offre::class);
     }
 
-    public function getSearchQuery(string $query = null, string $typeContrat = null)
-    {
-        $qb = $this->createQueryBuilder('o');
-        
-        if ($query) {
-            $qb->andWhere('o.titreoffre LIKE :query OR o.descriptionoffre LIKE :query')
-               ->setParameter('query', '%'.$query.'%');
-        }
-        
-        if ($typeContrat && in_array($typeContrat, ['CDI', 'CDD', 'STAGE'])) {
-            $qb->andWhere('o.typecontrat = :type')
-               ->setParameter('type', $typeContrat);
-        }
-        
-        return $qb->getQuery();
-    }
+    // Add custom methods as needed
 }

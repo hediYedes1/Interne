@@ -152,12 +152,6 @@
             👥 Employés : {{ branche.nombreemploye }}<br>
             ✉️ {{ branche.emailbranche }}
           </li>
-          <a href="{{ path('app_brancheentreprise_edit', {'idbranche': branche.idbranche}) }}" class="btn btn-primary">
-          <i class="fas fa-edit mr-2"></i>Modifier
-        </a>
-          <div class="mt-3">
-        {{ include('entreprise/_delete_form_branche.html.twig') }}
-      </div>
         {% endfor %}
       </ul>
     {% else %}
@@ -176,18 +170,8 @@
          🏢 {{ d.nomdepartement }} <br>
 👤 Responsable : {{ d.responsabledepartement }}  <br>
 📋 Description :{{ d.descriptiondepartement }}
+          
           </li>
-
-   <a href="{{ path('app_departmententreprise_edit', {'iddepartement': d.iddepartement}) }}" class="btn btn-primary">    
-         <i class="fas fa-edit mr-2"></i>Modifier
-        </a>
-              <div class="mt-3" >>
-
-     {{ include('entreprise/_delete_form_departement.html.twig') }}
-           </div>
-
-</div>
-   
         {% endfor %}
       </ul>
     {% else %}

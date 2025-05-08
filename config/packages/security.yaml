@@ -17,12 +17,14 @@ security:
         main:
             lazy: true
             provider: app_user_provider
-            custom_authenticator: App\Security\CaptchaAuthenticator
+            form_login:
+                login_path: app_login
+                check_path: app_login
+                username_parameter: _email # The name of the form field for the username
+                password_parameter: _password 
+                success_handler: App\Security\LoginSuccessHandler
             logout:
                 path: app_logout
-                invalidate_session: true 
-                target: app_base3
-            user_checker: App\Security\UserChecker
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used

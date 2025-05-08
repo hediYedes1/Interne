@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <!-- [Head] start -->
-<!-- Admin interface -->
-
 
 <head>
   <title>{% block title %}Dashboard {% endblock %}</title>
@@ -26,7 +24,6 @@
 <link rel="stylesheet" href="{{ asset('fonts/material.css') }}">
 <link rel="stylesheet" href="{{ asset('css/style.css') }}" id="main-style-link">
 <link rel="stylesheet" href="{{ asset('css/style-preset.css') }}">
-
 {% endblock %}
 </head>
 <!-- [Head] end -->
@@ -45,7 +42,7 @@
 <nav class="pc-sidebar">
   <div class="navbar-wrapper">
     <div class="m-header">
-      <a href="{{ path('app_base1') }}" class="b-brand text-primary">
+      <a href="{{ path('app_base2') }}" class="b-brand text-primary">
         <!-- ========   Change your logo from here   ============ -->
         <img src="{{ asset('img/logoIn.png') }}" alt="Logo" width="150" height="auto">
       </a>
@@ -53,40 +50,13 @@
     <div class="navbar-content">
       <ul class="pc-navbar">
         <li class="pc-item">
-          <a href="{{ path('app_base1') }}" class="pc-link">
+          <a href="{{ path('app_base2') }}" class="pc-link">
             <span class="pc-micon"><i class="ti ti-dashboard"></i></span>
             <span class="pc-mtext">Dashboard</span>
           </a>
         </li>
 
-        <li class="pc-item pc-caption">
-          <label>charts</label>
-          <i class="ti ti-dashboard"></i>
-        </li>
-         <li class="pc-item">
-           <a class="pc-link" href="{{ path('app_interview_stats') }}">
-    <span class="pc-micon"><i class="ti ti-lock"></i></span>
-    <span class="pc-mtext">Interview</span>
-</a>
-        </li>
-        <li class="pc-item">
-           <a class="pc-link" href="{{ path('app_test_technique_stats') }}">
-    <span class="pc-micon"><i class="ti ti-lock"></i></span>
-    <span class="pc-mtext">Test technique</span>
-</a>
-        </li>
-        <li class="pc-item">
-          <a href="{{ path('app_utilisateur_index') }}" class="pc-link">
-            <span class="pc-micon"><i class="ti ti-color-swatch"></i></span>
-            <span class="pc-mtext">Utilisateurs</span>
-          </a>
-        </li>
-        <li class="pc-item">
-          <a href="../elements/icon-tabler.html" class="pc-link">
-            <span class="pc-micon"><i class="ti ti-plant-2"></i></span>
-            <span class="pc-mtext">Hebergement</span>
-          </a>
-        </li>
+      
 
         <li class="pc-item pc-caption">
           <label>Pages</label>
@@ -99,13 +69,26 @@
           </a>
         </li>
         <li class="pc-item">
+          <a href="{{path('app_partenariat_admin_index')}}" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-lock"></i></span>
+            <span class="pc-mtext">Partenariat</span>
+          </a>
+        </li>
+        
+        <li class="pc-item">
+          <a href="{{path('app_hebergement_admin_index')}}" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-user-plus"></i></span>
+            <span class="pc-mtext">Hebergement</span>
+          </a>
+        </li>
+        <li class="pc-item">
           <a href="../pages/register.html" class="pc-link">
             <span class="pc-micon"><i class="ti ti-user-plus"></i></span>
             <span class="pc-mtext">Register</span>
           </a>
         </li>
          <li class="pc-item">
-          <a href="{{ path('app_interview_index_back') }}" class="pc-link">
+          <a href="{{ path('app_interview_index') }}" class="pc-link">
             <span class="pc-micon"><i class="ti ti-lock"></i></span>
             <span class="pc-mtext">Interview</span>
           </a>
@@ -116,43 +99,32 @@
             <span class="pc-mtext">Publication</span>
           </a>
         </li>
-        <li class="pc-item">
-  <a href="{{ path('back_offre_index') }}" class="pc-link">
-    <span class="pc-micon"><i class="ti ti-lock"></i></span>
-    <span class="pc-mtext">Offre</span>
-  </a>
-</li>
+         <li class="pc-item">
+          <a href="../pages/login.html" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-lock"></i></span>
+            <span class="pc-mtext">Offre</span>
+          </a>
+        </li>
         <li class="pc-item">
           <a href="{{path('app_entreprise_index')}}" class="pc-link">
             <span class="pc-micon"><i class="ti ti-user-plus"></i></span>
             <span class="pc-mtext">Entreprise</span>
           </a>
         </li>
+         
+        
          <li class="pc-item">
           <a href="../pages/login.html" class="pc-link">
             <span class="pc-micon"><i class="ti ti-lock"></i></span>
-            <span class="pc-mtext">Partenariat</span>
+            <span class="pc-mtext">Utilisateur</span>
           </a>
         </li>
         <li class="pc-item">
           <a href="../pages/register.html" class="pc-link">
             <span class="pc-micon"><i class="ti ti-user-plus"></i></span>
-            <span class="pc-mtext">Hebergement</span>
+            <span class="pc-mtext">Projet</span>
           </a>
         </li>
-        
-         <li class="pc-item">
-          <a href="{{ path('app_user_ban_index') }}" class="pc-link">
-            <span class="pc-micon"><i class="ti ti-lock"></i></span>
-            <span class="pc-mtext">interdiction d'utilisateur</span>
-          </a>
-        </li>
-        <li class="pc-item">
-  <a href="{{ path('back_projet_index') }}" class="pc-link">
-    <span class="pc-micon"><i class="ti ti-user-plus"></i></span>
-    <span class="pc-mtext">Projet</span>
-  </a>
-</li>
          <li class="pc-item">
           <a href="../pages/login.html" class="pc-link">
             <span class="pc-micon"><i class="ti ti-lock"></i></span>
@@ -205,13 +177,23 @@
           </ul>
         </li>
         <li class="pc-item">
-          <a href="{{ path('app_logout') }}" class="pc-link">
+          <a href="{{ path('app_base3') }}" class="pc-link">
             <span class="pc-micon"><i class="ti ti-power"></i></span> <!-- Add an icon here -->
             <span class="pc-mtext">Se Déconnecter</span>
           </a>
         </li>
         
+        
       </ul>
+      <div class="card text-center">
+        <div class="card-body">
+          <img src="images/img-navbar-card.png" alt="images" class="img-fluid mb-2">
+          <h5>Upgrade To Pro</h5>
+          <p>To get more features and components</p>
+          <a href="https://codedthemes.com/item/berry-bootstrap-5-admin-template/" target="_blank"
+          class="btn btn-success">Buy Now</a>
+        </div>
+      </div>
     </div>
   </div>
 </nav>
@@ -226,107 +208,104 @@
 <!-- [ Sidebar Menu ] end --> <!-- [ Header Topbar ] start -->
 <!-- [ Sidebar Menu ] end --> <!-- [ Header Topbar ] start -->
 <header class="pc-header">
-  <div class="header-wrapper">
-    <!-- [Mobile Media Block] start -->
-    <div class="me-auto pc-mob-drp">
-      <ul class="list-unstyled">
-      
-        <!-- ======= Menu collapse Icon ===== -->
-        <li class="pc-h-item pc-sidebar-collapse">
-          <a href="#" class="pc-head-link ms-0" id="sidebar-hide">
-            <i class="ti ti-menu-2"></i>
-          </a>
-        </li>
-        <li class="pc-h-item pc-sidebar-popup">
-          <a href="#" class="pc-head-link ms-0" id="mobile-collapse">
-            <i class="ti ti-menu-2"></i>
-          </a>
-        </li>
-        <li class="dropdown pc-h-item d-inline-flex d-md-none">
-          <a
-            class="pc-head-link dropdown-toggle arrow-none m-0"
-            data-bs-toggle="dropdown"
-            href="#"
-            role="button"
-            aria-haspopup="false"
-            aria-expanded="false"
-          >
-            <i class="ti ti-search"></i>
-          </a>
-          <div class="dropdown-menu pc-h-dropdown drp-search">
-            <form class="px-3">
-              <div class="form-group mb-0 d-flex align-items-center">
-                <i data-feather="search"></i>
-                <input type="search" class="form-control border-0 shadow-none" placeholder="Search here. . .">
-              </div>
-            </form>
+  <div class="header-wrapper"> <!-- [Mobile Media Block] start -->
+<div class="me-auto pc-mob-drp">
+  <ul class="list-unstyled">
+    <!-- ======= Menu collapse Icon ===== -->
+    <li class="pc-h-item pc-sidebar-collapse">
+      <a href="#" class="pc-head-link ms-0" id="sidebar-hide">
+        <i class="ti ti-menu-2"></i>
+      </a>
+    </li>
+    <li class="pc-h-item pc-sidebar-popup">
+      <a href="#" class="pc-head-link ms-0" id="mobile-collapse">
+        <i class="ti ti-menu-2"></i>
+      </a>
+    </li>
+    <li class="dropdown pc-h-item d-inline-flex d-md-none">
+      <a
+        class="pc-head-link dropdown-toggle arrow-none m-0"
+        data-bs-toggle="dropdown"
+        href="#"
+        role="button"
+        aria-haspopup="false"
+        aria-expanded="false"
+      >
+        <i class="ti ti-search"></i>
+      </a>
+      <div class="dropdown-menu pc-h-dropdown drp-search">
+        <form class="px-3">
+          <div class="form-group mb-0 d-flex align-items-center">
+            <i data-feather="search"></i>
+            <input type="search" class="form-control border-0 shadow-none" placeholder="Search here. . .">
           </div>
-        </li>
-        <li class="pc-h-item d-none d-md-inline-flex">
-          <form class="header-search">
-            <i data-feather="search" class="icon-search"></i>
-            <input type="search" class="form-control" placeholder="Search here. . .">
-          </form>
-        </li>
-      </ul>
-    </div>
-    <!-- [Mobile Media Block end] -->
-    <div class="ms-auto">
-      <ul class="list-unstyled">
-        <!-- Notification Dropdown -->
-        <li class="dropdown pc-h-item">
-          <a
-            class="pc-head-link dropdown-toggle arrow-none me-0"
-            data-bs-toggle="dropdown"
-            href="#"
-            role="button"
-            aria-haspopup="false"
-            aria-expanded="false"
-          >
-            <i class="ti ti-bell"></i>
-            {% set notifications = [] %}
-            {% set notification_file = project_dir ~ '/var/storage/notifications.json' %}
-            {% if file_exists(notification_file) %}
-                {% set json_content = file_get_contents(notification_file) %}
-                {% set notifications = json_content|json_decode %}
-            {% endif %}
-            {% if notifications|length > 0 %}
-                <span class="badge bg-danger pc-h-badge">{{ notifications|length }}</span>
-            {% endif %}
-          </a>
-          <div class="dropdown-menu dropdown-notification dropdown-menu-end pc-h-dropdown">
-              <div class="dropdown-header d-flex align-items-center justify-content-between">
-                  <h5 class="m-0">Notifications</h5>
-                  <a href="{{ path('clear_notifications') }}" class="pc-head-link bg-transparent">
-                      <i class="ti ti-x text-danger"></i>
-                  </a>
+        </form>
+      </div>
+    </li>
+    <li class="pc-h-item d-none d-md-inline-flex">
+      <form class="header-search">
+        <i data-feather="search" class="icon-search"></i>
+        <input type="search" class="form-control" placeholder="Search here. . .">
+      </form>
+    </li>
+  </ul>
+</div>
+<!-- [Mobile Media Block end] -->
+<div class="ms-auto">
+  <ul class="list-unstyled">
+    <li class="dropdown pc-h-item">
+      <a
+        class="pc-head-link dropdown-toggle arrow-none me-0"
+        data-bs-toggle="dropdown"
+        href="#"
+        role="button"
+        aria-haspopup="false"
+        aria-expanded="false"
+      >
+        <i class="ti ti-mail"></i>
+      </a>
+      <div class="dropdown-menu dropdown-notification dropdown-menu-end pc-h-dropdown">
+        <div class="dropdown-header d-flex align-items-center justify-content-between">
+          <h5 class="m-0">Message</h5>
+          <a href="#!" class="pc-head-link bg-transparent"><i class="ti ti-x text-danger"></i></a>
+        </div>
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-header px-0 text-wrap header-notification-scroll position-relative" style="max-height: calc(100vh - 215px)">
+          <div class="list-group list-group-flush w-100">
+            <a class="list-group-item list-group-item-action">
+              <div class="d-flex">
+                <div class="flex-shrink-0">
+                  <img src="images/user/avatar-2.jpg" alt="user-image" class="user-avtar">
+                </div>
+                <div class="flex-grow-1 ms-1">
+                  <span class="float-end text-muted">3:00 AM</span>
+                  <p class="text-body mb-1">It's <b>Cristina danny's</b> birthday today.</p>
+                  <span class="text-muted">2 min ago</span>
+                </div>
               </div>
-              <div class="dropdown-divider"></div>
-              <div class="dropdown-header px-0 text-wrap header-notification-scroll position-relative" style="max-height: calc(100vh - 215px)">
-                  <div class="list-group list-group-flush w-100">
-                      {% if notifications|length > 0 %}
-                          {% for notification in notifications %}
-                              <a class="list-group-item list-group-item-action">
-                                  <div class="d-flex">
-                                      <div class="flex-shrink-0">
-                                          <i class="ti ti-calendar-event text-primary"></i>
-                                      </div>
-                                      <div class="flex-grow-1 ms-1">
-                                          <span class="float-end text-muted">{{ notification.created_at|date('H:i') }}</span>
-                                          <p class="text-body mb-1">{{ notification.message }}</p>
-                                          <span class="text-muted">Interview #{{ notification.interview_id }}</span>
-                                      </div>
-                                  </div>
-                              </a>
-                          {% endfor %}
-                      {% else %}
-                          <div class="list-group-item list-group-item-action">
-                              <div class="text-center py-3">
-                                  <p class="text-muted mb-0">Aucune notification</p>
-                              </div>
-                          </div>
-                      {% endif %}
-                  </div>
+            </a>
+            <a class="list-group-item list-group-item-action">
+              <div class="d-flex">
+                <div class="flex-shrink-0">
+                  <img src="images/user/avatar-1.jpg" alt="user-image" class="user-avtar">
+                </div>
+                <div class="flex-grow-1 ms-1">
+                  <span class="float-end text-muted">6:00 PM</span>
+                  <p class="text-body mb-1"><b>Aida Burg</b> commented your post.</p>
+                  <span class="text-muted">5 August</span>
+                </div>
+              </div>
+            </a>
+            <a class="list-group-item list-group-item-action">
+              <div class="d-flex">
+                <div class="flex-shrink-0">
+                  <img src="images/user/avatar-3.jpg" alt="user-image" class="user-avtar">
+                </div>
+                <div class="flex-grow-1 ms-1">
+                  <span class="float-end text-muted">2:45 PM</span>
+                  <p class="text-body mb-1"><b>There was a failure to your setup.</b></p>
+                  <span class="text-muted">7 hours ago</span>
+                </div>
               </div>
             </a>
             <a class="list-group-item list-group-item-action">
@@ -366,13 +345,13 @@
         <div class="dropdown-header">
           <div class="d-flex mb-1">
             <div class="flex-shrink-0">
-              <img src="{{ asset('images/default-avatar.png') }}" alt="user-image" class="user-avtar wid-35">
+              <img src="images/user/avatar-2.jpg" alt="user-image" class="user-avtar wid-35">
             </div>
             <div class="flex-grow-1 ms-3">
               <h6 class="mb-1">{{ app.user ? app.user.nomutilisateur ~ ' ' ~ app.user.prenomutilisateur : 'Guest' }}</h6>
               <span>{{ app.user ? app.user.role.getLabel() : 'No Role' }}</span>
             </div>
-            <a href="{% if app.user %}{{ path('app_logout') }}{% else %}#{% endif %}" class="pc-head-link bg-transparent"><i class="ti ti-power text-danger"></i></a>
+            <a href="{{ path('app_logout') }}" class="pc-head-link bg-transparent"><i class="ti ti-power text-danger"></i></a>
           </div>
         </div>
         <ul class="nav drp-tabs nav-fill nav-tabs" id="mydrpTab" role="tablist">
@@ -413,8 +392,7 @@
               <i class="ti ti-user"></i>
               <span>View Profile</span>
             </a>
-            <a href="{{ path('app_logout') }}" class="dropdown-item">
-            <a href="{{ path('app_logout') }}" class="dropdown-item">
+            <a href="{{ path('app_base3') }}" class="dropdown-item">
               <i class="ti ti-power"></i>
               <span>Se Déconnecter</span>
             </a>
@@ -449,6 +427,7 @@
  </div>
 </header>
 <!-- [ Header ] end -->
+
 {% endblock %}
 <!-- [ Header ] end -->
 
@@ -465,28 +444,19 @@
           <div class="row align-items-center">
             <div class="col-md-12">
               <div class="page-header-title">
-               
+                <h5 class="m-b-10">Home</h5>
               </div>
               <ul class="breadcrumb">
-               
+                <li class="breadcrumb-item"><a href="{{ path('app_base2') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="javascript: void(0)">Dashboard</a></li>
+                <li class="breadcrumb-item" aria-current="page">Home</li>
               </ul>
             </div>
           </div>
         </div>
       </div>
-  {% endblock %}
+      {% endblock %}
       {% block body %}
-    <div class="container mt-4">
-        {% for label, messages in app.flashes %}
-            {% for message in messages %}
-                <div class="alert alert-{{ label == 'success' ? 'success' : (label == 'error' ? 'danger' : 'info') }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            {% endfor %}
-        {% endfor %}
-    </div>
-
       <div class="row">
         <!-- [ sample-page ] start -->
         <div class="col-md-6 col-xl-3">
@@ -774,30 +744,53 @@
       </div>
   </div>
       
+
+      </div>
+  </div>
+      
     </div>
   </div>
   <!-- [ Main Content ] end -->
   <footer class="pc-footer">
     <div class="footer-wrapper container-fluid">
       <div class="row">
+        <div class="col-sm my-1">
+          <p class="m-0"
+            >Mantis &#9829; crafted by Team <a href="https://themeforest.net/user/codedthemes" target="_blank">Codedthemes</a> Distributed by <a href="https://themewagon.com/">ThemeWagon</a>.</p
+          >
+        </div>
        
       </div>
     </div>
   </footer>
-{% block javascripts %}
-    {# Scripts de base #}
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
-    <script src="{{ asset('js/pcoded.js') }}"></script>
+{% block javascript %}
+ <!-- [Page Specific JS] start -->
+<script src="{{ asset('js/plugins/apexcharts.min.js') }}"></script>
+<script src="{{ asset('js/pages/dashboard-default.js') }}"></script>
+<!-- [Page Specific JS] end -->
 
-    {# Scripts pour les graphiques - chargés uniquement si nécessaire #}
-    {% if not disableApexCharts|default(false) %}
-        <script src="{{ asset('assets/js/plugins/apexcharts.min.js') }}"></script>
-        <script src="{{ asset('assets/js/dashboard-default.js') }}"></script>
-    {% endif %}
+<!-- Required JS -->
+<script src="{{ asset('js/plugins/popper.min.js') }}"></script>
+<script src="{{ asset('js/plugins/simplebar.min.js') }}"></script>
+<script src="{{ asset('js/plugins/bootstrap.min.js') }}"></script>
+<script src="{{ asset('js/fonts/custom-font.js') }}"></script>
+<script src="{{ asset('js/pcoded.js') }}"></script>
+<script src="{{ asset('js/plugins/feather.min.js') }}"></script>
+
+
+<!-- Scripts d'initialisation -->
+<script>
+    layout_change('light');
+    change_box_container('false');
+    layout_rtl_change('false');
+    preset_change("preset-1");
+    font_change("Public-Sans");
+</script>
+
+  
+    
 {% endblock %}
 </body>
-
 <!-- [Body] end -->
 
 </html>

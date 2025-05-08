@@ -1,4 +1,4 @@
-{% extends 'base1rh.html.twig' %}
+{% extends 'base1.html.twig' %}
 
 {% block title %}Branches Associées{% endblock %}
 
@@ -21,11 +21,10 @@
                 <ul class="list-group">
                     {% for branche in branches %}
                         <li class="list-group-item">
+                            <strong>Nom :</strong> {{ branche.nombranche }}<br>
                             <strong>Localisation :</strong> {{ branche.localisationbranche }}<br>
                             <strong>Email :</strong> {{ branche.emailbranche }}<br>
-                            <strong>Contact :</strong> {{ branche.contactbranche }}<br>
-                            <strong>Nombre d'employés :</strong> {{ branche.nombreemploye }}<br>
-                            <strong>Responsable :</strong> {{ branche.responsablebranche }}
+                            <strong>Contact :</strong> {{ branche.contactbranche }}
                         </li>
                     {% endfor %}
                 </ul>

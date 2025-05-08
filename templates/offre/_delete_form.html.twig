@@ -1,4 +1,0 @@
-<form method="post" action="{{ path('back_offre_delete', {'idoffre': offre.idoffre}) }}" style="display:inline;">
-    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ offre.idoffre) }}">
-    <button type="submit" class="btn btn-danger">Supprimer</button>
-</form>

@@ -1,10 +1,9 @@
-{% extends 'base2.html.twig' %}
+{% extends 'base1.html.twig' %}
 
 {% block title %}Interview index{% endblock %}
 
 {% block css %}
   {{ parent() }}
-  
   <style>
     .badge {
       font-size: 0.9em;
@@ -33,267 +32,370 @@
       padding: 0.25rem 0.5rem;
       font-size: 0.875rem;
     }
-    .pagination-container {
-      display: flex;
-      justify-content: center;
-      margin-top: 20px;
-    }
-    .pagination .page-item .page-link {
-      border-radius: 4px;
-      margin: 0 3px;
-      padding: 8px 12px;
-      font-size: 0.9rem;
-    }
-    .pagination .page-item.active .page-link {
-      background-color: #4e73df;
-      border-color: #4e73df;
-    }
-    .pagination .page-item.disabled .page-link {
-      cursor: not-allowed;
-      opacity: 0.6;
-    }
   </style>
 {% endblock %}
 
 {% block sideBar %}
-{{ parent() }}
+   
+<nav class="pc-sidebar">
+  <div class="navbar-wrapper">
+    <div class="m-header">
+      <a href="../dashboard/index.html" class="b-brand text-primary">
+        <!-- ========   Change your logo from here   ============ -->
+        <a href="{{ asset('index.html') }}"><img src="{{ asset('images/hedi.png') }}" alt="#"></a>
+      </a>
+   
+    </div>
+    <div class="navbar-content">
+      <ul class="pc-navbar">
+        <li class="pc-item">
+          <a href="../dashboard/index.html" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-dashboard"></i></span>
+            <span class="pc-mtext">Dashboard</span>
+          </a>
+        </li>
+
+        <li class="pc-item pc-caption">
+          <label>charts</label>
+          <i class="ti ti-dashboard"></i>
+        </li>
+        <li class="pc-item">
+          <a href="{{ path('app_interview_index_back') }}" class="pc-link">
+    <span class="pc-micon"><i class="ti ti-lock"></i></span>
+    <span class="pc-mtext">Interview</span>
+</a>
+        </li>
+        <li class="pc-item">
+          <a href="../elements/bc_color.html" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-color-swatch"></i></span>
+            <span class="pc-mtext">Utilisateur</span>
+          </a>
+        </li>
+        <li class="pc-item">
+          <a href="../elements/icon-tabler.html" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-plant-2"></i></span>
+            <span class="pc-mtext">Hebergement</span>
+          </a>
+        </li>
+
+        <li class="pc-item pc-caption">
+          <label>Pages</label>
+          <i class="ti ti-news"></i>
+        </li>
+        <li class="pc-item">
+          <a href="../pages/login.html" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-lock"></i></span>
+            <span class="pc-mtext">Login</span>
+          </a>
+        </li>
+        <li class="pc-item">
+          <a href="../pages/register.html" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-user-plus"></i></span>
+            <span class="pc-mtext">Register</span>
+          </a>
+        </li>
+         <li class="pc-item">
+          <a href="{{ path('app_interview_index_back') }}" class="pc-link">
+    <span class="pc-micon"><i class="ti ti-lock"></i></span>
+    <span class="pc-mtext">Interview</span>
+</a>
+        </li>
+        <li class="pc-item">
+          <a href="../pages/register.html" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-user-plus"></i></span>
+            <span class="pc-mtext">Publication</span>
+          </a>
+        </li>
+         <li class="pc-item">
+          <a href="../pages/login.html" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-lock"></i></span>
+            <span class="pc-mtext">Offre</span>
+          </a>
+        </li>
+        <li class="pc-item">
+          <a href="../pages/register.html" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-user-plus"></i></span>
+            <span class="pc-mtext">Entreprise</span>
+          </a>
+        </li>
+         <li class="pc-item">
+          <a href="../pages/login.html" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-lock"></i></span>
+            <span class="pc-mtext">Partenariat</span>
+          </a>
+        </li>
+        <li class="pc-item">
+          <a href="../pages/register.html" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-user-plus"></i></span>
+            <span class="pc-mtext">Hebergement</span>
+          </a>
+        </li>
+         <li class="pc-item">
+          <a href="../pages/login.html" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-lock"></i></span>
+            <span class="pc-mtext">Branche</span>
+          </a>
+        </li>
+        <li class="pc-item">
+          <a href="../pages/register.html" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-user-plus"></i></span>
+            <span class="pc-mtext">Departement</span>
+          </a>
+        </li>
+         <li class="pc-item">
+          <a href="../pages/login.html" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-lock"></i></span>
+            <span class="pc-mtext">Utilisateur</span>
+          </a>
+        </li>
+        <li class="pc-item">
+          <a href="../pages/register.html" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-user-plus"></i></span>
+            <span class="pc-mtext">Projet</span>
+          </a>
+        </li>
+         <li class="pc-item">
+          <a href="../pages/login.html" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-lock"></i></span>
+            <span class="pc-mtext">Test Technique</span>
+          </a>
+        </li>
+        <li class="pc-item">
+          <a href="../pages/register.html" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-user-plus"></i></span>
+            <span class="pc-mtext">Reponse</span>
+          </a>
+        </li>
+        <li class="pc-item pc-caption">
+          <label>Other</label>
+          <i class="ti ti-brand-chrome"></i>
+        </li>
+<li class="pc-item pc-hasmenu">
+          <a href="#!" class="pc-link"><span class="pc-micon"><i class="ti ti-menu"></i></span><span class="pc-mtext">Menu
+              levels</span><span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
+          <ul class="pc-submenu">
+            <li class="pc-item"><a class="pc-link" href="#!">Level 2.1</a></li>
+            <li class="pc-item pc-hasmenu">
+              <a href="#!" class="pc-link">Level 2.2<span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
+              <ul class="pc-submenu">
+                <li class="pc-item"><a class="pc-link" href="#!">Level 3.1</a></li>
+                <li class="pc-item"><a class="pc-link" href="#!">Level 3.2</a></li>
+                <li class="pc-item pc-hasmenu">
+                  <a href="#!" class="pc-link">Level 3.3<span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
+                  <ul class="pc-submenu">
+                    <li class="pc-item"><a class="pc-link" href="#!">Level 4.1</a></li>
+                    <li class="pc-item"><a class="pc-link" href="#!">Level 4.2</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li class="pc-item pc-hasmenu">
+              <a href="#!" class="pc-link">Level 2.3<span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
+              <ul class="pc-submenu">
+                <li class="pc-item"><a class="pc-link" href="#!">Level 3.1</a></li>
+                <li class="pc-item"><a class="pc-link" href="#!">Level 3.2</a></li>
+                <li class="pc-item pc-hasmenu">
+                  <a href="#!" class="pc-link">Level 3.3<span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
+                  <ul class="pc-submenu">
+                    <li class="pc-item"><a class="pc-link" href="#!">Level 4.1</a></li>
+                    <li class="pc-item"><a class="pc-link" href="#!">Level 4.2</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li class="pc-item">
+          <a href="../other/sample-page.html" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-brand-chrome"></i></span>
+            <span class="pc-mtext">Sample page</span>
+          </a>
+        </li>
+        
+        
+      </ul>
+      <div class="card text-center">
+        <div class="card-body">
+          <img src="images/img-navbar-card.png" alt="images" class="img-fluid mb-2">
+          <h5>Upgrade To Pro</h5>
+          <p>To get more features and components</p>
+          <a href="https://codedthemes.com/item/berry-bootstrap-5-admin-template/" target="_blank"
+          class="btn btn-success">Buy Now</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
 {% endblock %}
+
 
 {% block headside %}
   {{ parent() }}
 {% endblock %}
 
 {% block breadcrumb %}
-  {{ parent() }}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="../dashboard/index.html">Interviews</a></li>
+    <li class="breadcrumb-item active">Liste</li>
 {% endblock %}
 
 {% block body %}
-  <!-- Begin Page Content -->
-  <div class="container-fluid">
-    <!-- Page Heading -->
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-      <h1 class="h3 mb-0 text-gray-800">Liste des interviews</h1>
-      <a href="{{ path('app_interview_new') }}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-        <i class="fas fa-plus fa-sm text-white-50 mr-2"></i>Créer une nouvelle interview
-      </a>
-    </div>
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
 
-    <!-- Search and Filter Form -->
-    <div class="mb-4">
-      <form method="get" action="{{ path('app_interview_index') }}" class="form-inline">
-        <div class="form-group mr-2">
-          <input type="text" name="titreoffre" class="form-control" placeholder="Rechercher par titre"
-                 value="{{ app.request.get('titreoffre') }}">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Gestion des Interviews</h1>
+            <a href="{{ path('app_interview_new') }}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                <i class="fas fa-plus fa-sm text-white-50 mr-2"></i>Créer une nouvelle interview
+            </a>
         </div>
-        <div class="form-group mr-2">
-          <select name="typeinterview" class="form-control">
+
+        <!-- Search and Filter Form -->
+        <div class="mb-4">
+            <form method="get" action="{{ path('app_interview_index') }}" class="form-inline">
+    <div class="form-group mr-2">
+        <input type="text" name="titreoffre" class="form-control" placeholder="Rechercher par titre"
+               value="{{ app.request.get('titreoffre') }}">
+    </div>
+    
+    <div class="form-group mr-2">
+        <select name="typeinterview" class="form-control">
             <option value="">Tous les types</option>
             <option value="ENLIGNE" {{ app.request.get('typeinterview') == 'ENLIGNE' ? 'selected' : '' }}>En ligne</option>
             <option value="ENPERSONNE" {{ app.request.get('typeinterview') == 'ENPERSONNE' ? 'selected' : '' }}>En personne</option>
-          </select>
-        </div>
-        <button type="submit" class="btn btn-primary mr-2">
-          <i class="fas fa-search"></i> Rechercher
-        </button>
-        <a href="{{ path('app_interview_index') }}" class="btn btn-secondary">
-          <i class="fas fa-undo"></i> Réinitialiser
-        </a>
-      </form>
+        </select>
     </div>
-
-    <!-- Results Info -->
-    {% if app.request.get('titreoffre') or app.request.get('typeinterview') %}
-      <div class="alert alert-info">
-        Résultats pour: 
-        {% if app.request.get('titreoffre') %}
-          <strong>"{{ app.request.get('titreoffre') }}"</strong>
-        {% endif %}
-        {% if app.request.get('typeinterview') %}
-          {% if app.request.get('titreoffre') %} | {% endif %}
-          Type: <strong>{{ app.request.get('typeinterview') == 'ENLIGNE' ? 'En ligne' : 'En personne' }}</strong>
-        {% endif %}
-        ({{ pagination|length }} résultat(s) trouvé(s))
-      </div>
-    {% endif %}
-
-    <!-- Data Table -->
-    <div class="card shadow mb-4">
-      <div class="card-header py-3 d-flex justify-content-between align-items-center">
-        <h6 class="m-0 font-weight-bold text-primary">Liste des interviews</h6>
-        <span class="badge badge-primary">{{ pagination|length }} total</span>
-      </div>
-      <div class="card-body">
-        <div class="table-responsive">
-          <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-            <thead class="thead-light">
-              <tr>
-                <th>Titre de l'offre</th>
-                <th>Date</th>
-                <th>Type</th>
-                <th>Lien Meet</th>
-                <th>Localisation</th>
-                <th>Heure</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for interview in pagination %}
-                <tr>
-                  <td>{{ interview.titreoffre }}</td>
-                  <td>{{ interview.dateinterview ? interview.dateinterview|date('d/m/Y') : '' }}</td>
-                  <td>
-                    <span class="badge {{ interview.typeinterview.value == 'ENLIGNE' ? 'badge-online' : 'badge-inperson' }}">
-                      {{ interview.typeinterview.value == 'ENLIGNE' ? 'En ligne' : 'En personne' }}
-                    </span>
-                  </td>
-                  <td>
-                    {% if interview.lienmeet %}
-                      <a href="{{ interview.lienmeet }}" target="_blank" class="btn btn-sm btn-info">
-                        <i class="fas fa-video"></i> Rejoindre
-                      </a>
-                    {% else %}
-                      <span class="text-muted">N/A</span>
-                    {% endif %}
-                  </td>
-                  <td>
-                    {% if interview.localisation %}
-                      {{ interview.localisation }}
-                    {% else %}
-                      <span class="text-muted">N/A</span>
-                    {% endif %}
-                  </td>
-                  <td>{{ interview.timeinterview ? interview.timeinterview|date('H:i') : '' }}</td>
-                  <td class="action-buttons">
-                    <div class="btn-group" role="group">
-                      <a href="{{ path('app_interview_show', {'idinterview': interview.idinterview}) }}" 
-                         class="btn btn-sm btn-primary" title="Voir">
-                        <i class="fas fa-eye"></i>
-                      </a>
-                      <a href="{{ path('app_interview_edit', {'idinterview': interview.idinterview}) }}" 
-                         class="btn btn-sm btn-warning" title="Modifier">
-                        <i class="fas fa-edit"></i>
-                      </a>
-                      <a href="{{ path('app_testtechnique_by_interview', {'idinterview': interview.idinterview}) }}" 
-                         class="btn btn-sm btn-info" title="Tests Techniques">
-                        <i class="fas fa-clipboard-check"></i>
-                      </a>
-                      <a href="{{ path('app_affectationinterview_new', {'idinterview': interview.idinterview}) }}" 
-                         class="btn btn-sm btn-success" title="Affecter">
-                        <i class="fas fa-user-plus"></i>
-                      </a>
-                    </div>
-                  </td>
-                </tr>
-              {% else %}
-                <tr>
-                  <td colspan="8" class="text-center text-muted py-4">
-                    <i class="fas fa-info-circle fa-2x mb-2"></i><br>
-                    Aucune interview trouvée
-                  </td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-          <!-- Pagination -->
-          <div class="pagination-container">
-               <nav aria-label="Page navigation">
-              <ul class="pagination">
-               {% if pagination.previousPageNumber is defined %}
-                <li class="page-item">
-                <a class="page-link" href="{{ path('app_interview_index', app.request.query.all | merge({'page': pagination.previousPageNumber})) }}">Précédent</a>
-                </li>
-                      {% endif %}
-
-                      {% for page in 1..pagination.pageCount %}
-                    <li class="page-item {{ page == pagination.currentPageNumber ? 'active' : '' }}">
-                      <a class="page-link" href="{{ path('app_interview_index', app.request.query.all | merge({'page': page})) }}">{{ page }}</a>
-                        </li>
-                       {% endfor %}
-
-{% if pagination.nextPageNumber is defined %}
-  <li class="page-item">
-    <a class="page-link" href="{{ path('app_interview_index', app.request.query.all | merge({'page': pagination.nextPageNumber})) }}">Suivant</a>
-  </li>
-{% endif %}
-
-              </ul>
-            </nav>
-</div>
+    
+    <button type="submit" class="btn btn-primary mr-2">
+        <i class="fas fa-search"></i> Rechercher
+    </button>
+    
+    <a href="{{ path('app_interview_index') }}" class="btn btn-secondary">
+        <i class="fas fa-undo"></i> Réinitialiser
+    </a>
+</form>
         </div>
-      </div>
+
+        <!-- Results Info -->
+        {% if app.request.get('titreoffre') or app.request.get('typeinterview') %}
+            <div class="alert alert-info">
+                Résultats pour: 
+                {% if app.request.get('titreoffre') %}
+                    <strong>"{{ app.request.get('titreoffre') }}"</strong>
+                {% endif %}
+                {% if app.request.get('typeinterview') %}
+                    {% if app.request.get('titreoffre') %} | {% endif %}
+                    Type: <strong>{{ app.request.get('typeinterview') == 'ENLIGNE' ? 'En ligne' : 'En personne' }}</strong>
+                {% endif %}
+                ({{ interviews|length }} résultat(s) trouvé(s))
+            </div>
+        {% endif %}
+
+        <!-- Data Table -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                <h6 class="m-0 font-weight-bold text-primary">Liste des interviews</h6>
+                <span class="badge badge-primary">{{ interviews|length }} total</span>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Titre de l'offre</th>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Lien Meet</th>
+                                <th>Localisation</th>
+                                <th>Heure</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for interview in interviews %}
+                            <tr>
+                                <td>{{ interview.titreoffre }}</td>
+                                <td>{{ interview.dateinterview ? interview.dateinterview|date('d/m/Y') : '' }}</td>
+                                <td>
+                                    <span class="badge {{ interview.typeinterview.value == 'ENLIGNE' ? 'badge-online' : 'badge-inperson' }}">
+                                        {{ interview.typeinterview.value == 'ENLIGNE' ? 'En ligne' : 'En personne' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if interview.lienmeet %}
+                                        <a href="{{ interview.lienmeet }}" target="_blank" class="btn btn-sm btn-info">
+                                            <i class="fas fa-video"></i> Rejoindre
+                                        </a>
+                                    {% else %}
+                                        <span class="text-muted">N/A</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ interview.localisation }}</td>
+                                <td>{{ interview.timeinterview ? interview.timeinterview|date('H:i') : '' }}</td>
+                                <td class="action-buttons">
+                                    <div class="btn-group" role="group">
+                                        <a href="{{ path('app_interview_show', {'idinterview': interview.idinterview}) }}" 
+                                           class="btn btn-sm btn-primary" title="Voir">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{{ path('app_interview_edit', {'idinterview': interview.idinterview}) }}" 
+                                           class="btn btn-sm btn-warning" title="Modifier">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="{{ path('app_testtechnique_by_interview', {'idinterview': interview.idinterview}) }}" 
+                                           class="btn btn-sm btn-info" title="Tests Techniques">
+                                            <i class="fas fa-clipboard-check"></i>
+                                        </a>
+                                        <a href="{{ path('app_affectationinterview_new', {'idinterview': interview.idinterview}) }}" 
+                                           class="btn btn-sm btn-success" title="Affecter">
+                                            <i class="fas fa-user-plus"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="8" class="text-center text-muted py-4">
+                                    <i class="fas fa-info-circle fa-2x mb-2"></i><br>
+                                    Aucune interview trouvée
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-  <!-- /.container-fluid -->
+    <!-- /.container-fluid -->
 {% endblock %}
 
 {% block javascript %}
-  {{ parent() }}
-  <!-- Page level plugins -->
-  <script src="{{ asset('back/vendor/datatables/jquery.dataTables.min.js') }}"></script>
-  <script src="{{ asset('back/vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+    {{ parent() }}
+    <!-- Page level plugins -->
+    <script src="{{ asset('back/vendor/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('back/vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
 
-  <!-- Page level custom scripts -->
-  <script>
-    $(document).ready(function() {
-      $('#dataTable').DataTable({
-        "language": {
-          "url": "//cdn.datatables.net/plug-ins/1.10.20/i18n/French.json"
-        },
-        "columnDefs": [
-          { "orderable": false, "targets": [6] }, // Disable sorting on actions column
-          { "searchable": false, "targets": [6] }  // Disable searching on actions column
-        ],
-        "responsive": true,
-        "dom": '<"top"f>rt<"bottom"><"clear">', // Remove default pagination
-        "initComplete": function() {
-          // Reapply filters after DataTable initialization
-          $('input[name="titreoffre"]').val("{{ app.request.get('titreoffre') }}");
-          $('select[name="typeinterview"]').val("{{ app.request.get('typeinterview') }}");
-        }
-      });
-    });
-  </script>
-   <script>
-    // Connexion WebSocket
-    const ws = new WebSocket('ws://localhost:8080');
-    
-    // Gestion des messages WebSocket
-    ws.onmessage = function(event) {
-        const notification = JSON.parse(event.data);
-        
-        // Mettre à jour le compteur
-        const counter = document.getElementById('notification-counter');
-        counter.textContent = parseInt(counter.textContent) + 1;
-        
-        // Ajouter la nouvelle notification
-        const notificationItems = document.getElementById('notification-items');
-        const newNotification = document.createElement('div');
-        
-        newNotification.innerHTML = `
-            <a class="dropdown-item d-flex align-items-center" href="#">
-                <div class="mr-3">
-                    <div class="icon-circle bg-primary">
-                        <i class="fas fa-calendar-alt text-white"></i>
-                    </div>
-                </div>
-                <div>
-                    <div class="small text-gray-500">${new Date().toLocaleString()}</div>
-                    <span class="font-weight-bold">${notification.message}</span>
-                </div>
-            </a>
-        `;
-        
-        notificationItems.insertBefore(newNotification, notificationItems.firstChild);
-    };
-    
-    // Gestion des erreurs
-    ws.onerror = function(error) {
-        console.error('WebSocket Error:', error);
-    };
-    
-    // Rafraîchir les notifications lorsqu'on clique sur l'icône
-    document.getElementById('alertsDropdown').addEventListener('click', function() {
-        document.getElementById('notification-counter').textContent = '0';
-    });
-  </script>
+    <!-- Page level custom scripts -->
+    <script>
+        $(document).ready(function() {
+            $('#dataTable').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.20/i18n/French.json"
+                },
+                "columnDefs": [
+                    { "orderable": false, "targets": [6] }, // Disable sorting on actions column
+                    { "searchable": false, "targets": [6] }  // Disable searching on actions column
+                ],
+                "responsive": true,
+                "dom": '<"top"f>rt<"bottom"lip><"clear">',
+                "initComplete": function() {
+                    // Reapply filters after DataTable initialization
+                    $('input[name="titreoffre"]').val("{{ app.request.get('titreoffre') }}");
+                    $('select[name="typeinterview"]').val("{{ app.request.get('typeinterview') }}");
+                }
+            });
+        });
+    </script>
 {% endblock %}

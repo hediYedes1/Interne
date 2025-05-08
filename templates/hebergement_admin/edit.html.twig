@@ -1,0 +1,16 @@
+{% extends 'baseadmin.html.twig' %}
+
+{% block title %}Modifier un Hebergement{% endblock %}
+
+{% block body %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-5">Modifier un Hebergement</h1>
+        <div>
+        <a href="{{ path('app_hebergement_admin_index') }}" class="btn btn-outline-primary">⬅️ Retour à la liste</a>{{ include('hebergement_admin/_delete_form.html.twig') }}
+        </div>
+    </div>
+
+
+    {{ include('hebergement_admin/_form.html.twig', {'button_label': 'Update'}) }}
+
+{% endblock %}

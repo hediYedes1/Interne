@@ -1,0 +1,149 @@
+{% extends 'base1.html.twig' %}
+
+{% block title %}
+  Liste des Hébergements
+{% endblock %}
+
+{% block body %}
+  <div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="display-5">Liste des Hébergements</h1>
+      <a href="{{ path('app_hebergement_admin_new') }}" class="btn btn-success">➕ Nouveau Hébergement</a>
+    </div>
+
+    <div class="mt-4">
+      <a href="{{ path('app_affectation_admin_index') }}" class="btn btn-outline-primary">📅 Voir les Réservations</a>
+    </div>
+
+    <!-- ✅ Statistiques -->
+    <div class="row my-4">
+      <div class="col-md-4">
+        <div class="card shadow-sm p-3">
+          <h5>Total Hébergements</h5>
+          <p class="display-6 text-primary">{{ stats.total }}</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card shadow-sm p-3">
+          <h5>Disponibles</h5>
+          <p class="display-6 text-success">{{ stats.disponibles }}</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card shadow-sm p-3">
+          <h5>Prix Moyen</h5>
+          <p class="display-6 text-dark">{{ stats.prixMoyen }} TND</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ✅ Graphiques -->
+    <div class="row">
+      <div class="col-md-6 mb-4 d-flex justify-content-center">
+        <canvas id="chartTypeHebergement" class="chart-container"></canvas>
+      </div>
+      <div class="col-md-6 mb-4 d-flex justify-content-center">
+        <canvas id="chartDisponibilite" class="chart-container"></canvas>
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <input type="text" id="searchInput" class="form-control" placeholder="🔍 Rechercher un hébergement par nom, type ou adresse..." onkeyup="filterTable()" />
+      </div>
+    </div>
+
+    <!-- ✅ Tableau -->
+    <table class="table table-striped table-hover shadow-sm rounded">
+      <thead class="table-dark">
+        <tr>
+          <th>Nom</th>
+          <th>Type</th>
+          <th>Adresse</th>
+          <th>Prix</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for hebergement in hebergements %}
+          <tr>
+            <td class="fw-bold text-primary">{{ hebergement.nomhebergement }}</td>
+            <td>{{ hebergement.typehebergement }}</td>
+            <td class="text-muted fst-italic small">{{ hebergement.adressehebergement }}</td>
+            <td class="fw-bold text-dark">{{ hebergement.prixhebergement }} TND</td>
+            <td>
+              <div class="d-flex gap-1">
+                <a href="{{ path('app_hebergement_admin_show', { idhebergement: hebergement.idhebergement }) }}" class="btn btn-info btn-sm" data-bs-toggle="tooltip" title="Voir">👁️ Voir</a>
+                <a href="{{ path('app_hebergement_admin_edit', { idhebergement: hebergement.idhebergement }) }}" class="btn btn-warning btn-sm" data-bs-toggle="tooltip" title="Modifier">✏️ Modifier</a>
+                {{ include('hebergement_admin/_delete_form.html.twig') }}
+              </div>
+            </td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="5" class="text-center text-muted">Aucun hébergement trouvé.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ✅ Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const chartTypeData = {
+        labels: {{ types|json_encode|raw }},
+        datasets: [{
+            label: 'Répartition par type',
+            data: {{ counts|json_encode|raw }},
+            backgroundColor: ['#007bff', '#28a745', '#ffc107'],
+        }]
+    };
+
+    const chartDispoData = {
+        labels: ['Disponibles', 'Non disponibles'],
+        datasets: [{
+            label: 'Disponibilité',
+            data: [{{ stats.disponibles }}, {{ stats.nonDisponibles }}],
+            backgroundColor: ['#28a745', '#dc3545'],
+        }]
+    };
+
+    new Chart(document.getElementById('chartTypeHebergement'), {
+        type: 'pie',
+        data: chartTypeData,
+    });
+
+    new Chart(document.getElementById('chartDisponibilite'), {
+        type: 'doughnut',
+        data: chartDispoData,
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+      tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+        new bootstrap.Tooltip(tooltipTriggerEl)
+      });
+    });
+
+    function filterTable() {
+    const input = document.getElementById("searchInput");
+    const filter = input.value.toLowerCase();
+    const rows = document.querySelectorAll("table tbody tr");
+
+    rows.forEach(row => {
+      const cells = row.querySelectorAll("td");
+      const rowText = Array.from(cells).map(td => td.textContent.toLowerCase()).join(" ");
+      row.style.display = rowText.includes(filter) ? "" : "none";
+    });
+  }
+  </script>
+ 
+
+  <style>
+  .chart-container {
+    max-width: 300px;
+    max-height: 300px;
+    margin: 0 auto;
+  }
+</style>
+{% endblock %}

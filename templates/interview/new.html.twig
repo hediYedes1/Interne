@@ -1,4 +1,4 @@
-{% extends 'base2.html.twig' %}
+{% extends 'base1.html.twig' %}
 
 {% block title %}New Interview{% endblock %}
 
@@ -16,10 +16,6 @@
   {{ parent() }}
 {% endblock %}
 
-{% block breadcrumb %}
-  {{ parent() }}
-{% endblock %}
-
 {% block body %}
   <!-- [ Main Content ] start -->
   <div class="pc-container">
@@ -28,13 +24,13 @@
         <div class="col-12">
           <div class="card">
             <div class="card-header">
-              <h5>Creer un nouveau Interview</h5>
+              <h5>Create new Interview</h5>
             </div>
             <div class="card-body">
               {{ include('interview/_form.html.twig') }}
 
               <a href="{{ path('app_interview_index') }}" class="btn btn-light mt-3">
-                <i class="ti ti-arrow-left"></i> Retourner a la liste
+                <i class="ti ti-arrow-left"></i> Back to list
               </a>
             </div>
           </div>

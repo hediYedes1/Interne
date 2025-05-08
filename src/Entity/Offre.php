@@ -3,218 +3,151 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+
 use App\Entity\Entreprise;
-use App\Entity\Interview;
-use App\Enum\TypeContrat;
-use App\Entity\Projet;
-use App\Entity\Utilisateur;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Symfony\Component\Validator\Constraints as Assert;
+use App\Entity\Interview;
 
 #[ORM\Entity]
 class Offre
 {
+
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(name: "idoffre", type: "integer")]
-    private ?int $idoffre = null;
+    #[ORM\Column(type: "integer")]
+    private int $idoffre;
 
-    #[ORM\ManyToOne(targetEntity: Utilisateur::class, inversedBy: "offres")]
-    #[ORM\JoinColumn(name: "idutilisateur", referencedColumnName: "idutilisateur", nullable: true, onDelete: "CASCADE")]
-    private ?Utilisateur $utilisateur = null;
+        #[ORM\ManyToOne(targetEntity: Utilisateur::class, inversedBy: "offres")]
+    #[ORM\JoinColumn(name: 'idutilisateur', referencedColumnName: 'idutilisateur', onDelete: 'CASCADE')]
+    private Utilisateur $idutilisateur;
 
-    #[ORM\ManyToOne(targetEntity: Entreprise::class, inversedBy: "offres")]
-    #[ORM\JoinColumn(name: "identreprise", referencedColumnName: "identreprise", nullable: true, onDelete: "CASCADE")]
-    private ?Entreprise $entreprise = null;
+        #[ORM\ManyToOne(targetEntity: Entreprise::class, inversedBy: "offres")]
+    #[ORM\JoinColumn(name: 'identreprise', referencedColumnName: 'identreprise', onDelete: 'CASCADE')]
+    private Entreprise $identreprise;
 
     #[ORM\Column(type: "text")]
-    #[Assert\NotBlank(message: "Le titre de l'offre est obligatoire.")]
     private string $titreoffre;
 
     #[ORM\Column(type: "text")]
-    #[Assert\NotBlank(message: "La description de l'offre est obligatoire.")]
     private string $descriptionoffre;
 
     #[ORM\Column(type: "float")]
-    #[Assert\NotBlank(message: "Le salaire est obligatoire.")]
-    #[Assert\Positive(message: "Le salaire doit être un nombre positif.")]
     private float $salaireoffre;
 
     #[ORM\Column(type: "text")]
-    #[Assert\NotBlank(message: "La localisation est obligatoire.")]
     private string $localisationoffre;
 
     #[ORM\Column(type: "text")]
-    #[Assert\NotBlank(message: "L'adresse email du RH est obligatoire.")]
-    #[Assert\Email(message: "Veuillez entrer un email valide.")]
     private string $emailrh;
 
-    #[ORM\Column(type: "string", enumType: TypeContrat::class)]
-    private TypeContrat $typecontrat;
+    #[ORM\Column(type: "text")]
+    private string $typecontrat;
 
-    #[ORM\Column(type: "datetime")]  // Changez de "date" à "datetime"
-    #[Assert\NotBlank(message: "La date limite est requise.")]
-    #[Assert\GreaterThan("today", message: "La date limite doit être dans le futur.")]
+    #[ORM\Column(type: "date")]
     private \DateTimeInterface $datelimite;
 
-    #[ORM\OneToMany(mappedBy: "offre", targetEntity: Interview::class, orphanRemoval: false, cascade: ["persist", "remove"])]
-    private Collection $interviews;
-
-    #[ORM\ManyToOne(targetEntity: Projet::class, inversedBy: "offres")]
-    #[ORM\JoinColumn(name: "idprojet", referencedColumnName: "idprojet", nullable: true, onDelete: "SET NULL")]
-    private ?Projet $projet = null;
-
-    public function __construct()
-    {
-        $this->datelimite = new \DateTime('+1 day 23:59:59');
-        $this->interviews = new ArrayCollection();
-    }
-
-    // Getters and Setters (no change except corrected types)
-
-    public function getIdoffre(): ?int
+    public function getIdoffre()
     {
         return $this->idoffre;
     }
 
-    public function getUtilisateur(): ?Utilisateur
+    public function setIdoffre($value)
     {
-        return $this->utilisateur;
+        $this->idoffre = $value;
     }
 
-    public function setUtilisateur(?Utilisateur $utilisateur): self
+    public function getIdutilisateur()
     {
-        $this->utilisateur = $utilisateur;
-        return $this;
+        return $this->idutilisateur;
     }
 
-    public function getEntreprise(): ?Entreprise
+    public function setIdutilisateur($value)
     {
-        return $this->entreprise;
+        $this->idutilisateur = $value;
     }
 
-    public function setEntreprise(?Entreprise $entreprise): self
+    public function getIdentreprise()
     {
-        $this->entreprise = $entreprise;
-        return $this;
+        return $this->identreprise;
     }
 
-    public function getTitreoffre(): string
+    public function setIdentreprise($value)
+    {
+        $this->identreprise = $value;
+    }
+
+    public function getTitreoffre()
     {
         return $this->titreoffre;
     }
 
-    public function setTitreoffre(string $titreoffre): self
+    public function setTitreoffre($value)
     {
-        $this->titreoffre = $titreoffre;
-        return $this;
+        $this->titreoffre = $value;
     }
 
-    public function getDescriptionoffre(): string
+    public function getDescriptionoffre()
     {
         return $this->descriptionoffre;
     }
 
-    public function setDescriptionoffre(string $descriptionoffre): self
+    public function setDescriptionoffre($value)
     {
-        $this->descriptionoffre = $descriptionoffre;
-        return $this;
+        $this->descriptionoffre = $value;
     }
 
-    public function getSalaireoffre(): float
+    public function getSalaireoffre()
     {
         return $this->salaireoffre;
     }
 
-    public function setSalaireoffre(float $salaireoffre): self
+    public function setSalaireoffre($value)
     {
-        $this->salaireoffre = $salaireoffre;
-        return $this;
+        $this->salaireoffre = $value;
     }
 
-    public function getLocalisationoffre(): string
+    public function getLocalisationoffre()
     {
         return $this->localisationoffre;
     }
 
-    public function setLocalisationoffre(string $localisationoffre): self
+    public function setLocalisationoffre($value)
     {
-        $this->localisationoffre = $localisationoffre;
-        return $this;
+        $this->localisationoffre = $value;
     }
 
-    public function getEmailrh(): string
+    public function getEmailrh()
     {
         return $this->emailrh;
     }
 
-    public function setEmailrh(string $emailrh): self
+    public function setEmailrh($value)
     {
-        $this->emailrh = $emailrh;
-        return $this;
+        $this->emailrh = $value;
     }
 
-    public function getTypecontrat(): TypeContrat
+    public function getTypecontrat()
     {
         return $this->typecontrat;
     }
 
-    public function setTypecontrat(TypeContrat $typecontrat): self
+    public function setTypecontrat($value)
     {
-        $this->typecontrat = $typecontrat;
-        return $this;
+        $this->typecontrat = $value;
     }
 
-    public function getDatelimite(): \DateTimeInterface
+    public function getDatelimite()
     {
         return $this->datelimite;
     }
 
-    public function setDatelimite(\DateTimeInterface $datelimite): self
+    public function setDatelimite($value)
     {
-        if (!$datelimite instanceof \DateTimeInterface) {
-            throw new \InvalidArgumentException('datelimite must be a DateTimeInterface');
-        }
-        $this->datelimite = $datelimite;
-        return $this;
+        $this->datelimite = $value;
     }
 
-    public function getProjet(): ?Projet
-    {
-        return $this->projet;
-    }
+    #[ORM\OneToMany(mappedBy: "idoffre", targetEntity: Projet::class)]
+    private Collection $projets;
 
-    public function setProjet(?Projet $projet): self
-    {
-        $this->projet = $projet;
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Interview>
-     */
-    public function getInterviews(): Collection
-    {
-        return $this->interviews;
-    }
-
-    public function addInterview(Interview $interview): self
-    {
-        if (!$this->interviews->contains($interview)) {
-            $this->interviews[] = $interview;
-            $interview->setOffre($this);
-        }
-        return $this;
-    }
-
-    public function removeInterview(Interview $interview): self
-    {
-        if ($this->interviews->removeElement($interview)) {
-            if ($interview->getOffre() === $this) {
-                $interview->setOffre(null);
-            }
-        }
-        return $this;
-    }
+    #[ORM\OneToMany(mappedBy: "idoffre", targetEntity: Interview::class)]
+    private Collection $interviews;
 }
