@@ -132,6 +132,8 @@
     </style>
 {% endblock %}
 {% block body %}
+<a href="{{ path('app_publication_index_front') }}" class="btn btn-secondary mb-4">← Retour à l'accueil</a>
+
     <div class="publication-detail-container">
         <h1 class="publication-title">{{ publication.titre }}</h1>
         <p class="publication-content">{{ publication.contenu }}</p>
