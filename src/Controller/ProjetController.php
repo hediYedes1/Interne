@@ -32,7 +32,8 @@ final class ProjetController extends AbstractController
 
         if ($request->isXmlHttpRequest()) {
             return $this->render('projet/_projets_list.html.twig', [
-                'projets' => $projets
+                'projets' => $projets,
+                'route_show' => 'front_projet_show'
             ]);
         }
 
@@ -49,7 +50,8 @@ final class ProjetController extends AbstractController
 
         if ($request->isXmlHttpRequest()) {
             return $this->render('projet/_projets_list.html.twig', [
-                'projets' => $projets
+                'projets' => $projets,
+                'route_show' => 'rh_projet_show'
             ]);
         }
 
@@ -143,7 +145,8 @@ final class ProjetController extends AbstractController
 
         if ($request->isXmlHttpRequest()) {
             return $this->render('projet/_projets_list.html.twig', [
-                'projets' => $projets
+                'projets' => $projets,
+                'route_show' => 'back_projet_show'
             ]);
         }
 
