@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Entity\Utilisateur;
 
 #[Route('/publication')]
 final class PublicationController extends AbstractController
@@ -55,6 +56,13 @@ final class PublicationController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             // Handle file upload
+            
+            $user = $this->getUser();
+            if ($user instanceof Utilisateur) {
+                $publication->setUtilisateur($user);
+            }
+
+        
             $imageFile = $form->get('imageFile')->getData();
 
             if ($imageFile) {

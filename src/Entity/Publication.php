@@ -109,5 +109,35 @@ class Publication
         $this->titre = $titre;
     }
 
+    #[ORM\Column(type: 'integer')]
+    private ?int $idUtilisateur = null;
 
+    // ... getters et setters
+    public function getIdUtilisateur(): ?int
+    {
+        return $this->idUtilisateur;
+    }
+
+    public function setIdUtilisateur(int $idUtilisateur): self
+    {
+        $this->idUtilisateur = $idUtilisateur;
+        return $this;
+    }
+    #[ORM\ManyToOne(targetEntity: Utilisateur::class)]
+    #[ORM\JoinColumn(name: "id_utilisateur", referencedColumnName: "idutilisateur")]
+    private ?Utilisateur $utilisateur = null;
+
+    // ... 
+
+    public function getUtilisateur(): ?Utilisateur
+    {
+        return $this->utilisateur;
+    }
+
+    public function setUtilisateur(?Utilisateur $utilisateur): self
+    {
+        $this->utilisateur = $utilisateur;
+        return $this;
+    }
 }
+
