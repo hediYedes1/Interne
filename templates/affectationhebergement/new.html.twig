@@ -1,0 +1,248 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle Réservation{% endblock %}
+
+{% block body %}
+<div class="reservation-page">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <!-- Breadcrumb -->
+                
+                
+                <!-- Page Header -->
+                <div class="reservation-header mb-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h1 class="reservation-title">
+                            <i class="fas fa-calendar-plus text-primary me-2"></i>Nouvelle Réservation
+                        </h1>
+                        <a href="{{ path('app_hebergement_index') }}" class="btn btn-outline-secondary rounded-pill">
+                            <i class="fas fa-arrow-left me-1"></i> Retour à la liste
+                        </a>
+                    </div>
+                    <p class="text-muted mt-2">Complétez le formulaire ci-dessous pour finaliser votre réservation.</p>
+                </div>
+                
+                <!-- Reservation Card -->
+                <div class="card reservation-card border-0 shadow-lg">
+                    <div class="card-body p-0">
+                        <div class="row g-0">
+                            <!-- Left Side - Form -->
+                            <div class="col-lg-8">
+                                <div class="reservation-form-container p-4 p-lg-5">
+                                    <div class="reservation-form">
+                                        {{ include('affectationhebergement/_form.html.twig', {
+                                            'button_label': 'Confirmer la réservation',
+                                            'button_class': 'btn-lg btn-primary rounded-pill w-100 mt-4'
+                                        }) }}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Right Side - Summary -->
+                            <div class="col-lg-4 bg-light">
+                                <div class="reservation-summary p-4">
+                                    <h3 class="summary-title mb-4">
+                                        <i class="fas fa-receipt text-primary me-2"></i>Résumé
+                                    </h3>
+                                    
+                                    {% if app.request.get('idhebergement') %}
+                                        {% set hebergement = null %}
+                                        {# Get hebergement details if available #}
+                                        {% for h in hebergements|default([]) %}
+                                            {% if h.idhebergement == app.request.get('idhebergement') %}
+                                                {% set hebergement = h %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        
+                                        {% if hebergement %}
+                                            <div class="summary-item mb-4">
+                                                <div class="summary-header d-flex align-items-center mb-3">
+                                                    <div class="summary-icon me-3">
+                                                        <i class="fas fa-hotel fs-3 text-primary"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h4 class="mb-0">{{ hebergement.nomhebergement }}</h4>
+                                                        <span class="badge bg-info text-white">{{ hebergement.typehebergement }}</span>
+                                                    </div>
+                                                </div>
+                                                <div class="summary-details">
+                                                    <div class="detail-item d-flex justify-content-between mb-2">
+                                                        <span><i class="fas fa-map-marker-alt text-secondary me-2"></i>Adresse:</span>
+                                                        <span class="text-end">{{ hebergement.adressehebergement }}</span>
+                                                    </div>
+                                                    <div class="detail-item d-flex justify-content-between mb-2">
+                                                        <span><i class="fas fa-moon text-secondary me-2"></i>Nuits:</span>
+                                                        <span class="text-end">{{ hebergement.nbrnuitehebergement }}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endif %}
+                                    
+                                    <div class="price-summary p-3 bg-white rounded-3 shadow-sm mb-4">
+                                        <h5 class="mb-3">Détails du prix</h5>
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span>Prix total</span>
+                                            <span class="fw-bold text-primary fs-5">{{ app.request.get('prix') }} TND</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="reservation-info bg-white p-3 rounded-3 shadow-sm">
+                                        <h5 class="mb-3"><i class="fas fa-info-circle text-primary me-2"></i>Informations</h5>
+                                        <ul class="list-unstyled mb-0">
+                                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Annulation gratuite jusqu'à 48h avant</li>
+                                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Confirmation immédiate</li>
+                                            <li><i class="fas fa-check-circle text-success me-2"></i>Paiement sécurisé</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    /* Enhanced form styling */
+    .reservation-form {
+        transition: all 0.3s ease;
+    }
+    
+    .form-section-title {
+        font-weight: 600;
+        color: #333;
+    }
+    
+    .icon-circle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        font-size: 14px;
+    }
+    
+    .form-floating > .form-control,
+    .form-floating > .form-select {
+        border-radius: 0;
+        border-top: 0;
+        border-left: 0;
+        border-right: 0;
+        box-shadow: none;
+        transition: all 0.3s ease;
+    }
+    
+    .form-floating > .form-control:focus,
+    .form-floating > .form-select:focus {
+        box-shadow: none;
+        border-color: var(--bs-primary);
+    }
+    
+    .form-icon {
+        position: absolute;
+        top: 50%;
+        right: 12px;
+        transform: translateY(-50%);
+        pointer-events: none;
+    }
+    
+    .date-picker {
+        position: relative;
+    }
+    
+    .nights-counter {
+        background-color: rgba(var(--bs-primary-rgb), 0.05);
+        border-color: var(--bs-primary);
+    }
+    
+    .form-check-input:checked {
+        background-color: var(--bs-primary);
+        border-color: var(--bs-primary);
+    }
+    
+    .form-check-input:focus {
+        box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+    }
+    
+    .btn-primary {
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Modal styling */
+    .modal-content {
+        border-radius: 0.5rem;
+    }
+    
+    .modal-header, .modal-footer {
+        border-color: rgba(0, 0, 0, 0.05);
+    }
+</style>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Form validation
+        const form = document.querySelector('.needs-validation');
+        
+        form.addEventListener('submit', function(event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            
+            form.classList.add('was-validated');
+        });
+        
+        // Calculate nights between dates
+        const startDate = document.querySelector('[name$="[datedebut]"]');
+        const endDate = document.querySelector('[name$="[datefin]"]');
+        const nightsCounter = document.getElementById('nightsCount');
+        
+        function updateDates() {
+            if (startDate.value && endDate.value) {
+                const start = new Date(startDate.value);
+                const end = new Date(endDate.value);
+                
+                // Ensure end date is after start date
+                if (end <= start) {
+                    const newEnd = new Date(start);
+                    newEnd.setDate(start.getDate() + 1);
+                    endDate.value = newEnd.toISOString().split('T')[0];
+                }
+                
+                // Calculate nights
+                const timeDiff = Math.abs(end - start);
+                const nightsDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+                
+                // Update nights counter
+                nightsCounter.textContent = nightsDiff + (nightsDiff > 1 ? ' nuits' : ' nuit');
+            } else {
+                nightsCounter.textContent = 'Sélectionnez vos dates';
+            }
+        }
+        
+        startDate.addEventListener('change', updateDates);
+        endDate.addEventListener('change', updateDates);
+        
+        // Initial update
+        if (startDate.value && endDate.value) {
+            updateDates();
+        }
+    });
+</script>
+{% endblock %}

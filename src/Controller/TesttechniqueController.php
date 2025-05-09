@@ -399,4 +399,6 @@ public function testTechniqueStatistics(TestTechniqueStatisticsService $statisti
         'statistics' => $stats
     ]);
 }
+
+
 }

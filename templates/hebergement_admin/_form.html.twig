@@ -1,0 +1,245 @@
+{{ form_start(form, {'attr': {'class': 'hebergement-form'}}) }}
+
+<div class="form-wrapper">
+    {# Row 1 #}
+    <div class="form-row">
+        <div class="form-group">
+            {{ form_label(form.nomhebergement, 'Nom', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.nomhebergement, {'attr': {
+                'class': 'form-input',
+                'placeholder': 'Nom de l\'hébergement'
+            }}) }}
+            {{ form_errors(form.nomhebergement, {'attr': {'class': 'form-error'}}) }}
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.adressehebergement, 'Adresse', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.adressehebergement, {'attr': {
+                'class': 'form-input',
+                'placeholder': 'Adresse complète'
+            }}) }}
+            {{ form_errors(form.adressehebergement, {'attr': {'class': 'form-error'}}) }}
+        </div>
+    </div>
+
+    {# Row 2 #}
+    <div class="form-row">
+        <div class="form-group">
+            {{ form_label(form.typehebergement, 'Type d\'hébergement', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.typehebergement, {'attr': {
+                'class': 'form-input',
+                'placeholder': 'Type d\'hébergement'
+            }}) }}
+            {{ form_errors(form.typehebergement, {'attr': {'class': 'form-error'}}) }}
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.nbrnuitehebergement, 'Nombre de nuits', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.nbrnuitehebergement, {'attr': {
+                'class': 'form-input',
+                'placeholder': 'Nombre de nuits'
+            }}) }}
+            {{ form_errors(form.nbrnuitehebergement, {'attr': {'class': 'form-error'}}) }}
+        </div>
+    </div>
+
+    {# Description (full width) #}
+    <div class="form-group full-width">
+        {{ form_label(form.descriptionhebergement, 'Description', {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_widget(form.descriptionhebergement, {'attr': {
+            'class': 'form-textarea',
+            'placeholder': 'Description détaillée',
+            'rows': 4
+        }}) }}
+        {{ form_errors(form.descriptionhebergement, {'attr': {'class': 'form-error'}}) }}
+    </div>
+
+    {# Row 3 #}
+    <div class="form-row">
+        <div class="form-group">
+            {{ form_label(form.localisationhebergement, 'Localisation', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.localisationhebergement, {'attr': {
+                'class': 'form-input',
+                'placeholder': 'Localisation'
+            }}) }}
+            {{ form_errors(form.localisationhebergement, {'attr': {'class': 'form-error'}}) }}
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.prixhebergement, 'Prix par nuit', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.prixhebergement, {'attr': {
+                'class': 'form-input',
+                'placeholder': 'Prix par nuit'
+            }}) }}
+            {{ form_errors(form.prixhebergement, {'attr': {'class': 'form-error'}}) }}
+        </div>
+    </div>
+
+    {# Row 4 #}
+    <div class="form-row">
+        <div class="form-group">
+            <label class="form-checkbox-label">
+                {{ form_widget(form.disponibilitehebergement, {'attr': {'class': 'form-checkbox'}}) }}
+                <span>Disponible</span>
+            </label>
+            {{ form_errors(form.disponibilitehebergement, {'attr': {'class': 'form-error'}}) }}
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.idpartenariat, 'Partenariat associé', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.idpartenariat, {'attr': {'class': 'form-select'}}) }}
+            {{ form_errors(form.idpartenariat, {'attr': {'class': 'form-error'}}) }}
+        </div>
+    </div>
+
+    <button type="submit" class="form-submit-btn">{{ button_label|default('Enregistrer') }}</button>
+</div>
+
+{{ form_end(form) }}
+
+
+<style>
+/* FORM CONTAINER */
+.hebergement-form {
+    width: 100% !important;
+    max-width: 900px !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+}
+
+.form-wrapper {
+    background-color: #ffffff !important;
+    border-radius: 8px !important;
+    padding: 30px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* FORM STRUCTURE */
+.form-row {
+    display: flex !important;
+    gap: 20px !important;
+    margin-bottom: 20px !important;
+}
+
+.form-group {
+    flex: 1 !important;
+    margin-bottom: 0 !important;
+}
+
+.full-width {
+    flex: 0 0 100% !important;
+    margin-bottom: 20px !important;
+}
+
+/* FORM ELEMENTS */
+.form-label {
+    display: block !important;
+    margin-bottom: 8px !important;
+    font-weight: 600 !important;
+    color: #2d3748 !important;
+    font-size: 14px !important;
+}
+
+.form-input {
+    width: 100% !important;
+    padding: 12px 15px !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 6px !important;
+    font-size: 14px !important;
+    background-color: #f8fafc !important;
+    transition: all 0.3s ease !important;
+}
+
+.form-input:focus {
+    border-color: #4299e1 !important;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2) !important;
+    outline: none !important;
+}
+
+.form-textarea {
+    width: 100% !important;
+    min-height: 120px !important;
+    padding: 12px 15px !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 6px !important;
+    font-size: 14px !important;
+    background-color: #f8fafc !important;
+    resize: vertical !important;
+}
+
+.form-select {
+    width: 100% !important;
+    padding: 12px 15px !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 6px !important;
+    font-size: 14px !important;
+    background-color: #f8fafc !important;
+    appearance: none !important;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 10px center !important;
+    background-size: 1em !important;
+}
+
+/* CHECKBOX STYLING */
+.form-checkbox-label {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    cursor: pointer !important;
+}
+
+.form-checkbox {
+    width: 18px !important;
+    height: 18px !important;
+    margin: 0 !important;
+    accent-color: #4299e1 !important;
+}
+
+/* BUTTON STYLING */
+.form-submit-btn {
+    background-color: #4299e1 !important;
+    color: white !important;
+    border: none !important;
+    padding: 12px 24px !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    border-radius: 6px !important;
+    cursor: pointer !important;
+    transition: background-color 0.3s ease !important;
+    display: block !important;
+    width: 100% !important;
+    max-width: 200px !important;
+    margin: 30px auto 0 !important;
+    text-align: center !important;
+}
+
+.form-submit-btn:hover {
+    background-color: #3182ce !important;
+}
+
+/* ERROR MESSAGES */
+.form-error {
+    color: #e53e3e !important;
+    font-size: 12px !important;
+    margin-top: 5px !important;
+    display: block !important;
+}
+
+/* RESPONSIVE ADJUSTMENTS */
+@media (max-width: 768px) {
+    .form-row {
+        flex-direction: column !important;
+        gap: 15px !important;
+    }
+    
+    .form-group {
+        width: 100% !important;
+    }
+    
+    .form-submit-btn {
+        max-width: 100% !important;
+    }
+}
+</style>

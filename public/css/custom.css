@@ -1,0 +1,41 @@
+/* Fix for chart lagging and shaking */
+canvas {
+  width: 100% !important;
+  height: 250px !important;
+  min-height: 250px;
+  max-height: 250px;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  will-change: transform;
+}
+
+.card-body {
+  position: relative;
+  overflow: hidden;
+}
+
+.chart-container {
+  position: relative;
+  height: 250px;
+  width: 100%;
+}
+
+/* Optimize rendering */
+.card {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Reduce layout shifts */
+.card-body canvas {
+  display: block;
+  margin: 0 auto;
+}
+
+/* Improve scrolling performance */
+.table-responsive {
+  -webkit-overflow-scrolling: touch;
+  overflow-y: hidden;
+}

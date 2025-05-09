@@ -6,7 +6,6 @@ parameters:
     env(CLOUDINARY_API_SECRET): 'hoMRHm2K9a7LPaSEIg7AfkSqNU4'
     google.redirect_uri: 'http://localhost:8000/auth/google/callback'
     logo_directory: '%kernel.project_dir%/public/uploads/logos'
-
     images_directory: '%kernel.project_dir%/public/uploads/images'
 
 

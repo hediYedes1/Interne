@@ -136,12 +136,3 @@
         });
     </script>
 {% endblock %}
-{% block javascripts %}
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="{{ asset('js/map.js') }}"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeMap(document.getElementById('location_coords').value);
-        });
-    </script>
-{% endblock %}

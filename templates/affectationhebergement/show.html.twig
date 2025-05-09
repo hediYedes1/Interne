@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détail Réservation{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h2 mb-0">
+                    <i class="bi bi-calendar2-event text-primary me-2"></i>Détail de la Réservation
+                </h1>
+                <a href="{{ path('app_affectationhebergement_index') }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-1"></i> Retour
+                </a>
+            </div>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        Réservation du {{ affectationhebergement.datedebut|date('d/m/Y') }} au {{ affectationhebergement.datefin|date('d/m/Y') }}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold text-uppercase text-muted mb-3">Détails de la Réservation</h6>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>Statut</span>
+                                    <span class="badge {% if affectationhebergement.datedebut < "now"|date("Y-m-d") %}bg-danger{% else %}bg-success{% endif %}">
+                                        {% if affectationhebergement.datedebut < "now"|date("Y-m-d") %}
+                                            Terminée
+                                        {% else %}
+                                            Active
+                                        {% endif %}
+                                    </span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>Durée</span>
+                                    <span>{{ affectationhebergement.datefin.diff(affectationhebergement.datedebut).days }} nuits</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold text-uppercase text-muted mb-3">Hébergement</h6>
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ affectationhebergement.idhebergement.nomhebergement }}</h5>
+                                    <p class="card-text text-muted">
+                                        <i class="bi bi-geo-alt me-1"></i>
+                                        {{ affectationhebergement.idhebergement.adressehebergement }}
+                                    </p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="badge bg-info text-dark">
+                                            {{ affectationhebergement.idhebergement.typehebergement }}
+                                        </span>
+                                        <span class="fw-bold text-primary">
+                                            {{ affectationhebergement.idhebergement.prixhebergement }} dt
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-top-0 d-flex justify-content-end">
+                    <a href="{{ path('app_affectationhebergement_edit', {'idhebergement': affectationhebergement.idhebergement.idhebergement}) }}" 
+                       class="btn btn-warning me-2">
+                        <i class="bi bi-pencil me-1"></i> Modifier
+                    </a>
+                    {{ include('affectationhebergement/_delete_form.html.twig') }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,285 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Hébergements{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0 fw-bold text-primary">Liste des Hébergements</h1>
+        <a href="{{ path('app_affectationhebergement_index') }}" class="btn btn-outline-primary rounded-pill">
+            <i class="fas fa-list me-1"></i> Voir vos réservations
+        </a>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="input-group">
+                <span class="input-group-text bg-white"><i class="fas fa-search text-primary"></i></span>
+                <input type="text" id="searchInput" class="form-control border-start-0" placeholder="Rechercher..." onkeyup="filterCards()">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="input-group">
+                <span class="input-group-text bg-white"><i class="fas fa-filter text-primary"></i></span>
+                <select id="typeFilter" class="form-select border-start-0" onchange="filterCards()">
+                    <option value="">Tous les types</option>
+                    <option value="hotel">Hotel</option>
+                    <option value="appartement">Appartement</option>
+                    <option value="auberge">Auberge</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for hebergement in hebergements %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow hebergement-card">
+                <div class="card-header bg-primary text-white py-3">
+                    <h5 class="card-title mb-0 fw-bold">{{ hebergement.nomhebergement }}</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Weather Widget with improved styling -->
+                    <div class="weather-widget mb-3 p-2 bg-light rounded" data-location="{{ hebergement.adressehebergement }}">
+                        <div class="weather-loading">
+                            <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <small class="text-muted">Chargement météo...</small>
+                        </div>
+                        <div class="weather-content d-none">
+                            <div class="d-flex align-items-center">
+                                <div class="weather-icon me-2"></div>
+                                <div>
+                                    <span class="weather-temp fw-bold fs-5"></span>
+                                    <div class="weather-desc small text-muted"></div>
+                                </div>
+                            </div>
+                            <div class="weather-details mt-2 row small">
+                                <div class="col-6">
+                                    <i class="fas fa-tint me-1 text-info"></i>
+                                    <span class="weather-humidity"></span>%
+                                </div>
+                                <div class="col-6">
+                                    <i class="fas fa-wind me-1 text-info"></i>
+                                    <span class="weather-wind"></span> km/h
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <span class="badge bg-info text-white rounded-pill px-3 py-2 mb-2 d-inline-block">
+                            <i class="fas fa-building me-1"></i> {{ hebergement.typehebergement }}
+                        </span>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6 class="text-secondary mb-1"><i class="fas fa-map-marker-alt me-1"></i> Adresse:</h6>
+                        <p class="mb-0 ps-3 border-start border-primary border-3">{{ hebergement.adressehebergement }}</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6 class="text-secondary mb-1"><i class="fas fa-info-circle me-1"></i> Description:</h6>
+                        <p class="card-text ps-3 border-start border-primary border-3">
+                            {{ hebergement.descriptionhebergement|slice(0, 100) }}{% if hebergement.descriptionhebergement|length > 100 %}...{% endif %}
+                        </p>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <h6 class="text-secondary mb-1"><i class="fas fa-moon me-1"></i> Nuits:</h6>
+                            <p class="fw-bold mb-0">{{ hebergement.nbrnuitehebergement }}</p>
+                        </div>
+                        <div class="col-6">
+                            <h6 class="text-secondary mb-1"><i class="fas fa-tag me-1"></i> Prix:</h6> 
+                            <p class="mb-0"><span class="price-tnd fw-bold text-primary">{{ hebergement.prixhebergement }}</span> TND</p>
+                            <div class="currency-conversion small mt-2">
+                                <div class="currency-box bg-light p-2 rounded">
+                                    <div class="currency-item">
+                                        <i class="fas fa-dollar-sign me-1 text-success"></i>
+                                        <span class="price-usd fw-bold">
+                                            {% if hebergement.convertedPrices.USD is not null %}
+                                                {{ hebergement.convertedPrices.USD }}
+                                            {% else %}
+                                                <span class="text-danger">N/A</span>
+                                            {% endif %}
+                                        </span> USD
+                                    </div>
+                                    <div class="currency-item mt-1">
+                                        <i class="fas fa-euro-sign me-1 text-success"></i>
+                                        <span class="price-eur fw-bold">
+                                            {% if hebergement.convertedPrices.EUR is not null %}
+                                                {{ hebergement.convertedPrices.EUR }}
+                                            {% else %}
+                                                <span class="text-danger">N/A</span>
+                                            {% endif %}
+                                        </span> EUR
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6 class="text-secondary mb-1"><i class="fas fa-check-circle me-1"></i> Disponibilité:</h6>
+                        <span class="badge {% if hebergement.disponibilitehebergement %}bg-success{% else %}bg-danger{% endif %} rounded-pill px-3 py-2">
+                            {% if hebergement.disponibilitehebergement %}
+                                <i class="fas fa-check me-1"></i> Disponible
+                            {% else %}
+                                <i class="fas fa-times me-1"></i> Non disponible
+                            {% endif %}
+                        </span>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <a href="{{ path('app_affectationhebergement_new', {
+                            'idhebergement': hebergement.idhebergement, 
+                            'prix': hebergement.prixhebergement
+                        }) }}" class="btn btn-success btn-lg rounded-pill shadow-sm">
+                            <i class="fas fa-calendar-check me-1"></i> Réserver
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <div class="alert alert-info shadow-sm">
+                <i class="fas fa-info-circle me-2"></i> Aucun hébergement trouvé.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    :root {
+        --card-border-radius: 12px;
+        --transition-speed: 0.3s;
+    }
+    
+    .card {
+        transition: transform var(--transition-speed) ease-in-out, 
+                    box-shadow var(--transition-speed) ease-in-out;
+        border: none;
+        border-radius: var(--card-border-radius);
+        overflow: hidden;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    .card-header {
+        border-bottom: none;
+    }
+    
+    .badge {
+        font-weight: 500;
+        letter-spacing: 0.5px;
+    }
+    
+    .currency-box {
+        border-left: 3px solid var(--bs-success);
+    }
+    
+    .weather-widget {
+        transition: all var(--transition-speed);
+    }
+    
+    .weather-widget:hover {
+        transform: scale(1.02);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    }
+    
+    .btn-success {
+        transition: all var(--transition-speed);
+    }
+    
+    .btn-success:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3) !important;
+    }
+    
+    .input-group {
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        border-radius: 5px;
+        overflow: hidden;
+    }
+    
+    .input-group-text, .form-control, .form-select {
+        border-color: #e9ecef;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .col-md-4 {
+            margin-bottom: 1rem;
+        }
+    }
+</style>
+
+<script>
+    // Weather condition to emoji mapping
+    const weatherIcons = {
+        'snow': '❄️',
+        'rain': '🌧️',
+        'fog': '🌫️',
+        'wind': '💨',
+        'cloudy': '☁️',
+        'partly-cloudy-day': '⛅',
+        'partly-cloudy-night': '☁️',
+        'clear-day': '☀️',
+        'clear-night': '🌙',
+        'thunder-rain': '⛈️',
+        'showers-day': '🌦️'
+    };
+
+    async function fetchWeatherForCards() {
+        const weatherWidgets = document.querySelectorAll('.weather-widget');
+        for (const widget of weatherWidgets) {
+            const location = widget.dataset.location;
+            const loadingEl = widget.querySelector('.weather-loading');
+            const contentEl = widget.querySelector('.weather-content');
+            try {
+                const apiUrl = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${encodeURIComponent(location)}?unitGroup=metric&key=EJ78WFWNHH9DMBS7CUK53WYKK&contentType=json`;
+                const res = await fetch(apiUrl);
+                if (!res.ok) throw new Error(res.status);
+                const data = await res.json();
+                const curr = data.currentConditions;
+                if (curr) {
+                    widget.querySelector('.weather-icon').textContent = weatherIcons[curr.icon] || '🌡️';
+                    widget.querySelector('.weather-temp').textContent = Math.round(curr.temp);
+                    widget.querySelector('.weather-desc').textContent = curr.conditions;
+                    widget.querySelector('.weather-humidity').textContent = curr.humidity;
+                    widget.querySelector('.weather-wind').textContent = Math.round(curr.windspeed * 3.6);
+                    loadingEl.classList.add('d-none');
+                    contentEl.classList.remove('d-none');
+                }
+            } catch (e) {
+                console.error('Weather fetch error:', e);
+                loadingEl.innerHTML = '<small class="text-danger">Météo indisponible</small>';
+            }
+        }
+    }
+
+    function filterCards() {
+        const query = document.getElementById('searchInput').value.toLowerCase();
+        const type = document.getElementById('typeFilter').value.toLowerCase();
+        document.querySelectorAll('.hebergement-card').forEach(card => {
+            const text = card.textContent.toLowerCase();
+            const show = (!query || text.includes(query)) && (!type || text.includes(type));
+            card.closest('.col-md-4').style.display = show ? 'block' : 'none';
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchWeatherForCards();
+    });
+</script>
+{% endblock %}
+
+
+

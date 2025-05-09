@@ -1,0 +1,244 @@
+{% extends 'base1.html.twig' %}
+
+{% block title %}Liste des Partenariats{% endblock %}
+
+{% block body %}
+<div class="container-fluid px-4 py-5">
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-sm-flex justify-content-between align-items-center">
+        <div>
+          <h1 class="h2 text-primary fw-bold mb-0">Gestion des Partenariats</h1>
+          <p class="text-muted">Consultez et gérez tous les partenariats disponibles</p>
+        </div>
+        <div class="d-flex gap-2">
+          <a href="{{ path('app_hebergement_admin_index') }}" class="btn btn-outline-primary">
+            <i class="fas fa-hotel me-2"></i>Hébergements
+          </a>
+          <a href="{{ path('app_partenariat_admin_new') }}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Nouveau Partenariat
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="row g-4 mb-4">
+    <div class="col-md-4">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body p-4">
+          <div class="d-flex align-items-center">
+            <div class="stat-icon bg-light rounded-circle p-3 me-3">
+              <i class="fas fa-handshake text-primary fa-lg"></i>
+            </div>
+            <div>
+              <h6 class="text-muted mb-1">Total Partenariats</h6>
+              <h2 class="mb-0 fw-bold">{{ partenariats|length }}</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body p-4">
+          <div class="d-flex align-items-center">
+            <div class="stat-icon bg-light rounded-circle p-3 me-3">
+              <i class="fas fa-building text-success fa-lg"></i>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body p-4">
+          <div class="d-flex align-items-center">
+            <div class="stat-icon bg-light rounded-circle p-3 me-3">
+              <i class="fas fa-map-marker-alt text-primary fa-lg"></i>
+            </div>
+            <div>
+              <h6 class="text-muted mb-1">Localisations</h6>
+              <h2 class="mb-0 fw-bold">{{ partenariats|map(p => p.adressepartenariat)|filter(p => p)|length }}</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table Card -->
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-transparent d-flex justify-content-between align-items-center p-4 border-0">
+      <h5 class="mb-0">Liste des Partenariats</h5>
+      <div class="col-md-4">
+        <div class="input-group">
+          <span class="input-group-text bg-transparent border-end-0">
+            <i class="fas fa-search text-muted"></i>
+          </span>
+          <input type="text" id="searchInput" class="form-control border-start-0 ps-0" 
+                 placeholder="Rechercher..." onkeyup="filterTable()">
+        </div>
+      </div>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="bg-light">
+            <tr>
+              <th class="px-4 py-3">ID</th>
+              <th class="px-4 py-3">Nom</th>
+              <th class="px-4 py-3">Adresse</th>
+              <th class="px-4 py-3">Téléphone</th>
+              <th class="px-4 py-3">Branche</th>
+              <th class="px-4 py-3 text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for partenariat in partenariats %}
+              <tr>
+                <td class="px-4 py-3">{{ partenariat.idpartenariat }}</td>
+                <td class="px-4 py-3 fw-medium">{{ partenariat.nompartenariat }}</td>
+                <td class="px-4 py-3 text-muted small">{{ partenariat.adressepartenariat }}</td>
+                <td class="px-4 py-3">{{ partenariat.numtelpartenariat }}</td>
+                <td class="px-4 py-3">
+                 
+                </td>
+                <td class="px-4 py-3 text-end">
+                  <div class="d-flex gap-1 justify-content-end">
+                    <a href="{{ path('app_partenariat_admin_show', { 'idpartenariat': partenariat.idpartenariat }) }}" 
+                       class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="Voir">
+                      <i class="fas fa-eye"></i>
+                    </a>
+                    <a href="{{ path('app_partenariat_admin_edit', { 'idpartenariat': partenariat.idpartenariat }) }}" 
+                       class="btn btn-sm btn-outline-warning" data-bs-toggle="tooltip" title="Modifier">
+                      <i class="fas fa-edit"></i>
+                    </a>
+                    <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" 
+                            data-bs-target="#deleteModal{{ partenariat.idpartenariat }}" title="Supprimer">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                    
+                    <!-- Delete Modal -->
+                    <div class="modal fade" id="deleteModal{{ partenariat.idpartenariat }}" tabindex="-1" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title">Confirmer la suppression</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            Êtes-vous sûr de vouloir supprimer le partenariat <strong>{{ partenariat.nompartenariat }}</strong> ?
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+                            <form method="post" action="{{ path('app_partenariat_admin_delete', {'idpartenariat': partenariat.idpartenariat}) }}">
+                              <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ partenariat.idpartenariat) }}">
+                              <button type="submit" class="btn btn-danger">Supprimer</button>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            {% else %}
+              <tr>
+                <td colspan="6" class="text-center py-5">
+                  <div class="empty-state">
+                    <i class="fas fa-handshake fa-3x text-muted mb-3"></i>
+                    <h6>Aucun partenariat trouvé</h6>
+                    <p class="text-muted small">Commencez par ajouter un nouveau partenariat</p>
+                    <a href="{{ path('app_partenariat_admin_new') }}" class="btn btn-primary mt-2">
+                      <i class="fas fa-plus me-2"></i>Ajouter un partenariat
+                    </a>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    tooltipTriggerList.forEach(function(tooltipTriggerEl) {
+      new bootstrap.Tooltip(tooltipTriggerEl, {
+        boundary: document.body
+      })
+    });
+  });
+  
+  // Table search function
+  function filterTable() {
+    const input = document.getElementById("searchInput");
+    const filter = input.value.toLowerCase();
+    const rows = document.querySelectorAll("table tbody tr");
+
+    rows.forEach(row => {
+      if (!row.querySelector('.empty-state')) {
+        const cells = row.querySelectorAll("td");
+        const rowText = Array.from(cells).map(td => td.textContent.toLowerCase()).join(" ");
+        row.style.display = rowText.includes(filter) ? "" : "none";
+      }
+    });
+  }
+</script>
+
+<style>
+  .stat-icon {
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+  
+  .table th {
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .badge {
+    font-weight: 500;
+    padding: 0.5em 0.85em;
+  }
+  
+  .card-body {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  /* Optimize rendering */
+  .card {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+    will-change: transform;
+  }
+  
+  /* Improve scrolling performance */
+  .table-responsive {
+    -webkit-overflow-scrolling: touch;
+    overflow-y: hidden;
+  }
+</style>
+{% endblock %}

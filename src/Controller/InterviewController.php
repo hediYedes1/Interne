@@ -65,15 +65,13 @@ public function index(
 #[Route('/listBack', name: 'app_interview_index_back', methods: ['GET'])]
 public function indexBack(Request $request, InterviewRepository $interviewRepository, PaginatorInterface $paginator): Response
 {
-    $user = $this->getUser();
-    if (!$user) {
-        throw $this->createAccessDeniedException('Vous devez être connecté pour voir vos interviews.');
-    }
+    
+   
 
     $titre = $request->query->get('titreoffre');
     $type = $request->query->get('typeinterview');
 
-    $query = $interviewRepository->findInterviewsByUserWithFilters($user, $titre, $type);
+    $query = $interviewRepository->findByFilters($titre, $type);
 
     $pagination = $paginator->paginate(
         $query,
@@ -315,4 +313,5 @@ public function new(
             'statistics' => $stats
         ]);
     }
+  
 }

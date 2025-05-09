@@ -41,12 +41,12 @@ public function notificationWidget(ParameterBagInterface $params): Response
 {
     $notifications = [];
     $notificationFile = $params->get('kernel.project_dir').'/var/storage/notifications.json';
-    
+
     if (file_exists($notificationFile)) {
         $notifications = json_decode(file_get_contents($notificationFile), true) ?: [];
     }
 
-    return $this->render('interview/interviewReminder.html.twig', [
+    return $this->render('partials/notifications.html.twig', [
         'notifications' => $notifications
     ]);
 }

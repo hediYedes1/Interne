@@ -1,6 +1,6 @@
 {% extends 'base1.html.twig' %}
 
-{% block title %}Modifier Affectationinterview{% endblock %}
+{% block title %}Edit Affectationinterview{% endblock %}
 {% block css %}
   {{ parent() }}
  
@@ -16,13 +16,15 @@
 {% endblock %}
 {% block breadcrumb %}
     {{ parent() }}
+    <li class="breadcrumb-item"><a href="../dashboard/index.html">Interviews</a></li>
+    <li class="breadcrumb-item active">New</li>
 {% endblock %}
 {% block body %}
-    <h1>Modifier Affectationinterview</h1>
+    <h1>Edit Affectationinterview</h1>
 
     {{ include('affectationinterview/_form.html.twig', {'button_label': 'Update'}) }}
 
-    <a href="{{ path('app_affectationinterview_index') }}">retourner a la liste</a>
+    <a href="{{ path('app_affectationinterview_index') }}">back to list</a>
 
     {{ include('affectationinterview/_delete_form.html.twig') }}
 {% endblock %}

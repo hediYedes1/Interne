@@ -36,7 +36,7 @@ final class BaseController extends AbstractController
                     'user' => $user,
                 ]);
             } elseif (in_array(Role::RH, $roles, true )) {
-                return $this->render('base1.html.twig',
+                return $this->render('base2.html.twig',
                    ['user' => $user,]);
             }
 
