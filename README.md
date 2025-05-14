@@ -52,16 +52,17 @@ Pour utiliser ce projet, vous devez installer PHP, Voici les etapes:
 php -v
 ```
 
-##Contributions 
+## Contributions 
 Nous remercions tous ceux qui ont contribué à ce projet !
 ### Contributeurs
 Les personnes suivantes ont contribué à ce projet en ajoutant des fonctionnalité, en corrigeant des bugs ou en améliorant la documentation: 
--[medamine20) (https://github.com/medamine20) -Gestion de l'utilisateur et ses fonctionnalités
--[zainebt002] (https://github.com/zainebt002) -Gestion des offres d'emploi et projets
-- [HediYedes1] (https://github.com/hediYedes1) - Gestion des interviews et test techniques
--[naghamelaskri] (https://github.com/naghamelaskri) -Gestion des entreprises
-- [hibakhouloud-baadech] (https://github.com/hibakhouloud-baadech) -Gestion d'hébergement
--[abelhoula] (https://github.com/abelhoula) -Gestion de publications
+
+- [medamine20) (https://github.com/medamine20) -Gestion de l'utilisateur et ses fonctionnalités.
+- [zainebt002] (https://github.com/zainebt002) -Gestion des offres d'emploi et projets.
+- [HediYedes1] (https://github.com/hediYedes1) - Gestion des interviews et test techniques.
+- [naghamelaskri] (https://github.com/naghamelaskri) -Gestion des entreprises.
+- [hibakhouloud-baadech] (https://github.com/hibakhouloud-baadech) -Gestion d'hébergement.
+- [abelhoula] (https://github.com/abelhoula) -Gestion de publications
 Si vous souhaitez contribuer, suivez les étapes ci-dessous pour faire un **fork**, créer une nouvelle branche et soumettre une **pull request**.
 ### Comment contributer ?
 1. **Fork le projet**: Allez sur la page Github du projet et cliquez sur le bouton **Fork** dans le coin supérieur droit pour créer une copie du projet dans votre propre compte Github.
@@ -89,3 +90,4 @@ git pull origin nomdubranche
 ```
 ## mots-clés-et-topics
 Symfony 6 , PHP 8.1+ , Plateforme RH, Recrutement, Gestion des offres d’emploi, Gestion des interviews, Tests techniques, Publication d’articles, Twig / Doctrine ORM / Bootstrap 5, Mantis Admin Template
+
