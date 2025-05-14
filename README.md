@@ -18,6 +18,8 @@
 - Gestion de l’hébergement et des partenariats
 - Gestion des publications
 
+### Contexte du Projet
+Ce projet a été établi comme projet d'étude à **Esprit Engineering School** pour l'année scolaire **2024/2025**. Il s'inscrit dans le cadre de la formation en ingénierie et vise à appliquer des concepts avancés de développement web et de gestion de base de données.
 ## Table des Matières
 
 - [Installation](#installation)
@@ -137,5 +139,4 @@ git pull origin nomdubranche
 - Composer  
 - Symfony CLI  
 - MySQL
-
 
