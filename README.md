@@ -31,12 +31,14 @@
 ```bash
 git clone https://github.com/hediYedes1/Interne
 cd Interne
+```
 2. Si vous utilisez XAMPP :
 * Placez le projet dans le dossier htdocs (XAMPP)
 * Démarrez Apache et MySQL depuis l'interface de XAMPP
 * Démarrez le serveur Symfony :
  ```bash
 symfony serve
+```
 * Accédez au projet via : https://127.0.0.1:8000/base1
 
 ## Utilisation
@@ -48,6 +50,7 @@ Pour utiliser ce projet, vous devez installer PHP, Voici les etapes:
 3. Vérifiez l'installation de PHP en exécutant la commande suivante dans votre terminal:
 ```bash
 php -v
+```
 
 ##Contributions 
 Nous remercions tous ceux qui ont contribué à ce projet !
@@ -66,19 +69,23 @@ Si vous souhaitez contribuer, suivez les étapes ci-dessous pour faire un **fork
 ```bash
 git clone https://github.com/hediYedes1/Interne 
 cd Interne
+```
 3. Créez une nouvelle branche
 ```bash
 git checkout -b nomdubranche
+```
 4. Committer aprés modifications pour le enregistrer
 ```bash
 git add . 
 git commit -m 'Ajout de la fonctionnalité x'
+```
 5. Pousser vos modifications
 ```bash
 git push origin nomdubranche
+```
 4. Soumettez une Pull Request
 ```bash
 git pull origin nomdubranche
-
+```
 ## mots-clés-et-topics
 Symfony 6 , PHP 8.1+ , Plateforme RH, Recrutement, Gestion des offres d’emploi, Gestion des interviews, Tests techniques, Publication d’articles, Twig / Doctrine ORM / Bootstrap 5, Mantis Admin Template
