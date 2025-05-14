@@ -62,29 +62,29 @@ Les personnes suivantes ont contribué à ce projet en ajoutant des fonctionnali
 - [HediYedes1] (https://github.com/hediYedes1) - Gestion des interviews et test techniques.
 - [naghamelaskri] (https://github.com/naghamelaskri) -Gestion des entreprises.
 - [hibakhouloud-baadech] (https://github.com/hibakhouloud-baadech) -Gestion d'hébergement.
-- [abelhoula] (https://github.com/abelhoula) -Gestion de publications
+- [abelhoula] (https://github.com/abelhoula) -Gestion de publications.
 Si vous souhaitez contribuer, suivez les étapes ci-dessous pour faire un **fork**, créer une nouvelle branche et soumettre une **pull request**.
 ### Comment contributer ?
 1. **Fork le projet**: Allez sur la page Github du projet et cliquez sur le bouton **Fork** dans le coin supérieur droit pour créer une copie du projet dans votre propre compte Github.
-2 **Clonez votre fork**: Clonez le fork sur votre machine locale:
+2. **Clonez votre fork**: Clonez le fork sur votre machine locale:
 ```bash
 git clone https://github.com/hediYedes1/Interne 
 cd Interne
 ```
-3. Créez une nouvelle branche
+3. **Créez une nouvelle branche**
 ```bash
 git checkout -b nomdubranche
 ```
-4. Committer aprés modifications pour le enregistrer
+4. **Committer aprés modifications pour le enregistrer**
 ```bash
 git add . 
 git commit -m 'Ajout de la fonctionnalité x'
 ```
-5. Pousser vos modifications
+5. **Pousser vos modifications**
 ```bash
 git push origin nomdubranche
 ```
-4. Soumettez une Pull Request
+4. **Soumettez une Pull Request**
 ```bash
 git pull origin nomdubranche
 ```
