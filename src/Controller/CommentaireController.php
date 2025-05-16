@@ -3,9 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Commentaire;
+use App\Entity\Publication;
 use App\Form\CommentaireType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route; // Fixed typo here
@@ -110,5 +112,76 @@ final class CommentaireController extends AbstractController
         }
 
         return $this->redirectToRoute('app_commentaire_index', [], Response::HTTP_SEE_OTHER);
+    }
+    // src/Controller/CommentaireController.php
+
+
+    #[Route('/add/{idpublication}', name: 'add_front', methods: ['POST'])]
+    public function addFront(Request $request, ManagerRegistry $doctrine, int $idpublication): Response
+    {
+        $entityManager = $doctrine->getManager();
+        $publication = $doctrine->getRepository(Publication::class)->find($idpublication);
+
+        if (!$publication) {
+            throw $this->createNotFoundException('Publication non trouvée.');
+        }
+
+        $comment = new Commentaire();
+        $comment->setPublication($publication);
+        $comment->setDateCommentaire(new \DateTime());
+
+        $form = $this->createForm(CommentaireType::class, $comment);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($comment);
+            $entityManager->flush();
+            return $this->redirectToRoute('app_publication_index_front');
+        }
+
+        // Optional: If not valid, re-render the form (or just redirect)
+        return $this->redirectToRoute('app_publication_index_front');
+    }
+
+    #[Route('/{idCommentaire}/like', name: 'app_commentaire_like', methods: ['POST'])]
+    public function like(Commentaire $commentaire, EntityManagerInterface $entityManager): Response
+    {
+        // Increment the likes count
+        $commentaire->setLikes($commentaire->getLikes() + 1);
+        $entityManager->flush();
+        
+        // If it's an AJAX request, return JSON
+        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+            return new JsonResponse([
+                'success' => true,
+                'likes' => $commentaire->getLikes()
+            ]);
+        }
+        
+        // Otherwise redirect back to the publication page
+        return $this->redirectToRoute('app_publication_show_front', [
+            'id' => $commentaire->getIdPublication()->getIdPublication()
+        ]);
+    }
+    
+    #[Route('/{idCommentaire}/dislike', name: 'app_commentaire_dislike', methods: ['POST'])]
+    public function dislike(Commentaire $commentaire, EntityManagerInterface $entityManager): Response
+    {
+        // Increment the dislikes count
+        $commentaire->setDislikes($commentaire->getDislikes() + 1);
+        $entityManager->flush();
+        
+        // If it's an AJAX request, return JSON
+        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+            return new JsonResponse([
+                'success' => true,
+                'dislikes' => $commentaire->getDislikes()
+            ]);
+        }
+        
+        // Otherwise redirect back to the publication page
+        return $this->redirectToRoute('app_publication_show_front', [
+            'id' => $commentaire->getIdPublication()->getIdPublication()
+        ]);
     }
 }

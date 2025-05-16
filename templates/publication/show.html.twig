@@ -1,20 +1,9 @@
-{% extends 'base.html.twig' %}
+{% extends 'base1.html.twig' %}
 
 {% block title %}Détail de la publication{% endblock %}
 
 {% block css %}
 {{ parent() }}
-<style>
-    .comment-card {
-        transition: transform 0.2s ease-in-out;
-    }
-    .comment-card:hover {
-        transform: translateY(-2px);
-    }
-    .btn-primary {
-        transition: background-color 0.3s ease;
-    }
-</style>
 {% endblock %}
 
 {% block sideBar %}
@@ -22,104 +11,90 @@
 {% endblock %} 
 
 {% block headside %}
-{{ parent() }}
+  {{ parent() }}
 {% endblock %}
 
+
 {% block breadcrumb %}
-{{ parent() }}
+    {{ parent() }}
 {% endblock %}
 
 {% block body %}
-<div class="container mx-auto px-4 py-8 max-w-4xl">
-    <!-- Publication Card -->
-    <div class="bg-white rounded-xl shadow-lg p-8 mb-8 border border-gray-100">
-        <h2 class="text-3xl font-bold text-gray-800 mb-6">{{ publication.titre }}</h2>
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-2xl font-semibold mb-4">{{ publication.titre }}</h2>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="space-y-4">
-                <p class="text-gray-600"><span class="font-semibold">ID:</span> {{ publication.idPublication }}</p>
-                <p class="text-gray-600"><span class="font-semibold">Contenu:</span> {{ publication.contenu }}</p>
-                <p class="text-gray-600"><span class="font-semibold">Date:</span> 
-                    {{ publication.datePublication ? publication.datePublication|date('d/m/Y H:i') : 'Non précisée' }}
-                </p>
-                <p class="text-gray-600"><span class="font-semibold">Note:</span> 
-                    <span class="text-yellow-500">⭐ {{ publication.rating }}</span>
-                </p>
-            </div>
+        <div class="space-y-2">
+            <p><strong>ID:</strong> {{ publication.idPublication }}</p>
+            <p><strong>Contenu:</strong> {{ publication.contenu }}</p>
+            <p><strong>Date:</strong>
+                {{ publication.datePublication ? publication.datePublication|date('d/m/Y H:i') : 'Non précisée' }}
+            </p>
+            <p><strong>Note:</strong> ⭐ {{ publication.rating }}</p>
 
             {% if publication.imagePath %}
-                <div class="flex justify-center md:justify-end">
-                    <img src="{{ asset('Uploads/' ~ publication.imagePath) }}" 
-                         alt="Publication Image" 
-                         class="w-full max-w-sm rounded-lg shadow-md object-cover">
-                </div>
+                <p>
+                    <img src="{{ asset('uploads/' ~ publication.imagePath) }}" alt="Image" class="w-64 h-auto rounded-md mt-2">
+                </p>
             {% endif %}
         </div>
 
-        <div class="mt-8 flex flex-wrap gap-4 items-center">
+        <div class="mt-6 flex gap-4 items-center">
             <a href="{{ path('app_publication_edit', {'idPublication': publication.idPublication}) }}"
-               class="btn-primary inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+               class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
                 ✏️ Modifier
             </a>
 
+            {# 🔥 Correction ici : on passe bien la variable publication au fichier partiel #}
             {{ include('publication/_delete_form.html.twig', { publication: publication }) }}
 
             <a href="{{ path('app_publication_index') }}"
-               class="text-gray-500 hover:text-gray-700 text-sm font-medium transition">
+               class="text-gray-600 hover:underline text-sm">
                 ← Retour à la liste
             </a>
         </div>
     </div>
 
-    <!-- Comments Section -->
-    <div class="bg-white rounded-xl shadow-lg p-8 mb-8 border border-gray-100">
-        <h3 class="text-2xl font-bold text-gray-800 mb-6">💬 Commentaires</h3>
+    {# 💬 Liste des commentaires #}
+    <div class="mt-10 bg-white p-6 rounded-lg shadow-md">
+        <h3 class="text-xl font-semibold mb-4">💬 Commentaires</h3>
 
         {% if commentaires is not empty %}
-            <div class="space-y-6">
+
+            <ul class="space-y-4">
                 {% for commentaire in commentaires %}
-                    <div class="comment-card bg-gray-50 p-6 rounded-lg shadow-sm border border-gray-200">
-                        <p class="text-sm text-gray-500 mb-2">
-                            <span class="font-semibold">Posté le :</span> {{ commentaire.dateCommentaire|date('d/m/Y H:i') }}
+                    <li class="bg-gray-100 p-4 rounded shadow-sm">
+                        <p class="text-sm text-gray-800">
+                            <strong>Posté le :</strong> {{ commentaire.dateCommentaire|date('d/m/Y H:i') }}
                         </p>
-                        <p class="text-gray-700">{{ commentaire.contenu }}</p>
-                        <div class="mt-3 flex gap-4 text-sm text-gray-500">
-                            <span>👍 {{ commentaire.likes }}</span>
-                            <span>👎 {{ commentaire.dislikes }}</span>
+                        <p class="mt-2 text-gray-700">{{ commentaire.contenu }}</p>
+                        <div class="mt-2 text-sm text-gray-500">
+                            👍 {{ commentaire.likes }} | 👎 {{ commentaire.dislikes }}
                         </div>
-                    </div>
+                    </li>
                 {% endfor %}
-            </div>
+            </ul>
         {% else %}
-            <p class="text-gray-500 italic">Aucun commentaire pour cette publication.</p>
+            <p class="text-gray-500">Aucun commentaire pour cette publication.</p>
         {% endif %}
     </div>
 
-    <!-- Comment Form -->
-    <div class="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
-        <h3 class="text-2xl font-bold text-gray-800 mb-6">➕ Ajouter un commentaire</h3>
+    {# ➕ Formulaire d'ajout de commentaire #}
+    <div class="mt-10 bg-white p-6 rounded-lg shadow-md">
+        <h3 class="text-xl font-semibold mb-4">➕ Ajouter un commentaire</h3>
 
-        {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+        {{ form_start(form, {'attr': {'class': 'space-y-4'}}) }}
         <div>
-            {{ form_label(form.contenu, null, {
-                'label_attr': {'class': 'block text-sm font-semibold text-gray-700 mb-2'}
-            }) }}
-            {{ form_widget(form.contenu, {
-                'attr': {'class': 'w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500'}
-            }) }}
-            {{ form_errors(form.contenu, {
-                'attr': {'class': 'text-red-500 text-sm mt-1'}
-            }) }}
+            {{ form_label(form.contenu, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
+            {{ form_widget(form.contenu) }}
+            {{ form_errors(form.contenu) }}
         </div>
-        <button type="submit" 
-                class="btn-primary inline-flex items-center px-6 py-3 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition">
+        <button class="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded hover:bg-green-700 transition">
             💬 Commenter
         </button>
         {{ form_end(form) }}
     </div>
-</div>
 {% endblock %}
 
 {% block javascript %}
-{{ parent() }}
+  {{ parent() }}
 {% endblock %}

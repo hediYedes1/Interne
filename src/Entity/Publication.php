@@ -4,9 +4,10 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use App\Entity\Commentaire;
+use App\Entity\Utilisateur;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: \App\Repository\PublicationRepository::class)]
 #[ORM\Table(name: 'publication')]
 class Publication
 {
@@ -35,8 +36,12 @@ class Publication
 
     #[ORM\Column(name: 'image_path', type: 'string', length: 255, nullable: true)]
     private ?string $imagePath = null;
+    
+    #[ORM\ManyToOne(targetEntity: Utilisateur::class)]
+    #[ORM\JoinColumn(name: 'idutilisateur', referencedColumnName: 'idutilisateur', nullable: true)]
+    private ?Utilisateur $idutilisateur = null;
 
-    #[ORM\OneToMany(mappedBy: 'publication', targetEntity: Commentaire::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'idPublication', targetEntity: Commentaire::class, orphanRemoval: true)]
     private Collection $commentaires;
 
     public function getCommentaires(): Collection
@@ -109,35 +114,15 @@ class Publication
         $this->titre = $titre;
     }
 
-    #[ORM\Column(type: 'integer')]
-    private ?int $idUtilisateur = null;
-
-    // ... getters et setters
-    public function getIdUtilisateur(): ?int
+    public function getIdutilisateur(): ?Utilisateur
     {
-        return $this->idUtilisateur;
+        return $this->idutilisateur;
     }
 
-    public function setIdUtilisateur(int $idUtilisateur): self
+    public function setIdutilisateur(?Utilisateur $idutilisateur): self
     {
-        $this->idUtilisateur = $idUtilisateur;
-        return $this;
-    }
-    #[ORM\ManyToOne(targetEntity: Utilisateur::class)]
-    #[ORM\JoinColumn(name: "id_utilisateur", referencedColumnName: "idutilisateur")]
-    private ?Utilisateur $utilisateur = null;
-
-    // ... 
-
-    public function getUtilisateur(): ?Utilisateur
-    {
-        return $this->utilisateur;
-    }
-
-    public function setUtilisateur(?Utilisateur $utilisateur): self
-    {
-        $this->utilisateur = $utilisateur;
+        $this->idutilisateur = $idutilisateur;
+        
         return $this;
     }
 }
-

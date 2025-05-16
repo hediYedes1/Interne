@@ -1,0 +1,249 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Publications{% endblock %}
+
+{% block css %}
+  {{ parent() }}
+  <style>
+    :root {
+      --primary: #4e73df;
+      --primary-light: #e8f1ff;
+      --secondary: #6c757d;
+      --success: #1cc88a;
+      --info: #36b9cc;
+      --warning: #f6c23e;
+      --danger: #e74a3b;
+      --light: #f8f9fc;
+      --dark: #5a5c69;
+      --border: #e3e6f0;
+    }
+
+    .publications-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .page-header {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 2rem;
+    }
+
+    @media (min-width: 768px) {
+      .page-header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+    }
+
+    .page-title {
+      color: var(--dark);
+      font-weight: 600;
+      margin-bottom: 1rem;
+      font-size: 1.75rem;
+    }
+
+    .publication-card {
+      background: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+      transition: all 0.3s ease;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      border-left: 4px solid var(--primary);
+      overflow: hidden;
+    }
+
+    .publication-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0.5rem 1.5rem rgba(58, 59, 69, 0.2);
+    }
+
+    .card-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      background-color: var(--light);
+    }
+
+    .card-title {
+      font-weight: 600;
+      color: var(--dark);
+      margin: 0;
+      padding-right: 2rem;
+      font-size: 1.1rem;
+    }
+
+    .card-body {
+      padding: 1.5rem;
+      flex: 1;
+    }
+
+    .card-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px dashed var(--border);
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      background-color: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      color: var(--border);
+      margin-bottom: 1.5rem;
+    }
+
+    .empty-state h4 {
+      color: var(--dark);
+      margin-bottom: 1rem;
+    }
+
+    .empty-state p {
+      color: var(--secondary);
+      margin-bottom: 1.5rem;
+    }
+
+    .publication-image-wrapper {
+      margin-top: 15px;
+      overflow: hidden;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .publication-image {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      transition: transform 0.3s ease;
+    }
+
+    .publication-image:hover {
+      transform: scale(1.05);
+    }
+
+    .publication-footer a {
+      text-decoration: none;
+      background-color: var(--primary);
+      color: white;
+      padding: 10px 15px;
+      border-radius: 5px;
+      font-weight: 600;
+    }
+
+    .publication-footer a:hover {
+      background-color: var(--primary-light);
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center; /* Centering the buttons */
+      margin-top: 2rem;
+      gap: 10px; /* Adds spacing between the buttons */
+    }
+
+    .pagination a {
+      padding: 10px 15px;
+      background-color: var(--light);
+      border-radius: 5px;
+      color: var(--dark);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .pagination a.active {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .pagination a:hover {
+      background-color: var(--primary-light);
+    }
+
+    /* New grid style for two publications per row */
+    .publications-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      justify-content: center;  /* Centering the row */
+    }
+
+    .col-lg-6, .col-xl-4 {
+      flex: 1 1 calc(50% - 1rem); /* Adjust to two items per row */
+      max-width: calc(50% - 1rem);
+    }
+
+    @media (max-width: 768px) {
+      .col-lg-6, .col-xl-4 {
+        flex: 1 1 100%; /* Single item per row on smaller screens */
+        max-width: 100%;
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block body %}
+  <div class="publications-container">
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1 class="page-title">📰 Liste des Publications</h1>
+    </div>
+
+    <!-- Publications Cards -->
+    <div class="publications-row">
+      {% if publications|length > 0 %}
+        {% for publication in publications %}
+          <div class="col-lg-6 col-xl-4 mb-4">
+            <div class="publication-card">
+              <div class="card-header">
+                <h3 class="card-title">{{ publication.titre }}</h3>
+              </div>
+              <div class="card-body">
+                <p>{{ publication.contenu|slice(0, 150) }}...</p>
+                <p><strong>Publié le :</strong> {{ publication.datePublication|date('Y-m-d H:i') }}</p>
+                <p><strong>Rating :</strong> {{ publication.rating }}</p>
+
+                {% if publication.imagePath %}
+                  <div class="publication-image-wrapper">
+                    <img src="{{ asset(publication.imagePath) }}" alt="Image" class="publication-image"/>
+                  </div>
+                {% endif %}
+              </div>
+              <div class="card-footer">
+               <!-- In your Twig file -->
+<a href="{{ path('app_publication_show_front', {'id': publication.idPublication}) }}">Voir plus</a>
+
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="empty-state">
+          <i class="fas fa-newspaper"></i>
+          <h4>Aucune publication trouvée</h4>
+          <p>Essayez de modifier votre recherche ou ajoutez une nouvelle publication.</p>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Pagination Controls -->
+    <div class="pagination-controls">
+      {% if currentPage > 1 %}
+        <a href="{{ path('app_publication_index_front', {'page': currentPage - 1}) }}" class="btn btn-primary">Précédent</a>
+      {% endif %}
+
+      {% if currentPage < totalPages %}
+        <a href="{{ path('app_publication_index_front', {'page': currentPage + 1}) }}" class="btn btn-primary">Suivant</a>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

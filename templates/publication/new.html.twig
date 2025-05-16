@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'base1.html.twig' %}
 
 {% block title %}Nouvelle publication{% endblock %}
 {% block css %}
@@ -37,4 +37,129 @@
 
 {% block javascript %}
   {{ parent() }}
+  
+  {% if requireFaceId is defined and requireFaceId %}
+  <script src="{{ asset('js/face_id.js') }}"></script>
+  <script>
+    // Face ID verification
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.querySelector('form[name="publication"]');
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const originalBtnText = submitBtn.innerHTML;
+      
+      // Add face verification button
+      const verifyFaceBtn = document.createElement('button');
+      verifyFaceBtn.type = 'button';
+      verifyFaceBtn.className = 'btn btn-outline-secondary mb-3';
+      verifyFaceBtn.innerHTML = '<i class="fas fa-camera"></i> Vérifier votre identité par Face ID';
+      
+      // Add status message
+      const statusDiv = document.createElement('div');
+      statusDiv.className = 'alert alert-info';
+      statusDiv.style.display = 'none';
+      statusDiv.innerHTML = 'La vérification par Face ID est requise avant de soumettre ce formulaire.';
+      
+      form.insertBefore(statusDiv, submitBtn.parentNode);
+      form.insertBefore(verifyFaceBtn, statusDiv);
+      
+      // Disable submit button initially
+      submitBtn.disabled = true;
+      statusDiv.style.display = 'block';
+      
+      // Add video element for face capture
+      const videoContainer = document.createElement('div');
+      videoContainer.style.display = 'none';
+      videoContainer.innerHTML = `
+        <div class="text-center mb-3">
+          <video id="video" width="320" height="240" class="mx-auto border rounded" autoplay></video>
+          <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
+        </div>
+        <div class="text-center mb-3">
+          <button id="captureBtn" type="button" class="btn btn-primary">Capturer</button>
+          <button id="cancelCaptureBtn" type="button" class="btn btn-secondary ml-2">Annuler</button>
+        </div>
+      `;
+      form.insertBefore(videoContainer, verifyFaceBtn);
+      
+      // Face verification process
+      verifyFaceBtn.addEventListener('click', startFaceCapture);
+      
+      function startFaceCapture() {
+        videoContainer.style.display = 'block';
+        verifyFaceBtn.style.display = 'none';
+        
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const captureBtn = document.getElementById('captureBtn');
+        const cancelBtn = document.getElementById('cancelCaptureBtn');
+        
+        // Get access to the camera
+        if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function(stream) {
+              video.srcObject = stream;
+              video.play();
+            })
+            .catch(function(err) {
+              statusDiv.className = 'alert alert-danger';
+              statusDiv.innerHTML = `Erreur d'accès à la caméra: ${err.message}`;
+            });
+        }
+        
+        captureBtn.addEventListener('click', function() {
+          // Draw the video frame to the canvas
+          canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+          
+          // Convert the canvas to base64 data URL
+          const imageData = canvas.toDataURL('image/jpeg');
+          
+          // Stop video stream
+          stopVideoStream();
+          
+          // Send to server for verification
+          statusDiv.className = 'alert alert-info';
+          statusDiv.innerHTML = 'Vérification en cours...';
+          
+          fetch('{{ path("app_publication_verify_face") }}', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ image: imageData }),
+          })
+          .then(response => response.json())
+          .then(data => {
+            if(data.success) {
+              statusDiv.className = 'alert alert-success';
+              statusDiv.innerHTML = 'Identité vérifiée avec succès!';
+              submitBtn.disabled = false;
+              videoContainer.style.display = 'none';
+            } else {
+              statusDiv.className = 'alert alert-danger';
+              statusDiv.innerHTML = data.message || 'Échec de la vérification faciale.';
+              verifyFaceBtn.style.display = 'block';
+            }
+          })
+          .catch(error => {
+            statusDiv.className = 'alert alert-danger';
+            statusDiv.innerHTML = `Erreur: ${error.message}`;
+            verifyFaceBtn.style.display = 'block';
+          });
+        });
+        
+        cancelBtn.addEventListener('click', function() {
+          stopVideoStream();
+          videoContainer.style.display = 'none';
+          verifyFaceBtn.style.display = 'block';
+        });
+        
+        function stopVideoStream() {
+          if(video.srcObject) {
+            video.srcObject.getTracks().forEach(track => track.stop());
+          }
+        }
+      }
+    });
+  </script>
+  {% endif %}
 {% endblock %}

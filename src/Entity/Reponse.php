@@ -5,7 +5,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Commentaire;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: \App\Repository\ReponseRepository::class)]
 #[ORM\Table(name: 'reponse')]
 #[ORM\Index(name: 'fk_commentaire', columns: ['id_commentaire'])]
 class Reponse

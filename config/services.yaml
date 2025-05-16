@@ -4,10 +4,13 @@ parameters:
     env(CLOUDINARY_CLOUD_NAME): 'dkjyekxne'
     env(CLOUDINARY_API_KEY): '635948861942666'
     env(CLOUDINARY_API_SECRET): 'hoMRHm2K9a7LPaSEIg7AfkSqNU4'
+    env(FACE_API_KEY): '635948861942666'
+    env(FACE_API_SECRET): 'hoMRHm2K9a7LPaSEIg7AfkSqNU4'
     google.redirect_uri: 'http://localhost:8000/auth/google/callback'
     logo_directory: '%kernel.project_dir%/public/uploads/logos'
     images_directory: '%kernel.project_dir%/public/uploads/images'
-
+    publications_directory: '%kernel.project_dir%/public/uploads/publications'
+    avatars_directory: '%kernel.project_dir%/public/uploads/avatars'
 
     profile_images_directory: '%kernel.project_dir%/public/uploads/profile_images'
     face_api_key: '%env(FACE_API_KEY)%'
@@ -22,6 +25,7 @@ services:
             $logger: '@logger'
             $httpClient: '@http_client'
             $params: '@parameter_bag'
+            $imagesDirectory: '%images_directory%'
 
     App\Utils\GoogleOAuthService:
         arguments:
@@ -32,8 +36,6 @@ services:
         autowire: true
         tags: ['controller.service_arguments']
 
-
-            # config/services.yaml
     App\Twig\AppExtension:
         tags: ['twig.extension']
 

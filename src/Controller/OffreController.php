@@ -40,6 +40,7 @@ class OffreController extends AbstractController
         if ($request->isXmlHttpRequest()) {
             return $this->render('offre/_offres_list.html.twig', [
                 'offres' => $offres,
+                'route_show' => 'front_offre_show',
                 'searchQuery' => $searchQuery,
                 'selectedType' => $typeContrat,
             ]);
@@ -68,6 +69,7 @@ class OffreController extends AbstractController
         if ($request->isXmlHttpRequest()) {
             return $this->render('offre/_offres_list.html.twig', [
                 'offres' => $offres,
+                'route_show' => 'rh_offre_show',
                 'searchQuery' => $searchQuery,
                 'selectedType' => $typeContrat,
             ]);
@@ -274,7 +276,8 @@ class OffreController extends AbstractController
 
         if ($request->isXmlHttpRequest()) {
             return $this->render('offre/_offres_list.html.twig', [
-                'offres' => $offres
+                'offres' => $offres,
+                'route_show' => 'back_offre_show'
             ]);
         }
 

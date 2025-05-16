@@ -4,12 +4,19 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Publication;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: \App\Repository\CommentaireRepository::class)]
 #[ORM\Table(name: 'commentaire')]
 #[ORM\Index(name: 'fk_publication', columns: ['id_publication'])]
 class Commentaire
 {
+    public function __construct()
+    {
+        $this->dateCommentaire = new \DateTime();
+        $this->reponses = new ArrayCollection();
+    }
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     #[ORM\Column(name: 'id_commentaire', type: 'integer')]
@@ -27,9 +34,12 @@ class Commentaire
     #[ORM\Column(type: 'integer', nullable: true, options: ['default' => 0])]
     private ?int $dislikes = 0;
 
-    #[ORM\ManyToOne(targetEntity: Publication::class)]
+    #[ORM\ManyToOne(targetEntity: Publication::class, inversedBy: "commentaires")]
     #[ORM\JoinColumn(name: 'id_publication', referencedColumnName: 'id_publication')]
     private Publication $idPublication;
+    
+    #[ORM\OneToMany(mappedBy: 'idCommentaire', targetEntity: Reponse::class, orphanRemoval: true)]
+    private Collection $reponses;
 
     public function getIdCommentaire(): int
     {
@@ -89,6 +99,33 @@ class Commentaire
     public function setContenu(string $contenu): void
     {
         $this->contenu = $contenu;
+    }
+
+    public function getReponses(): Collection
+    {
+        return $this->reponses;
+    }
+
+    public function addReponse(Reponse $reponse): self
+    {
+        if (!$this->reponses->contains($reponse)) {
+            $this->reponses[] = $reponse;
+            $reponse->setIdCommentaire($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReponse(Reponse $reponse): self
+    {
+        if ($this->reponses->removeElement($reponse)) {
+            // set the owning side to null (unless already changed)
+            if ($reponse->getIdCommentaire() === $this) {
+                $reponse->setIdCommentaire(null);
+            }
+        }
+
+        return $this;
     }
 
     public function getLikeDislikeRatio(): float

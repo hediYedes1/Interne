@@ -2,10 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Commentaire;
 use App\Entity\Reponse;
 use App\Form\ReponseType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -80,5 +82,59 @@ final class ReponseController extends AbstractController
         }
 
         return $this->redirectToRoute('app_reponse_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/ajax/new', name: 'app_reponse_new_ajax', methods: ['POST'])]
+    public function newAjax(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        // Get comment ID from the request
+        $commentaireId = $request->request->get('commentaire_id');
+        $contenu = $request->request->get('contenu_reponse');
+        
+        // Check if the required data is present
+        if (!$commentaireId || !$contenu) {
+            if ($request->isXmlHttpRequest()) {
+                return new JsonResponse(['success' => false, 'message' => 'Données manquantes'], 400);
+            }
+            $this->addFlash('error', 'Données manquantes pour la réponse');
+            return $this->redirectToRoute('app_publication_index_front');
+        }
+        
+        // Find the commentaire
+        $commentaire = $entityManager->getRepository(Commentaire::class)->find($commentaireId);
+        if (!$commentaire) {
+            if ($request->isXmlHttpRequest()) {
+                return new JsonResponse(['success' => false, 'message' => 'Commentaire non trouvé'], 404);
+            }
+            $this->addFlash('error', 'Commentaire non trouvé');
+            return $this->redirectToRoute('app_publication_index_front');
+        }
+        
+        // Create and persist the new response
+        $reponse = new Reponse();
+        $reponse->setIdCommentaire($commentaire);
+        $reponse->setContenuReponse($contenu);
+        $reponse->setDateReponse(new \DateTime());
+        
+        $entityManager->persist($reponse);
+        $entityManager->flush();
+        
+        // If it's an AJAX request, return JSON
+        if ($request->isXmlHttpRequest()) {
+            return new JsonResponse([
+                'success' => true,
+                'message' => 'Réponse ajoutée avec succès',
+                'reponse' => [
+                    'id' => $reponse->getIdReponse(),
+                    'contenu' => $reponse->getContenuReponse(),
+                    'date' => $reponse->getDateReponse()->format('Y-m-d H:i')
+                ]
+            ]);
+        }
+        
+        // Otherwise redirect back to the publication page
+        $this->addFlash('success', 'Réponse ajoutée avec succès');
+        $publicationId = $commentaire->getIdPublication()->getIdPublication();
+        return $this->redirectToRoute('app_publication_show_front', ['id' => $publicationId]);
     }
 }

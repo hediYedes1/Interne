@@ -1,84 +1,209 @@
 {{ form_start(form, {'attr': {'class': 'custom-affectation-form'}}) }}
 
-    <div class="form-group">
-        {{ form_label(form.datedebut) }}
-        {{ form_widget(form.datedebut) }}
-        <div class="form-error">{{ form_errors(form.datedebut) }}</div>
+    <div class="form-header">
+        <h3>Détails de l'affectation</h3>
+        <p class="form-subtitle">Veuillez remplir tous les champs obligatoires</p>
     </div>
 
     <div class="form-group">
-        {{ form_label(form.datefin) }}
-        {{ form_widget(form.datefin) }}
-        <div class="form-error">{{ form_errors(form.datefin) }}</div>
+        <div class="input-icon-group">
+            <i class="ti ti-calendar-event"></i>
+            {{ form_label(form.datedebut) }}
+            {{ form_widget(form.datedebut) }}
+            <div class="form-error">{{ form_errors(form.datedebut) }}</div>
+            <small class="form-text text-muted">Date de début de l'affectation</small>
+        </div>
     </div>
 
     <div class="form-group">
-        {{ form_label(form.idhebergement) }}
-        {{ form_widget(form.idhebergement) }}
-        <div class="form-error">{{ form_errors(form.idhebergement) }}</div>
+        <div class="input-icon-group">
+            <i class="ti ti-calendar-off"></i>
+            {{ form_label(form.datefin) }}
+            {{ form_widget(form.datefin) }}
+            <div class="form-error">{{ form_errors(form.datefin) }}</div>
+            <small class="form-text text-muted">Date de fin prévue</small>
+        </div>
     </div>
 
     <div class="form-group">
-        {{ form_label(form.idutilisateur) }}
-        {{ form_widget(form.idutilisateur) }}
-        <div class="form-error">{{ form_errors(form.idutilisateur) }}</div>
+        <div class="input-icon-group">
+            <i class="ti ti-building"></i>
+            {{ form_label(form.idhebergement) }}
+            {{ form_widget(form.idhebergement) }}
+            <div class="form-error">{{ form_errors(form.idhebergement) }}</div>
+            <small class="form-text text-muted">Sélectionnez l'hébergement concerné</small>
+        </div>
     </div>
 
-    <button class="btn">Enregistrer</button>
+    {% if form.getIdutilisateur is defined %}
+    <div class="form-group">
+        <div class="input-icon-group">
+            <i class="ti ti-user"></i>
+            {{ form_label(form.getIdutilisateur) }}
+            {{ form_widget(form.getIdutilisateur) }}
+            <div class="form-error">{{ form_errors(form.getIdutilisateur) }}</div>
+            <small class="form-text text-muted">Sélectionnez l'utilisateur à affecter</small>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="form-actions">
+        <button class="btn btn-primary mt-3">
+            <i class="ti ti-device-floppy"></i> {{ button_label|default('Enregistrer') }}
+        </button>
+        <a href="#" class="btn btn-light mt-3">Annuler</a>
+    </div>
 
 {{ form_end(form) }}
 
 <style>
     .custom-affectation-form {
-        background-color: #fefefe !important;
-        padding: 25px !important;
-        border-radius: 10px !important;
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.08) !important;
-        max-width: 700px !important;
-        margin: 40px auto !important;
-        font-family: 'Segoe UI', sans-serif !important;
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        max-width: 700px;
+        margin: 40px auto;
+        font-family: 'Poppins', sans-serif;
+        transition: all 0.3s ease;
+        border: 1px solid #e9ecef;
+    }
+
+    .form-header {
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .form-header h3 {
+        color: #2c3e50;
+        font-weight: 600;
+        margin-bottom: 5px;
+        font-size: 1.5rem;
+    }
+
+    .form-subtitle {
+        color: #6c757d;
+        font-size: 0.9rem;
+        margin-bottom: 0;
     }
 
     .form-group {
-        margin-bottom: 20px !important;
+        margin-bottom: 24px;
+        position: relative;
+    }
+
+    .input-icon-group {
+        position: relative;
+    }
+
+    .input-icon-group i {
+        position: absolute;
+        left: 10px;
+        top: 40px;
+        color: #6c757d;
+        font-size: 16px;
     }
 
     .custom-affectation-form label {
-        display: block !important;
-        margin-bottom: 6px !important;
-        font-weight: 600 !important;
-        color: #333 !important;
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #343a40;
+        font-size: 15px;
+        transition: color 0.3s;
     }
 
     .custom-affectation-form input,
     .custom-affectation-form select {
-        width: 100% !important;
-        padding: 10px !important;
-        margin-bottom: 5px !important;
-        border: 2px solid #3d74b6 !important;
-        border-radius: 8px !important;
-        font-size: 15px !important;
-        box-sizing: border-box !important;
+        width: 100%;
+        padding: 12px 16px 12px 35px;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        font-size: 15px;
+        box-sizing: border-box;
+        transition: all 0.3s;
+        background-color: #f8f9fa;
+    }
+
+    .custom-affectation-form input:focus,
+    .custom-affectation-form select:focus {
+        outline: none;
+        border-color: #1890ff;
+        box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.1);
+        background-color: #fff;
+    }
+
+    .form-text {
+        display: block;
+        margin-top: 5px;
+        font-size: 12px;
     }
 
     .form-error {
-        color: #d9534f !important;
-        font-size: 14px !important;
-        margin-top: 4px !important;
+        color: #dc3545;
+        font-size: 13px;
+        margin-top: 6px;
+        font-weight: 400;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+        padding-top: 20px;
+        border-top: 1px solid #e9ecef;
     }
 
     .custom-affectation-form .btn {
-        background-color: #3d74b6 !important;
-        color: white !important;
-        padding: 12px 24px !important;
-        border: none !important;
-        border-radius: 8px !important;
-        font-size: 16px !important;
-        cursor: pointer !important;
-        transition: background 0.3s ease !important;
+        padding: 12px 28px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        text-align: center;
+        gap: 8px;
     }
 
-    .custom-affectation-form .btn:hover {
-        background-color: #2c5f9e !important;
+    .custom-affectation-form .btn-primary {
+        background-color: #1890ff;
+        color: white;
+        box-shadow: 0 2px 6px rgba(24, 144, 255, 0.2);
+    }
+
+    .custom-affectation-form .btn-light {
+        background-color: #f8f9fa;
+        color: #495057;
+        border: 1px solid #dee2e6;
+    }
+
+    .custom-affectation-form .btn-primary:hover {
+        background-color: #096dd9;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
+    }
+
+    .custom-affectation-form .btn-light:hover {
+        background-color: #e9ecef;
+    }
+
+    .custom-affectation-form .btn:active {
+        transform: translateY(0);
+    }
+
+    @media (max-width: 768px) {
+        .custom-affectation-form {
+            padding: 20px;
+            margin: 20px auto;
+        }
+        
+        .form-actions {
+            flex-direction: column;
+            gap: 10px;
+        }
     }
 </style>
